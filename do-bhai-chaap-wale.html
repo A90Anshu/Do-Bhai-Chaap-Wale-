@@ -1,3 +1,146 @@
-<!DOCTYPE html> <html lang="en"> <head>   <meta charset="UTF-8" />   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>   <title>Do Bhai Chaap Wale | Nangloi, New Delhi</title>   <style>     body { margin:0; font-family:'Segoe UI',sans-serif; background:#fdfdfd; color:#333; }     header { background:#2e2e2e; color:#fff; padding:60px 20px; text-align:center; }     header h1 { font-size:3rem; margin:0; }     .tagline { font-size:1.2rem; margin:10px 0 20px; }     .btn-primary { backgrou...
-...
-</script> </body> </html>
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Do Bhai Chaap Wale | Nangloi, New Delhi</title>
+  <style>
+    body { margin:0; font-family:'Segoe UI',sans-serif; background:#fdfdfd; color:#333; }
+    header { background:#2e2e2e; color:#fff; padding:60px 20px; text-align:center; }
+    header h1 { font-size:3rem; margin:0; }
+    .tagline { font-size:1.2rem; margin:10px 0 20px; }
+    .btn-primary { background:#e91e63; color:#fff; padding:8px 16px; border:none; border-radius:20px; cursor:pointer; }
+    section { padding:40px 20px; max-width:1000px; margin:auto; }
+    h2 { color:#e91e63; margin-bottom:20px; }
+    ul { list-style:none; padding:0; }
+    li { padding:8px 0; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center; }
+    .badge { background:gold; color:#333; padding:2px 6px; border-radius:4px; font-size:0.8rem; margin-left:6px; }
+    blockquote { background:#f0f0f0; padding:15px 20px; margin:20px 0; border-left:5px solid #e91e63; }
+    .btn-secondary { background:#333; color:#fff; padding:10px 20px; border-radius:5px; text-decoration:none; }
+    footer { background:#222; color:#aaa; text-align:center; padding:20px; font-size:0.9rem; }
+    #cart, #user-details { background:#fff0f4; padding:20px; margin:30px auto; border:1px solid #e91e63; border-radius:10px; max-width:1000px; }
+    input[type="text"] { padding:8px; margin:5px 0; width:100%; border:1px solid #ccc; border-radius:4px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Do Bhai Chaap Wale</h1>
+  <p class="tagline">Authentic Chaap & Street‑Style Fast Food</p>
+  <a href="#menu" class="btn-primary">Explore Menu</a>
+</header>
+
+<section id="menu">
+  <h2>Our Delicious Menu</h2>
+  <ul>
+    <li>Malai Chaap — ₹229 <span class="badge">Bestseller</span> <button class="btn-primary" onclick="addToCart('Malai Chaap', 229)">Add</button></li>
+    <li>Masala Chaap — ₹229 <span class="badge">Bestseller</span> <button class="btn-primary" onclick="addToCart('Masala Chaap', 229)">Add</button></li>
+    <li>Rumali Roti — ₹15 <button class="btn-primary" onclick="addToCart('Rumali Roti', 15)">Add</button></li>
+    <!-- Add other items as needed, maintaining original layout -->
+  </ul>
+</section>
+
+<section id="cart">
+  <h2>🛒 Your Cart</h2>
+  <div id="cart-items"><em>No items in cart.</em></div>
+  <p id="total-amount">Total: ₹0</p>
+</section>
+
+<section id="user-details">
+  <h2>Customer Details</h2>
+  <input type="text" id="name" placeholder="Enter your name" required>
+  <input type="text" id="mobile" placeholder="Enter mobile number" required>
+  <input type="text" id="address" placeholder="Enter delivery address" required>
+  <button class="btn-primary" onclick="checkout()">Proceed to Pay</button>
+</section>
+
+<footer>
+  <p>&copy; 2025 Do Bhai Chaap Wale | All Rights Reserved</p>
+</footer>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSy...",
+    authDomain: "dobhaichaap.firebaseapp.com",
+    projectId: "dobhaichaap",
+    storageBucket: "dobhaichaap.appspot.com",
+    messagingSenderId: "8727...",
+    appId: "1:8727...web..."
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  let cart = [];
+
+  function addToCart(name, price) {
+    cart.push({ name, price });
+    updateCart();
+  }
+
+  function updateCart() {
+    const cartDiv = document.getElementById("cart-items");
+    const totalDiv = document.getElementById("total-amount");
+    if (cart.length === 0) {
+      cartDiv.innerHTML = "<em>No items in cart.</em>";
+      totalDiv.innerText = "Total: ₹0";
+      return;
+    }
+    let html = "", total = 0;
+    cart.forEach(item => {
+      html += `<div style="display:flex;justify-content:space-between"><span>${item.name}</span><span>₹${item.price}</span></div>`;
+      total += item.price;
+    });
+    cartDiv.innerHTML = html;
+    totalDiv.innerText = "Total: ₹" + total;
+  }
+
+  function checkout() {
+    const name = document.getElementById("name").value.trim();
+    const mobile = document.getElementById("mobile").value.trim();
+    const address = document.getElementById("address").value.trim();
+
+    if (!name || !mobile || !address) {
+      alert("Please fill all customer details before checkout.");
+      return;
+    }
+
+    const amount = cart.reduce((sum, item) => sum + item.price, 0);
+    if (amount === 0) return alert("Cart is empty!");
+
+    const options = {
+      key: "UPZld5Aet4MvL8",
+      amount: amount * 100,
+      currency: "INR",
+      name: "Do Bhai Chaap Wale",
+      description: "Order Payment",
+      handler: function (response) {
+        alert("Payment successful!");
+
+        const orderData = {
+          name, mobile, address,
+          cart,
+          total: amount,
+          paymentId: response.razorpay_payment_id,
+          created: new Date().toISOString()
+        };
+
+        db.collection("orders").add(orderData).then(() => {
+          window.open(`https://api.whatsapp.com/send?phone=918700494451&text=New Order%0AName: ${name}%0AMobile: ${mobile}%0AAddress: ${address}%0ATotal: ₹${amount}`, '_blank');
+          cart = [];
+          updateCart();
+        });
+      },
+      theme: { color: "#e91e63" }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }
+</script>
+
+</body>
+</html>
