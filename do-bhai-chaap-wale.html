@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -15,28 +15,43 @@
     ul { list-style:none; padding:0; }
     li { padding:8px 0; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center; }
     .badge { background:gold; color:#333; padding:2px 6px; border-radius:4px; font-size:0.8rem; margin-left:6px; }
-    blockquote { background:#f0f0f0; padding:15px 20px; margin:20px 0; border-left:5px solid #e91e63; }
-    .btn-secondary { background:#333; color:#fff; padding:10px 20px; border-radius:5px; text-decoration:none; }
     footer { background:#222; color:#aaa; text-align:center; padding:20px; font-size:0.9rem; }
-    #cart, #user-details { background:#fff0f4; padding:20px; margin:30px auto; border:1px solid #e91e63; border-radius:10px; max-width:1000px; }
-    input[type="text"] { padding:8px; margin:5px 0; width:100%; border:1px solid #ccc; border-radius:4px; }
+    #cart { background:#fff0f4; padding:20px; margin:30px auto; border:1px solid #e91e63; border-radius:10px; max-width:1000px; }
+    input, textarea { width:100%; padding:8px; margin:6px 0; border:1px solid #ccc; border-radius:5px; box-sizing:border-box; }
+    #login { background:#e8f0ff; padding:20px; margin:30px auto; border-radius:10px; }
   </style>
 </head>
 <body>
-
 <header>
   <h1>Do Bhai Chaap Wale</h1>
   <p class="tagline">Authentic Chaap & Street‑Style Fast Food</p>
   <a href="#menu" class="btn-primary">Explore Menu</a>
 </header>
 
+<section id="login">
+  <h2>👤 Customer Login</h2>
+  <input type="text" id="login-mobile" placeholder="Enter your Mobile Number" />
+  <button onclick="login()" class="btn-primary">Login</button>
+  <div id="order-history" style="margin-top:20px;"></div>
+</section>
+
 <section id="menu">
   <h2>Our Delicious Menu</h2>
   <ul>
-    <li>Malai Chaap — ₹229 <span class="badge">Bestseller</span> <button class="btn-primary" onclick="addToCart('Malai Chaap', 229)">Add</button></li>
-    <li>Masala Chaap — ₹229 <span class="badge">Bestseller</span> <button class="btn-primary" onclick="addToCart('Masala Chaap', 229)">Add</button></li>
-    <li>Rumali Roti — ₹15 <button class="btn-primary" onclick="addToCart('Rumali Roti', 15)">Add</button></li>
-    <!-- Add other items as needed, maintaining original layout -->
+    <li>Malai Chaap — ₹229 <span class="badge">BESTSELLER</span> <button onclick="addToCart('Malai Chaap',229)" class="btn-primary">Add</button></li>
+    <li>Masala Chaap — ₹229 <span class="badge">BESTSELLER</span> <button onclick="addToCart('Masala Chaap',229)" class="btn-primary">Add</button></li>
+    <li>Tandoori Chaap — ₹229 <button onclick="addToCart('Tandoori Chaap',229)" class="btn-primary">Add</button></li>
+    <li>Hariyali Chaap — ₹249 <button onclick="addToCart('Hariyali Chaap',249)" class="btn-primary">Add</button></li>
+    <li>Afghani Chaap — ₹249 <button onclick="addToCart('Afghani Chaap',249)" class="btn-primary">Add</button></li>
+    <li>Pudina Chaap — ₹249 <button onclick="addToCart('Pudina Chaap',249)" class="btn-primary">Add</button></li>
+    <li>Malai Tikka Chaap — ₹259 <button onclick="addToCart('Malai Tikka Chaap',259)" class="btn-primary">Add</button></li>
+    <li>Stuffed Chaap — ₹279 <button onclick="addToCart('Stuffed Chaap',279)" class="btn-primary">Add</button></li>
+    <li>Tawa Chaap — ₹195 <button onclick="addToCart('Tawa Chaap',195)" class="btn-primary">Add</button></li>
+    <li>Lemon Chaap — ₹249 <button onclick="addToCart('Lemon Chaap',249)" class="btn-primary">Add</button></li>
+    <li>Extra Malai Chaap — ₹279 <button onclick="addToCart('Extra Malai Chaap',279)" class="btn-primary">Add</button></li>
+    <li>Garlic Chaap — ₹279 <button onclick="addToCart('Garlic Chaap',279)" class="btn-primary">Add</button></li>
+    <li>Rumali Roti — ₹15 <button onclick="addToCart('Rumali Roti',15)" class="btn-primary">Add</button></li>
+    <li>Creamy Onion Salad — ₹49 <button onclick="addToCart('Creamy Onion Salad',49)" class="btn-primary">Add</button></li>
   </ul>
 </section>
 
@@ -44,14 +59,11 @@
   <h2>🛒 Your Cart</h2>
   <div id="cart-items"><em>No items in cart.</em></div>
   <p id="total-amount">Total: ₹0</p>
-</section>
-
-<section id="user-details">
-  <h2>Customer Details</h2>
-  <input type="text" id="name" placeholder="Enter your name" required>
-  <input type="text" id="mobile" placeholder="Enter mobile number" required>
-  <input type="text" id="address" placeholder="Enter delivery address" required>
-  <button class="btn-primary" onclick="checkout()">Proceed to Pay</button>
+  <h3>Customer Details</h3>
+  <input type="text" id="cust-name" placeholder="Full Name" required />
+  <input type="tel" id="cust-mobile" placeholder="Mobile Number" required />
+  <textarea id="cust-address" placeholder="Full Address" rows="3" required></textarea>
+  <button onclick="checkout()" class="btn-primary">Proceed to Pay</button>
 </section>
 
 <footer>
@@ -59,88 +71,88 @@
 </footer>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSy...",
-    authDomain: "dobhaichaap.firebaseapp.com",
-    projectId: "dobhaichaap",
-    storageBucket: "dobhaichaap.appspot.com",
-    messagingSenderId: "8727...",
-    appId: "1:8727...web..."
+let cart = [];
+
+function addToCart(name, price) {
+  cart.push({ name, price });
+  updateCart();
+}
+
+function updateCart() {
+  const cartDiv = document.getElementById("cart-items");
+  const totalDiv = document.getElementById("total-amount");
+  if (cart.length === 0) {
+    cartDiv.innerHTML = "<em>No items in cart.</em>";
+    totalDiv.innerText = "Total: ₹0";
+    return;
+  }
+  let html = "", total = 0;
+  cart.forEach(item => {
+    html += `<div style="display:flex;justify-content:space-between"><span>${item.name}</span><span>₹${item.price}</span></div>`;
+    total += item.price;
+  });
+  cartDiv.innerHTML = html;
+  totalDiv.innerText = "Total: ₹" + total;
+}
+
+function checkout() {
+  const name = document.getElementById("cust-name").value.trim();
+  const mobile = document.getElementById("cust-mobile").value.trim();
+  const address = document.getElementById("cust-address").value.trim();
+  if (!name || !mobile || !address) {
+    alert("Please fill all customer details before proceeding.");
+    return;
+  }
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  if (total === 0) {
+    alert("Cart is empty!");
+    return;
+  }
+
+  const order = {
+    items: [...cart],
+    total: total,
+    date: new Date().toLocaleString()
   };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
 
-  let cart = [];
+  const key = "order_" + mobile;
+  const previous = JSON.parse(localStorage.getItem(key) || "[]");
+  previous.push(order);
+  localStorage.setItem(key, JSON.stringify(previous));
 
-  function addToCart(name, price) {
-    cart.push({ name, price });
-    updateCart();
-  }
+  const options = {
+    key: "rzp_test_1zUnVkUnHsZr5Q",
+    amount: total * 100,
+    currency: "INR",
+    name: "Do Bhai Chaap Wale",
+    description: "Online Food Order",
+    prefill: { name: name, contact: mobile, email: "guest@example.com" },
+    notes: { address: address, order_items: cart.map(item => item.name).join(", ") },
+    handler: function (response) {
+      alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
+      cart = [];
+      updateCart();
+    },
+    theme: { color: "#e91e63" }
+  };
+  const razorpay = new Razorpay(options);
+  razorpay.open();
+}
 
-  function updateCart() {
-    const cartDiv = document.getElementById("cart-items");
-    const totalDiv = document.getElementById("total-amount");
-    if (cart.length === 0) {
-      cartDiv.innerHTML = "<em>No items in cart.</em>";
-      totalDiv.innerText = "Total: ₹0";
-      return;
-    }
-    let html = "", total = 0;
-    cart.forEach(item => {
-      html += `<div style="display:flex;justify-content:space-between"><span>${item.name}</span><span>₹${item.price}</span></div>`;
-      total += item.price;
+function login() {
+  const mobile = document.getElementById("login-mobile").value.trim();
+  const orders = JSON.parse(localStorage.getItem("order_" + mobile) || "[]");
+  let html = "<h3>Your Past Orders</h3>";
+  if (orders.length === 0) {
+    html += "<p>No past orders found.</p>";
+  } else {
+    orders.reverse().forEach(o => {
+      html += `<div style="margin-bottom:10px;"><strong>${o.date}</strong><br>Items: ${o.items.map(i=>i.name).join(", ")}<br>Total: ₹${o.total}</div>`;
     });
-    cartDiv.innerHTML = html;
-    totalDiv.innerText = "Total: ₹" + total;
   }
-
-  function checkout() {
-    const name = document.getElementById("name").value.trim();
-    const mobile = document.getElementById("mobile").value.trim();
-    const address = document.getElementById("address").value.trim();
-
-    if (!name || !mobile || !address) {
-      alert("Please fill all customer details before checkout.");
-      return;
-    }
-
-    const amount = cart.reduce((sum, item) => sum + item.price, 0);
-    if (amount === 0) return alert("Cart is empty!");
-
-    const options = {
-      key: "UPZld5Aet4MvL8",
-      amount: amount * 100,
-      currency: "INR",
-      name: "Do Bhai Chaap Wale",
-      description: "Order Payment",
-      handler: function (response) {
-        alert("Payment successful!");
-
-        const orderData = {
-          name, mobile, address,
-          cart,
-          total: amount,
-          paymentId: response.razorpay_payment_id,
-          created: new Date().toISOString()
-        };
-
-        db.collection("orders").add(orderData).then(() => {
-          window.open(`https://api.whatsapp.com/send?phone=918700494451&text=New Order%0AName: ${name}%0AMobile: ${mobile}%0AAddress: ${address}%0ATotal: ₹${amount}`, '_blank');
-          cart = [];
-          updateCart();
-        });
-      },
-      theme: { color: "#e91e63" }
-    };
-
-    const rzp = new Razorpay(options);
-    rzp.open();
-  }
+  document.getElementById("order-history").innerHTML = html;
+}
 </script>
-
 </body>
 </html>
