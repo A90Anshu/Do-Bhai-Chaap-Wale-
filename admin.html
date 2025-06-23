@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel | Do Bhai Chaap Wale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f7f7f7; color:#333; transition: background 0.3s, color 0.3s; }
+    .dark-mode { background:#1e1e1e; color:#ddd; }
+    h1 { text-align:center; }
+    .hidden { display:none; }
+    .container { max-width: 1000px; margin:auto; }
+    input, button { padding:8px 12px; margin:10px 0; border-radius:4px; }
+    button { cursor:pointer; background:#e91e63; border:none; color:white; }
+    table { width:100%; border-collapse: collapse; margin-top:20px; }
+    th, td { border:1px solid #ccc; padding:8px; text-align:left; }
+    .theme-toggle { float:right; margin:10px; background:#333; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+    <h1>Admin Panel</h1>
+
+    <div id="login-area">
+      <input type="password" id="admin-pass" placeholder="Enter Admin Password" />
+      <button onclick="checkLogin()">Login</button>
+    </div>
+
+    <div id="admin-area" class="hidden">
+      <input type="text" id="search-mobile" placeholder="Search by mobile number" />
+      <button onclick="searchOrders()">Search</button>
+      <button onclick="fetchOrders()">Show All</button>
+      <button onclick="exportCSV()">Export CSV</button>
+
+      <table id="orders-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Address</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Payment ID</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "dobhaichaap.firebaseapp.com",
+      projectId: "dobhaichaap",
+      storageBucket: "dobhaichaap.appspot.com",
+      messagingSenderId: "YOUR_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const correctPassword = "A90Anshu@";
+    let ordersData = [];
+
+    function checkLogin() {
+      const input = document.getElementById("admin-pass").value;
+      if (input === correctPassword) {
+        document.getElementById("login-area").classList.add("hidden");
+        document.getElementById("admin-area").classList.remove("hidden");
+        fetchOrders();
+      } else {
+        alert("Incorrect password!");
+      }
+    }
+
+    function fetchOrders() {
+      db.collection("orders").orderBy("created", "desc").get().then(snapshot => {
+        ordersData = snapshot.docs.map(doc => doc.data());
+        renderTable(ordersData);
+      });
+    }
+
+    function searchOrders() {
+      const mobile = document.getElementById("search-mobile").value.trim();
+      const filtered = ordersData.filter(o => o.mobile.includes(mobile));
+      renderTable(filtered);
+    }
+
+    function renderTable(data) {
+      const tbody = document.querySelector("#orders-table tbody");
+      tbody.innerHTML = "";
+      data.forEach(order => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${new Date(order.created).toLocaleString()}</td>
+          <td>${order.name}</td>
+          <td>${order.mobile}</td>
+          <td>${order.address}</td>
+          <td>${order.cart.map(i => `${i.name} (₹${i.price})`).join(", ")}</td>
+          <td>₹${order.total}</td>
+          <td>${order.paymentId}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function exportCSV() {
+      let csv = "Time,Name,Mobile,Address,Items,Total,Payment ID\n";
+      ordersData.forEach(order => {
+        const time = new Date(order.created).toLocaleString();
+        const items = order.cart.map(i => `${i.name} (₹${i.price})`).join(" | ");
+        csv += `"${time}","${order.name}","${order.mobile}","${order.address}","${items}","₹${order.total}","${order.paymentId}"\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "orders.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark-mode");
+    }
+  </script>
+</body>
+</html>
