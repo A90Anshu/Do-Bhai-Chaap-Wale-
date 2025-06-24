@@ -233,10 +233,6 @@ function checkout() {
   const address = document.getElementById("cust-address").value.trim();
   const option = document.getElementById("delivery-option").value;
 
-  if (!name || !mobile || !address) {
-    alert("Please fill all customer details before proceeding.");
-    return;
-  }
 
   const baseTotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   if (baseTotal === 0) {
