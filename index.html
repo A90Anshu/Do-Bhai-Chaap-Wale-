@@ -247,12 +247,70 @@ function checkout() {
     date: new Date().toLocaleString(),
     option
   };
-  const key = "order_" + mobile;
-  const previous = JSON.parse(localStorage.getItem(key) || "[]");
-  previous.push(order);
-  localStorage.setItem(key, JSON.stringify(previous));
+  function checkout() {
+  const name = document.getElementById("cust-name").value.trim();
+  const mobile = document.getElementById("cust-mobile").value.trim();
+  const address = document.getElementById("cust-address").value.trim();
+  const option = document.getElementById("delivery-option").value;
+
+  if (!name || !mobile || !address) {
+    alert("Please fill all customer details before proceeding.");
+    return;
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  if (total === 0) {
+    alert("Cart is empty!");
+    return;
+  }
 
   const options = {
+    key: "rzp_live_IAwVGH2rtMwKWw", // ✅ Replace with your LIVE key in production
+    amount: total * 100,
+    currency: "INR",
+    name: "Do Bhai Chaap Wale",
+    description: "Online Food Order",
+    prefill: {
+      name: name,
+      contact: mobile,
+      email: "guest@example.com"
+    },
+    notes: {
+      address: address,
+      option: option,
+      order_items: cart.map(item => item.name).join(", ")
+    },
+    handler: function (response) {
+      // ✅ SAVE ORDER ONLY AFTER SUCCESSFUL PAYMENT
+      const order = {
+        items: [...cart],
+        total: total,
+        date: new Date().toLocaleString(),
+        option
+      };
+      const key = "order_" + mobile;
+      const previous = JSON.parse(localStorage.getItem(key) || "[]");
+      previous.push(order);
+      localStorage.setItem(key, JSON.stringify(previous));
+
+      alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
+      cart = [];
+      updateCart();
+      document.getElementById("inform-us-box").style.display = "block";
+      document.getElementById("success-tick").style.display = "block";
+    },
+    theme: {
+      color: "#e91e63"
+    }
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+
+  // 🔴 LIVE Razorpay Key — do NOT commit publicly!
+const options = {
     key: "rzp_live_IAwVGH2rtMwKWw",
     amount: total * 100,
     currency: "INR",
