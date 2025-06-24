@@ -227,10 +227,74 @@ function scrollToCart() {
 }
 
 function checkout() {
+ function checkout() {
   const name = document.getElementById("cust-name").value.trim();
   const mobile = document.getElementById("cust-mobile").value.trim();
   const address = document.getElementById("cust-address").value.trim();
   const option = document.getElementById("delivery-option").value;
+
+  if (!name || !mobile || !address) {
+    alert("Please fill all customer details before proceeding.");
+    return;
+  }
+
+  const baseTotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  if (baseTotal === 0) {
+    alert("Cart is empty!");
+    return;
+  }
+
+  const paymentCharge = Math.ceil(baseTotal * 0.02); // 2% payment charge
+  const grandTotal = baseTotal + paymentCharge;
+
+  const cartCopy = [...cart]; // Copy of cart to preserve state
+
+  const options = {
+    key: "rzp_test_1zUnVkUnHsZr5Q", // Replace with live key for production
+    amount: grandTotal * 100, // Razorpay uses paise, so multiply by 100
+    currency: "INR",
+    name: "Do Bhai Chaap Wale",
+    description: "Online Food Order",
+    prefill: {
+      name: name,
+      contact: mobile,
+      email: "guest@example.com"
+    },
+    notes: {
+      address: address,
+      option: option,
+      customer_name: name,
+      customer_mobile: mobile,
+      items: cartCopy.map(item => item.name).join(", ")
+    },
+    handler: function (response) {
+      // ✅ Save order only after successful payment
+      const order = {
+        items: cartCopy,
+        total: grandTotal,
+        date: new Date().toLocaleString(),
+        option: option
+      };
+      const key = "order_" + mobile;
+      const previous = JSON.parse(localStorage.getItem(key) || "[]");
+      previous.push(order);
+      localStorage.setItem(key, JSON.stringify(previous));
+
+      alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
+      cart = [];
+      updateCart();
+      document.getElementById("inform-us-box").style.display = "block";
+      document.getElementById("success-tick").style.display = "block";
+    },
+    theme: {
+      color: "#e91e63"
+    }
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
   if (!name || !mobile || !address) {
     alert("Please fill all customer details before proceeding.");
     return;
