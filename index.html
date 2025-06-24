@@ -226,8 +226,6 @@ function scrollToCart() {
   document.getElementById('cart').scrollIntoView({ behavior: 'smooth' });
 }
 
-
-  }
 function checkout() {
   const name = document.getElementById("cust-name").value.trim();
   const mobile = document.getElementById("cust-mobile").value.trim();
@@ -293,6 +291,7 @@ function checkout() {
   const rzp = new Razorpay(options);
   rzp.open();
 }
+
 
 function login() {
   const mobile = document.getElementById("login-mobile").value.trim();
