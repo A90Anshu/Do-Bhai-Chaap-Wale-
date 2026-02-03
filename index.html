@@ -1,4 +1,5 @@
-<!DOCTYPE html><!-- ORIGINAL CONTENT 100% PRESERVED. ONLY ADDITIONS ARE COMMENTED CLEARLY --><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -12,7 +13,6 @@
       background:#e91e63; color:#fff; padding:8px 16px;
       border:none; border-radius:20px; cursor:pointer; margin:4px 0;
     }
-    .btn-primary[disabled]{opacity:0.6;cursor:not-allowed}
     .btn-view-cart {
       position:fixed; bottom:20px; right:20px; z-index:1000; display:none;
     }
@@ -23,125 +23,206 @@
       padding:8px 0; border-bottom:1px solid #ddd;
       display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap;
     }
-    .badge { background:gold; color:#333; padding:2px 6px; border-radius:4px; font-size:0.8rem; margin-left:6px; }
-    .half-full, .roll-qty { font-size:0.9rem; color:#555; margin-right:8px; }
     footer { background:#222; color:#aaa; text-align:center; padding:20px; font-size:0.9rem; }
     #cart {
       background:#fff0f4; padding:20px; margin:30px auto;
-      border:1px solid #e91e63; border-radius:10px; max-width:1000px;
+      border:1px solid #e91e63; border-radius:10px;
     }
     input, textarea, select {
       width:100%; padding:8px; margin:6px 0;
-      border:1px solid #ccc; border-radius:5px; box-sizing:border-box;
+      border:1px solid #ccc; border-radius:5px;
     }
     #login { background:#e8f0ff; padding:20px; margin:30px auto; border-radius:10px; }
-    .inform-us {
-      background:#d4edda; padding:20px;
-      border-left:5px solid green; margin-top:20px;
-      text-align:center; font-size:1.2rem;
-    }
-    .policy-links a {
-      margin:0 10px; color:#e91e63; text-decoration:none;
-    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Do Bhai Chaap Wale</h1>
-    <p class="tagline">Authentic Chaap & Street‑Style Fast Food</p>
-    <a href="#menu" class="btn-primary">Explore Menu</a>
-  </header><button id="view-cart-toggle" class="btn-view-cart" onclick="scrollToCart()">View Cart</button>
 
-  <section id="login">
-    <h2>👤 Customer Login</h2>
-    <input type="text" id="login-mobile" placeholder="Enter your Mobile Number" />
-    <button onclick="login()" class="btn-primary">Login</button>
-    <div id="order-history" style="margin-top:20px;"></div>
-  </section>  <section id="menu">
-    <h2>Our Delicious Menu</h2>
-    <ul id="menu-list"></ul>
-  </section>
-  <section id="cart">
-    <h2>🛒 Your Cart</h2>
-    <div id="cart-items"><em>No items in cart.</em></div>
-    <p id="total-amount">Total: ₹0</p><h3>Customer Details</h3>
-<input type="text" id="cust-name" placeholder="Full Name" required />
-<input type="tel" id="cust-mobile" placeholder="Mobile Number" maxlength="10" />
-<textarea id="cust-address" placeholder="Full Address" rows="3" required></textarea>
+<header>
+  <h1>Do Bhai Chaap Wale</h1>
+  <p class="tagline">Authentic Chaap & Street-Style Fast Food</p>
+  <a href="#menu" class="btn-primary">Explore Menu</a>
+</header>
 
-<label>Choose Option:</label>
-<select id="delivery-option">
-  <option value="Delivery">Delivery</option>
-  <option value="Takeaway">Takeaway</option>
-</select>
+<button id="view-cart-toggle" class="btn-view-cart" onclick="scrollToCart()">View Cart</button>
 
-<button id="pay-btn" onclick="checkout()" class="btn-primary">Proceed to Pay</button>
+<section id="login">
+  <h2>👤 Customer Login</h2>
+  <input type="text" id="login-mobile" placeholder="Enter your Mobile Number" />
+  <button onclick="login()" class="btn-primary">Login</button>
+  <div id="order-history" style="margin-top:20px;"></div>
+</section>
 
-<div id="inform-us-box" class="inform-us" style="display:none;">
-  ✅ Order placed successfully!<br>
-  Please inform us on WhatsApp: <br>
-  <strong><a href="https://wa.me/918700494451" target="_blank">+91 8700494451</a></strong>
-  <div id="success-tick" style="font-size:60px;margin-top:20px;display:none;">✅</div>
-</div>
+<section id="menu">
+  <h2>Our Delicious Menu</h2>
+  <ul id="menu-list"></ul>
+</section>
 
-  </section>  <footer>
-    <div class="policy-links">
-      <a href="#" onclick="alert('+91 8700494451')">Contact Us</a> |
-      <a href="#" onclick="alert('We use Razorpay for payments. Your data is encrypted and safe.')">Privacy Policy</a> |
-      <a href="#" onclick="alert('You may cancel within 5 minutes at no charge. ₹20 cancellation fee after that.')">Cancellation Policy</a> |
-      <a href="#" onclick="alert('Terms & Conditions follow Razorpay\'s user policy.')">Terms & Conditions</a>
-    </div>
-    <p>&copy; 2025 Do Bhai Chaap Wale | All Rights Reserved</p>
-  </footer>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script><!-- ================= FIREBASE SDK (CDN, SAFE ADDITION) ================= --><script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+<section id="cart">
+  <h2>🛒 Your Cart</h2>
+  <div id="cart-items"><em>No items in cart.</em></div>
+  <p id="total-amount">Total: ₹0</p>
 
-  // Firebase configuration (USER PROVIDED – DO NOT MODIFY)
-  const firebaseConfig = {
-    apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4",
-    authDomain: "dobhaichaapwale1.firebaseapp.com",
-    projectId: "dobhaichaapwale1",
-    storageBucket: "dobhaichaapwale1.firebasestorage.app",
-    messagingSenderId: "141034963645",
-    appId: "1:141034963645:web:442a93b6e87643b3bf2dd4",
-    measurementId: "G-RXGYPHBCKQ"
+  <h3>Customer Details</h3>
+  <input type="text" id="cust-name" placeholder="Full Name" />
+  <input type="tel" id="cust-mobile" placeholder="Mobile Number" />
+  <textarea id="cust-address" placeholder="Full Address"></textarea>
+
+  <button onclick="checkout()" class="btn-primary">Proceed to Pay</button>
+</section>
+
+<footer>
+  <p>&copy; 2025 Do Bhai Chaap Wale</p>
+</footer>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+let cart = [];
+
+const menuItems = [
+  { name: "Malai Chaap", half: 130, full: 190 },
+  { name: "Extra Malai Chaap", half: 150, full: 210 },
+  { name: "Masala Chaap", half: 130, full: 190 },
+  { name: "Tandoori Chaap", half: 130, full: 190 },
+  { name: "Achari Chaap", half: 140, full: 200 },
+  { name: "Spl. Afghani Chaap", half: 140, full: 200 },
+  { name: "Lemon Chaap", half: 140, full: 200 },
+  { name: "Hariyali Chaap", half: 140, full: 200 },
+  { name: "Pudina Chaap", half: 140, full: 200 },
+  { name: "Malai Tikka Chaap", half: 150, full: 210 },
+  { name: "Stuff Chaap", half: 160, full: 220 },
+  { name: "Garlic Chaap", half: 160, full: 220 },
+  { name: "Tawa Chaap", half: 160, full: 220 },
+  { name: "Veg Tandoori Butter Leg Piece", half: 130, full: 190 },
+  { name: "Plain Roti", price: 6 },
+  { name: "Butter Roti", price: 7 },
+  { name: "Tawa Roti", price: 6 },
+  { name: "Tawa Butter Roti", price: 7 },
+  { name: "Rumali Roti", price: 8 },
+  { name: "Missi Roti", price: 25 },
+  { name: "Laccha Parantha", price: 25 },
+  { name: "Stuff Naan", price: 35 },
+  { name: "Plain Naan", price: 25 },
+  { name: "Butter Naan", price: 30 },
+  { name: "2pcs Chaap + 2 Butter Roti", price: 120 },
+  { name: "Creamy Onion", price: 20 },
+  { name: "Malai Chaap Roll", four: 110, six: 170 },
+  { name: "Masala Chaap Roll", four: 110, six: 170 },
+  { name: "Tandoori Chaap Roll", four: 120, six: 170 },
+  { name: "Afgani Chaap Roll", four: 120, six: 170 },
+  { name: "Achari Chaap Roll", four: 120, six: 170 },
+  { name: "Lemon Chaap Roll", four: 120, six: 230 },
+  { name: "Hariyali Chaap Roll", four: 120, six: 230 },
+  { name: "Pudina Chaap Roll", four: 120, six: 230 },
+  { name: "Garlic Chaap Roll", four: 120, six: 230 },
+  { name: "Stuff Chaap Roll", four: 120, six: 230 }
+];
+
+document.addEventListener("DOMContentLoaded", () => {
+  const menu = document.getElementById("menu-list");
+  menuItems.forEach(item => {
+    const li = document.createElement("li");
+    if (item.half) {
+      li.innerHTML = `${item.name} — Half ₹${item.half} / Full ₹${item.full}
+      <button onclick="addToCart('${item.name} (Half)',${item.half})" class="btn-primary">Add Half</button>
+      <button onclick="addToCart('${item.name} (Full)',${item.full})" class="btn-primary">Add Full</button>`;
+    } else if (item.four) {
+      li.innerHTML = `${item.name} — 4pcs ₹${item.four} / 6pcs ₹${item.six}
+      <button onclick="addToCart('${item.name} (4pcs)',${item.four})" class="btn-primary">Add 4pcs</button>
+      <button onclick="addToCart('${item.name} (6pcs)',${item.six})" class="btn-primary">Add 6pcs</button>`;
+    } else {
+      li.innerHTML = `${item.name} — ₹${item.price}
+      <button onclick="addToCart('${item.name}',${item.price})" class="btn-primary">Add</button>`;
+    }
+    menu.appendChild(li);
+  });
+});
+
+function addToCart(name, price) {
+  const f = cart.find(i => i.name === name);
+  if (f) f.qty++; else cart.push({ name, price, qty: 1 });
+  updateCart();
+  document.getElementById("view-cart-toggle").style.display = "block";
+}
+
+function updateCart() {
+  let total = 0;
+  const div = document.getElementById("cart-items");
+  div.innerHTML = "";
+  cart.forEach(i => {
+    total += i.price * i.qty;
+    div.innerHTML += `${i.name} × ${i.qty} = ₹${i.price * i.qty}<br>`;
+  });
+  document.getElementById("total-amount").innerText = "Total: ₹" + total;
+}
+
+function scrollToCart() {
+  document.getElementById("cart").scrollIntoView({ behavior: "smooth" });
+}
+
+function checkout() {
+  const name = document.getElementById("cust-name").value.trim();
+  const mobile = document.getElementById("cust-mobile").value.trim();
+  const address = document.getElementById("cust-address").value.trim();
+
+  if (!name || !mobile || !address) {
+    alert("Please fill all customer details before proceeding.");
+    return;
+  }
+
+  if (cart.length === 0) {
+    alert("Cart is empty!");
+    return;
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  const options = {
+    key: "rzp_live_IAwVGH2rtMwKWw", // your original Razorpay key
+    amount: total * 100,
+    currency: "INR",
+    name: "Do Bhai Chaap Wale",
+    description: "Online Food Order",
+
+    handler: async function (response) {
+      // ================= FIRESTORE SAVE (STEP 2) =================
+      try {
+        if (window._db) {
+          const { collection, addDoc, serverTimestamp } =
+            await import("https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js");
+
+          await addDoc(collection(window._db, "orders"), {
+            name,
+            mobile,
+            address,
+            items: cart,
+            total,
+            paymentId: response.razorpay_payment_id,
+            created: serverTimestamp()
+          });
+        }
+      } catch (e) {
+        console.error("Firestore save failed:", e);
+      }
+      // ================= END FIRESTORE SAVE =================
+
+      alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
+
+      cart = [];
+      updateCart();
+    },
+
+    theme: { color: "#e91e63" }
   };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
 
-  // Expose Firestore safely to existing scripts
-  window._db = db;
-  window._fs = { collection, addDoc, serverTimestamp, query, where, getDocs, orderBy };
-</script><script>
-// ================= FIXES ADDED (ORIGINAL LOGIC UNTOUCHED) =================
-// ================= FIREBASE BACKEND ADDITION (NO UI CHANGE) =================
-// NOTE: Replace the firebaseConfig values with your own Firebase project keys
-let cart = [];
-let isPaying = false;
+function login() {
+  alert("Baseline file confirmed.");
+}
+</script>
 
-// ---- FIREBASE SDKs ----
-// These scripts are safe additions and do NOT affect existing UI
-
-
-function validMobile(num){return /^[6-9]\d{9}$/.test(num)}
-
-// ================= FIREBASE CONFIG (SAFE ADDITION) =================
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
-};
-
-// Firebase init (will activate once keys are added)
-// firebase.initializeApp(firebaseConfig);
-// const db = firebase.firestore();
-
-// ================= ORIGINAL MENU & CART CODE BELOW =================
-</script><!-- ORIGINAL SCRIPT CONTINUES WITHOUT ANY REMOVAL --></body>
+</body>
 </html>
