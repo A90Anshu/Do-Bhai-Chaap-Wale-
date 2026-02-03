@@ -75,6 +75,24 @@
 </footer>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- 🔥 Firebase CDN (required) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+  firebase.initializeApp({
+    apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4",
+    authDomain: "dobhaichaapwale1.firebaseapp.com",
+    projectId: "dobhaichaapwale1",
+    storageBucket: "dobhaichaapwale1.firebasestorage.app",
+    messagingSenderId: "141034963645",
+    appId: "1:141034963645:web:442a93b6e87643b3bf2dd4"
+  });
+
+  // ✅ THIS WAS MISSING
+  window._db = firebase.firestore();
+</script>
+
 
 <script>
 let cart = [];
@@ -188,18 +206,15 @@ function checkout() {
       // ================= FIRESTORE SAVE (STEP 2) =================
       try {
         if (window._db) {
-          const { collection, addDoc, serverTimestamp } =
-            await import("https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js");
-
-          await addDoc(collection(window._db, "orders"), {
-            name,
-            mobile,
-            address,
-            items: cart,
-            total,
-            paymentId: response.razorpay_payment_id,
-            created: serverTimestamp()
-          });
+          window._db.collection("orders").add({
+  name,
+  mobile,
+  address,
+  items: cart,
+  total,
+  paymentId: response.razorpay_payment_id,
+  created: firebase.firestore.FieldValue.serverTimestamp()
+});
         }
       } catch (e) {
         console.error("Firestore save failed:", e);
