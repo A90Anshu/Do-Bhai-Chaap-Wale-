@@ -204,8 +204,9 @@ function checkout() {
 
  handler: async function (response) {
 
+  // 1️⃣ SAVE ORDER TO FIRESTORE
   if (window._db) {
-    window._db.collection("orders").add({
+    await window._db.collection("orders").add({
       name,
       mobile,
       address,
@@ -216,10 +217,7 @@ function checkout() {
     });
   }
 
-  // (WhatsApp code can come here safely)
-
-}
-// ================= WHATSAPP INSTANT ALERT =================
+  // 2️⃣ WHATSAPP MESSAGE BUILD
   let itemsText = cart
     .map(i => `• ${i.name} x ${i.qty} = ₹${i.price * i.qty}`)
     .join('%0A');
@@ -235,16 +233,14 @@ function checkout() {
 
   let waUrl = `https://wa.me/918700494451?text=${waMessage}`;
 
-  // Show success box
+  // 3️⃣ SHOW SUCCESS BOX + SAFE WHATSAPP BUTTON
   document.getElementById("inform-us-box").style.display = "block";
-
-  // Popup-safe WhatsApp open (user click)
   document.getElementById("waBtn").onclick = function () {
     window.location.href = waUrl;
   };
-  // ================= END WHATSAPP ALERT =================
 
 }
+
 
         }
       } catch (e) {
