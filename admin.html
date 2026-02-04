@@ -129,8 +129,8 @@
   }
 
   function loadOrders() {
-    db.collection("orders").orderBy("created", "desc").onSnapshot(snap => {
-      orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+   db.collection("orders").onSnapshot(snap => {
+     orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderOrders();
     });
   }
