@@ -175,6 +175,43 @@
     a.click();
   }
 </script>
+<!-- 🔔 FIREBASE CLOUD MESSAGING (ADMIN ONLY) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4",
+    authDomain: "dobhaichaapwale1.firebaseapp.com",
+    projectId: "dobhaichaapwale1",
+    messagingSenderId: "141034963645",
+    appId: "1:141034963645:web:442a93b6e87643b3bf2dd4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  // 🔐 Ask notification permission
+  Notification.requestPermission().then(permission => {
+    if (permission === "granted") {
+      getToken(messaging, {
+        vapidKey: "BJGo3XpD2q6WTYnBMa3Gr1ppLxup-Rcs25MDIYOGe-k0t5JNe2HETeoYyhG8bdEayJrCoV2yAR-2muwIBvdpW14"
+      }).then(token => {
+        if (token) {
+          console.log("✅ ADMIN FCM TOKEN:", token);
+          // (Token will be used by backend automatically later)
+        }
+      });
+    }
+  });
+
+  // 🔊 FOREGROUND RINGING (APP OPEN)
+  onMessage(messaging, payload => {
+    const audio = new Audio("/ring.mp3");
+    audio.play();
+    alert("🛎️ NEW ORDER RECEIVED!");
+  });
+</script>
 
 </body>
 </html>
