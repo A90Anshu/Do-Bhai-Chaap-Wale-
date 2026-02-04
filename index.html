@@ -249,14 +249,15 @@ handler: async function (response) {
     theme: { color: "#e91e63" }
   };
 
-  const rzp = new Razorpay(options);
-  rzp.open();
-
+const rzp = new Razorpay(options);
+rzp.open();
+} // ✅ CLOSE checkout() PROPERLY
 
 function login() {
   alert("Baseline file confirmed.");
 }
 </script>
+
 
 <script>
   console.log("Firebase check:", typeof firebase);
