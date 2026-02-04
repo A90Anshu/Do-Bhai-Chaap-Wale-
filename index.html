@@ -46,11 +46,21 @@
 <button id="view-cart-toggle" class="btn-view-cart" onclick="scrollToCart()">View Cart</button>
 
 <section id="login">
-  <h2>👤 Customer Login</h2>
-  <input type="text" id="login-mobile" placeholder="Enter your Mobile Number" />
-  <button onclick="login()" class="btn-primary">Login</button>
-  <div id="order-history" style="margin-top:20px;"></div>
+  <h2>📱 Login with Mobile</h2>
+
+  <input type="tel" id="phoneNumber" placeholder="Enter mobile number (10 digits)" />
+  <div id="recaptcha-container"></div>
+
+  <button onclick="sendOTP()" class="btn-primary">Send OTP</button>
+
+  <div id="otpBox" style="display:none;">
+    <input type="text" id="otpCode" placeholder="Enter OTP" />
+    <button onclick="verifyOTP()" class="btn-primary">Verify OTP</button>
+  </div>
+
+  <p id="loginStatus"></p>
 </section>
+
 
 <section id="menu">
   <h2>Our Delicious Menu</h2>
@@ -84,6 +94,7 @@
 <!-- 🔥 Firebase CDN (required) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
   firebase.initializeApp({
@@ -101,6 +112,69 @@
 
 
 <script>
+  <script>
+let confirmationResult = null;
+
+// Invisible reCAPTCHA (required by Firebase)
+window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+  'recaptcha-container',
+  { size: 'invisible' }
+);
+
+// SEND OTP
+function sendOTP() {
+  const phone = document.getElementById("phoneNumber").value.trim();
+
+  if (phone.length !== 10) {
+    alert("Enter valid 10-digit mobile number");
+    return;
+  }
+
+  firebase.auth()
+    .signInWithPhoneNumber("+91" + phone, window.recaptchaVerifier)
+    .then(result => {
+      confirmationResult = result;
+      document.getElementById("otpBox").style.display = "block";
+      document.getElementById("loginStatus").innerText = "OTP sent ✅";
+    })
+    .catch(err => alert(err.message));
+}
+
+// VERIFY OTP
+function verifyOTP() {
+  const code = document.getElementById("otpCode").value.trim();
+
+  confirmationResult.confirm(code)
+    .then(result => {
+      document.getElementById("loginStatus").innerText = "Login successful 🎉";
+      loadUserProfile(result.user);
+    })
+    .catch(() => alert("Wrong OTP"));
+}
+
+// CREATE / LOAD USER PROFILE
+function loadUserProfile(user) {
+  const ref = window._db.collection("users").doc(user.uid);
+
+  ref.get().then(doc => {
+    if (!doc.exists) {
+      ref.set({
+        mobile: user.phoneNumber,
+        name: "",
+        address: "",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } else {
+      const d = doc.data();
+      document.getElementById("cust-name").value = d.name || "";
+      document.getElementById("cust-address").value = d.address || "";
+      document.getElementById("cust-mobile").value =
+        user.phoneNumber.replace("+91", "");
+    }
+  });
+}
+</script>
+
 let cart = [];
 
 const menuItems = [
@@ -223,6 +297,14 @@ handler: async function (response) {
       created: firebase.firestore.FieldValue.serverTimestamp()
     });
   }
+  const user = firebase.auth().currentUser;
+if (user) {
+  window._db.collection("users").doc(user.uid).update({
+    name,
+    address
+  });
+}
+
 
   // 2️⃣ BUILD WHATSAPP MESSAGE
   let itemsText = cart
