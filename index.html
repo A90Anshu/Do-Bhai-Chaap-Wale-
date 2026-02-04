@@ -214,7 +214,26 @@ function checkout() {
   total,
   paymentId: response.razorpay_payment_id,
   created: firebase.firestore.FieldValue.serverTimestamp()
-});
+});// ================= WHATSAPP INSTANT ALERT =================
+let itemsText = cart
+  .map(i => `• ${i.name} x ${i.qty} = ₹${i.price * i.qty}`)
+  .join('%0A');
+
+let waMessage =
+  `🛎️ NEW ORDER – Do Bhai Chaap Wale%0A%0A` +
+  `👤 Name: ${name}%0A` +
+  `📞 Mobile: ${mobile}%0A` +
+  `🏠 Address: ${address}%0A%0A` +
+  `🍽️ Items:%0A${itemsText}%0A%0A` +
+  `💰 Total: ₹${total}%0A` +
+  `💳 Payment ID: ${response.razorpay_payment_id}`;
+
+let waUrl = `https://wa.me/918700494451?text=${waMessage}`;
+
+// Open WhatsApp instantly
+window.open(waUrl, '_blank');
+// ================= END WHATSAPP ALERT =================
+
         }
       } catch (e) {
         console.error("Firestore save failed:", e);
