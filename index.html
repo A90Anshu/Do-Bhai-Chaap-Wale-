@@ -202,7 +202,7 @@ function checkout() {
     name: "Do Bhai Chaap Wale",
     description: "Online Food Order",
 
- handler: async function (response) {
+handler: async function (response) {
 
   // 1️⃣ SAVE ORDER TO FIRESTORE
   if (window._db) {
@@ -217,7 +217,7 @@ function checkout() {
     });
   }
 
-  // 2️⃣ WHATSAPP MESSAGE BUILD
+  // 2️⃣ BUILD WHATSAPP MESSAGE
   let itemsText = cart
     .map(i => `• ${i.name} x ${i.qty} = ₹${i.price * i.qty}`)
     .join('%0A');
@@ -233,26 +233,18 @@ function checkout() {
 
   let waUrl = `https://wa.me/918700494451?text=${waMessage}`;
 
-  // 3️⃣ SHOW SUCCESS BOX + SAFE WHATSAPP BUTTON
+  // 3️⃣ SUCCESS UI + SAFE WHATSAPP BUTTON
   document.getElementById("inform-us-box").style.display = "block";
   document.getElementById("waBtn").onclick = function () {
     window.location.href = waUrl;
   };
 
-}
+  alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
 
+  cart = [];
+  updateCart();
+},
 
-        }
-      } catch (e) {
-        console.error("Firestore save failed:", e);
-      }
-      // ================= END FIRESTORE SAVE =================
-
-      alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
-
-      cart = [];
-      updateCart();
-    },
 
     theme: { color: "#e91e63" }
   };
