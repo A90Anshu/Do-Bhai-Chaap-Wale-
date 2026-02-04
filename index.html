@@ -202,19 +202,24 @@ function checkout() {
     name: "Do Bhai Chaap Wale",
     description: "Online Food Order",
 
-    handler: async function (response) {
-      // ================= FIRESTORE SAVE (STEP 2) =================
-      try {
-        if (window._db) {
-          window._db.collection("orders").add({
-  name,
-  mobile,
-  address,
-  items: cart,
-  total,
-  paymentId: response.razorpay_payment_id,
-  created: firebase.firestore.FieldValue.serverTimestamp()
-});// ================= WHATSAPP INSTANT ALERT =================
+ handler: async function (response) {
+
+  if (window._db) {
+    window._db.collection("orders").add({
+      name,
+      mobile,
+      address,
+      items: cart,
+      total,
+      paymentId: response.razorpay_payment_id,
+      created: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  // (WhatsApp code can come here safely)
+
+}
+// ================= WHATSAPP INSTANT ALERT =================
   let itemsText = cart
     .map(i => `• ${i.name} x ${i.qty} = ₹${i.price * i.qty}`)
     .join('%0A');
