@@ -21,6 +21,11 @@
     .status { background:var(--bg); padding:5px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; }
     .status.active { background:#e8f5e9; color:var(--success); }
 
+    /* COUPONS */
+    .offers-scroll { display:flex; gap:12px; overflow-x:auto; padding:15px; scrollbar-width:none; }
+    .offer-card { min-width:260px; background:linear-gradient(135deg,#2c3e50,#000); color:#fff; padding:15px; border-radius:var(--radius); box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+    .offer-card h3 { margin:0; font-size:1.1rem; }
+    
     /* MENU */
     .cat-scroll { display:flex; gap:10px; overflow-x:auto; padding:10px 15px; background:#fff; border-bottom:1px solid #eee; }
     .cat-chip { white-space:nowrap; padding:8px 16px; background:#f9f9f9; border:1px solid #eee; border-radius:50px; font-weight:600; font-size:0.85rem; color:var(--gray); transition:0.2s; cursor:pointer; }
@@ -80,6 +85,9 @@
   </div>
 
   <div id="cat-scroll" class="cat-scroll">
+      </div>
+  
+  <div id="coupon-scroll" class="offers-scroll">
       </div>
 
   <div id="menu-list" class="menu-grid">
@@ -197,6 +205,12 @@ window.onload = () => {
         menu = [];
         snap.forEach(d => menu.push({id:d.id, ...d.data()}));
         renderMenu(menu);
+    });
+    
+    // FETCH COUPONS
+    db.collection("coupons").onSnapshot(snap => {
+        const d = document.getElementById("coupon-scroll"); d.innerHTML="";
+        snap.forEach(doc => { const c=doc.data(); d.innerHTML+=`<div class="offer-card"><h3>${c.code}</h3><p>${c.desc}</p></div>`; });
     });
 
     // AUTH
