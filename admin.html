@@ -62,13 +62,13 @@
     h1, h2, h3, .brand-font { font-family: 'Poppins', sans-serif; }
     .hidden { display: none !important; }
 
-    /* ================= LOADER ================= */
+    /* ================= LOADER (FIXED) ================= */
     #page-loader {
       position: fixed;
       inset: 0;
       background: #fff;
       z-index: 9999;
-      display: flex;
+      display: none; /* FIXED: Hidden by default so you can see login */
       justify-content: center;
       align-items: center;
       flex-direction: column;
@@ -555,6 +555,10 @@ function login() {
   
   if (adminUser.value === ADMIN_USER && adminPass.value === ADMIN_PASS) {
     document.getElementById("login-overlay").style.display = "none";
+    
+    // Show loader only AFTER login
+    document.getElementById("page-loader").style.display = "flex";
+    
     document.getElementById("dashboard").classList.remove("hidden");
     loadOrders();
     showToast("Welcome back, Admin!");
@@ -591,10 +595,12 @@ let currentFilter = "Pending";
 function loadOrders() {
   db.collection("orders").orderBy("created", "desc")
     .onSnapshot(snap => {
-      // Hide loader on first load
+      // Hide loader when data arrives
       const loader = document.getElementById("page-loader");
-      if(loader) loader.style.opacity = '0';
-      setTimeout(() => { if(loader) loader.style.display = 'none'; }, 500);
+      if(loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => { loader.style.display = 'none'; }, 500);
+      }
 
       ordersData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderOrders();
