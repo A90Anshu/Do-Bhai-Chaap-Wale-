@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+<script>
+  window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function () {
+    OneSignal.init({
+      appId: "f0a152b1-8778-4aee-9d27-8f74eb2267b7",
+      notifyButton: { enable: false }
+    });
+  });
+</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Do Bhai Chaap Wale | Nangloi, New Delhi</title>
@@ -358,25 +369,16 @@ function login() {
   console.log("Firebase check:", typeof firebase);
 </script>
 
-  <script>
-async function sendAdminRing(order) {
-  await fetch("https://onesignal.com/api/v1/notifications", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "os_v2_app_6cqvfmmhpbfo5hjhr52owithw55wegqnakoux2ewhwjh6n6bn6m7vofa232fx2qyyd3th5memvjlxozvyldzq2wvh6xgak2t6uwuema"
-    },
-    body: JSON.stringify({
-      app_id: "f0a152b1-8778-4aee-9d27-8f74eb2267b7",
-      included_segments: ["All"],
-      headings: { en: "🛎️ New Order Received" },
-      contents: {
-        en: `Order from ${order.name}\nTotal ₹${order.total}`
-      },
-      android_priority: 10,
-      android_sound: "ring",
-      android_channel_id: "orders",
-    })
+<script>
+function ringAdmins(order) {
+  OneSignal.push(function () {
+    OneSignal.sendSelfNotification(
+      "🛎️ NEW ORDER RECEIVED",
+      `Order from ${order.name}\nTotal ₹${order.total}`,
+      null,
+      null,
+      { sound: "ring" }
+    );
   });
 }
 </script>
