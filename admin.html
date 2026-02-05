@@ -15,14 +15,15 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
 
   <style>
-    /* ================= VARIABLES ================= */
+    /* ================= STYLES ================= */
     :root {
       --primary: #e91e63; --primary-hover: #be124e;
       --slate-900: #0f172a; --slate-800: #1e293b; --slate-700: #334155;
       --bg-body: #f1f5f9; --text-main: #1e293b; --text-muted: #64748b;
       --success: #10b981; --danger: #ef4444;
     }
-    * { box-sizing: border-box; outline: none; }
+    * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+    
     body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-body); height: 100vh; overflow: hidden; color: var(--text-main); }
     h1, h2, h3, .brand-font { font-family: 'Poppins', sans-serif; }
     .hidden { display: none !important; }
@@ -50,7 +51,7 @@
     .table-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow: hidden; flex: 1; display: flex; flex-direction: column; }
     .table-wrapper { overflow-y: auto; flex: 1; }
     table { width: 100%; border-collapse: collapse; min-width: 800px; }
-    thead th { position: sticky; top: 0; background: #f8fafc; padding: 15px; text-align: left; font-size: 0.85rem; color: var(--text-muted); border-bottom: 2px solid #e2e8f0; }
+    thead th { position: sticky; top: 0; background: #f8fafc; padding: 15px; text-align: left; font-size: 0.85rem; color: var(--text-muted); border-bottom: 2px solid #e2e8f0; z-index: 10; }
     td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
 
     .btn { padding: 8px 16px; border: none; border-radius: 6px; color: #fff; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; }
@@ -83,17 +84,56 @@
     .variant-row { display: flex; gap: 10px; margin-bottom: 10px; }
     .variant-row input { flex: 1; }
 
-    /* MOBILE RESPONSIVE */
+    /* MOBILE RESPONSIVE FIXES */
+    .mobile-list { display: none; }
+    
     @media (max-width: 900px) {
       body { overflow: auto; background: #f1f5f9; }
       #dashboard { flex-direction: column; height: auto; min-height: 100vh; }
-      aside { width: 100%; position: sticky; top: 0; height: auto; flex-direction: row; padding: 10px; overflow-x: auto; white-space: nowrap; }
+      
+      /* Sidebar becomes Scrollable Top Nav */
+      aside { 
+        width: 100%; 
+        position: sticky; 
+        top: 0; 
+        height: auto; 
+        flex-direction: row; 
+        padding: 10px; 
+        overflow-x: auto; 
+        white-space: nowrap; 
+        background: var(--slate-800);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      }
       .brand-header { display: none; }
-      .nav-container { flex-direction: row; padding: 0; width: 100%; }
+      .nav-container { flex-direction: row; padding: 0; width: 100%; gap: 10px; }
+      .nav-item { background: rgba(255,255,255,0.1); flex: none; }
+      
+      /* Main Content */
       main { padding: 15px; height: auto; overflow: visible; }
-      .table-card { display: none; } 
+      
+      /* Hide Tables, Show Mobile Lists */
+      .table-card { display: none !important; }
       .mobile-list { display: block; }
-      .m-card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+      
+      /* Mobile Card Style */
+      .m-card { 
+        background: #fff; 
+        padding: 15px; 
+        border-radius: 12px; 
+        margin-bottom: 15px; 
+        border: 1px solid #e2e8f0; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      .m-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
+      .m-body { margin-bottom: 12px; }
+      .m-actions { display: flex; gap: 10px; }
+      .m-actions button { flex: 1; justify-content: center; padding: 10px; }
+      
+      /* Controls Stack */
+      .header-bar { flex-direction: column; align-items: stretch; gap: 10px; }
+      .status-filter { width: 100%; }
+      .tab { flex: 1; text-align: center; }
+      .btn { width: 100%; justify-content: center; }
     }
     
     /* UTILS */
@@ -208,6 +248,7 @@
         </div>
         <button class="btn btn-outline" onclick="enableSound()">🔊 Sound On</button>
       </div>
+      
       <div class="table-card">
         <div class="table-wrapper">
           <table>
@@ -216,6 +257,7 @@
           </table>
         </div>
       </div>
+      
       <div id="mobileOrders" class="mobile-list"></div>
     </div>
 
@@ -225,6 +267,7 @@
         <div style="flex:1"></div>
         <button class="btn btn-primary" onclick="openAddModal()">➕ Add Item</button>
       </div>
+      
       <div class="table-card">
         <div class="table-wrapper">
           <table>
@@ -233,6 +276,8 @@
           </table>
         </div>
       </div>
+      
+      <div id="mobileMenu" class="mobile-list"></div>
     </div>
 
     <div id="view-categories" class="hidden">
@@ -339,13 +384,27 @@ function switchView(v) {
 /* ================= ORDERS ================= */
 let ordersData = [];
 let currentFilter = "Pending";
+let isFirstLoad = true;
 
 function loadOrders() {
     db.collection("orders").orderBy("created", "desc").onSnapshot(snap => {
         const newOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        // CHECK FOR NEW PENDING ORDERS
+        const newPendingCount = newOrders.filter(o => (o.status || "Pending") === "Pending").length;
+        const oldPendingCount = ordersData.filter(o => (o.status || "Pending") === "Pending").length;
+
+        if (!isFirstLoad && newPendingCount > oldPendingCount) {
+            // New order arrived!
+            alarmSound.play().catch(e => console.log("Sound locked", e));
+            if(navigator.vibrate) navigator.vibrate([500,500,500]);
+            showToast("🔔 New Order Received!");
+        }
+
         ordersData = newOrders;
         renderOrders();
         updateStats();
+        isFirstLoad = false;
     });
 }
 
@@ -369,13 +428,29 @@ function renderOrders() {
     filtered.forEach(o => {
         const itemsHtml = (o.items || []).map(i => `<div>${i.name} x${i.qty}</div>`).join('');
         let btns = "";
-        if((o.status||"Pending")==="Pending") btns = `<button class="btn btn-accept" onclick="updOrder('${o.id}','Accepted')">Accept</button>`;
-        else if(o.status==="Accepted") btns = `<button class="btn btn-primary" onclick="updOrder('${o.id}','Ready')">Ready</button>`;
-        else btns = `<span style="color:green;font-weight:bold">${o.status}</span>`;
+        
+        // Buttons
+        if((o.status||"Pending")==="Pending") 
+            btns = `<button class="btn btn-accept" style="width:100%" onclick="updOrder('${o.id}','Accepted')">Accept</button>`;
+        else if(o.status==="Accepted") 
+            btns = `<button class="btn btn-primary" style="width:100%" onclick="updOrder('${o.id}','Ready')">Ready</button>`;
+        else 
+            btns = `<span style="color:green;font-weight:bold;display:block;text-align:center;">${o.status}</span>`;
 
+        // Desktop Row
         tbody.innerHTML += `<tr><td>${o.created?.toDate?o.created.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</td><td><b>${o.name}</b><br>${o.mobile}</td><td>${itemsHtml}</td><td>₹${o.total}</td><td>${btns}</td></tr>`;
         
-        mlist.innerHTML += `<div class="m-card"><div style="display:flex;justify-content:space-between;margin-bottom:10px;font-weight:bold;"><span>${o.name}</span><span>₹${o.total}</span></div><div style="background:#f8fafc;padding:10px;margin-bottom:10px;">${itemsHtml}</div><div style="display:flex;">${btns.replace('btn','btn style="width:100%"')}</div></div>`;
+        // Mobile Card
+        mlist.innerHTML += `
+        <div class="m-card">
+            <div class="m-header">
+                <span style="font-weight:bold">${o.name}</span>
+                <span style="color:var(--primary); font-weight:bold">₹${o.total}</span>
+            </div>
+            <div style="font-size:0.9rem; color:#555; margin-bottom:5px;">${o.mobile}</div>
+            <div class="m-body" style="background:#f9f9f9; padding:10px; border-radius:8px;">${itemsHtml}</div>
+            <div class="m-actions">${btns}</div>
+        </div>`;
     });
 }
 function updOrder(id, s) { db.collection("orders").doc(id).update({status:s}); showToast("Order Updated"); }
@@ -409,10 +484,11 @@ function promptNewCategory() {
 function loadMenu() {
     db.collection("menu").orderBy("category").onSnapshot(snap => {
         const tbody = document.getElementById('menuTable');
-        tbody.innerHTML = "";
+        const mlist = document.getElementById('mobileMenu');
+        tbody.innerHTML = ""; mlist.innerHTML = "";
+        
         snap.forEach(doc => {
             const m = doc.data();
-            // Price Display Logic
             let priceDisplay = "";
             if(m.type === "variant" && m.variants) {
                 priceDisplay = m.variants.map(v => `<span style="font-size:0.8rem;background:#f1f5f9;padding:2px 5px;margin-right:5px;border-radius:4px;">${v.name}: ₹${v.price}</span>`).join(" ");
@@ -421,7 +497,8 @@ function loadMenu() {
             }
 
             const star = m.isBestseller ? "⭐" : "";
-
+            
+            // Desktop Row
             tbody.innerHTML += `
             <tr>
                 <td><b>${m.name}</b> ${star}</td>
@@ -436,6 +513,23 @@ function loadMenu() {
                 </td>
                 <td><button class="btn btn-danger" onclick="if(confirm('Delete?')) db.collection('menu').doc('${doc.id}').delete()"><i class="fas fa-trash"></i></button></td>
             </tr>`;
+
+            // Mobile Card
+            mlist.innerHTML += `
+            <div class="m-card">
+                <div class="m-header">
+                    <b>${m.name} ${star}</b>
+                    <label class="switch">
+                        <input type="checkbox" ${m.available?'checked':''} onchange="db.collection('menu').doc('${doc.id}').update({available:this.checked})">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div style="font-size:0.9rem; margin-bottom:8px;">${priceDisplay}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="background:#e0f2fe;color:#0284c7;padding:2px 8px;border-radius:4px;font-size:0.8rem;">${m.category}</span>
+                    <button class="btn btn-danger" style="width:auto; padding:5px 10px;" onclick="if(confirm('Delete?')) db.collection('menu').doc('${doc.id}').delete()"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
         });
     });
 }
@@ -537,6 +631,7 @@ function addCoupon() {
 /* ================= UTILS ================= */
 function updateStats() {
   document.getElementById("pay-total").innerText = "₹" + ordersData.reduce((a,b)=>a+Number(b.total||0),0);
+  document.getElementById("stat-orders").innerText = ordersData.length;
 }
 function showToast(msg) {
   const box = document.getElementById('toast-box');
