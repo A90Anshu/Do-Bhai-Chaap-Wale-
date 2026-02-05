@@ -351,5 +351,29 @@ function login() {
 <script>
   console.log("Firebase check:", typeof firebase);
 </script>
+
+  <script>
+async function sendAdminRing(order) {
+  await fetch("https://onesignal.com/api/v1/notifications", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "os_v2_app_6cqvfmmhpbfo5hjhr52owithw55wegqnakoux2ewhwjh6n6bn6m7vofa232fx2qyyd3th5memvjlxozvyldzq2wvh6xgak2t6uwuema"
+    },
+    body: JSON.stringify({
+      app_id: "f0a152b1-8778-4aee-9d27-8f74eb2267b7",
+      included_segments: ["All"],
+      headings: { en: "🛎️ New Order Received" },
+      contents: {
+        en: `Order from ${order.name}\nTotal ₹${order.total}`
+      },
+      android_priority: 10,
+      android_sound: "ring",
+      android_channel_id: "orders",
+    })
+  });
+}
+</script>
+
 </body>
 </html>
