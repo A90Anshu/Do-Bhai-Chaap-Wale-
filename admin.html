@@ -452,7 +452,70 @@
       a.download = "orders.csv";
       a.click();
     }
+function renderList(elementId, data, type) {
+    const container = document.getElementById(elementId);
+    container.innerHTML = "";
 
+    if(data.length === 0) {
+        container.innerHTML = `<div class="empty-msg"><i class="fas fa-check-circle"></i><br>No orders here</div>`;
+        return;
+    }
+
+    data.forEach(o => {
+        const time = o.created ? o.created.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "";
+        
+        const itemsHtml = (o.items || []).map(i => `<div>${i.name} <b>x${i.qty}</b></div>`).join("");
+        
+        // --- SMART MAP LOGIC START ---
+        // Default: Search the written address
+        let finalMapLink = `https://maps.google.com/maps?q=${encodeURIComponent(o.address)}`;
+        
+        // Smart: If a GPS link exists in the text, use THAT instead
+        // This looks for "http" links inside the address text
+        const gpsMatch = (o.address || "").match(/http[s]?:\/\/maps\.google\.com\/[^ \n]+/);
+        if(gpsMatch) {
+            finalMapLink = gpsMatch[0];
+        }
+        // --- SMART MAP LOGIC END ---
+
+        let buttons = "";
+        if(type === "pending") {
+            buttons = `
+                <button class="btn btn-map" onclick="window.open('${finalMapLink}')"><i class="fas fa-map-marker-alt"></i></button>
+                <button class="btn btn-accept" onclick="updateStatus('${o.id}', 'Accepted')">Accept & Cook</button>
+            `;
+        } else if(type === "accepted") {
+            buttons = `
+                <button class="btn btn-ready" onclick="markReady('${o.id}', '${o.mobile}')">Mark Ready ✅</button>
+            `;
+        } else {
+            buttons = `<div style="text-align:center; width:100%; color:#27ae60; font-weight:bold;">Completed</div>`;
+        }
+
+        const div = document.createElement("div");
+        div.className = `card ${type}`;
+        div.innerHTML = `
+            <div class="card-header">
+                <span>#${o.id.slice(-4)}</span>
+                <span>${time}</span>
+            </div>
+            <div class="cust-details">
+                ${o.name} <small>(${o.orderType || 'Delivery'})</small>
+            </div>
+            <div class="cust-address" onclick="window.open('${finalMapLink}')">
+                 <i class="fas fa-location-arrow"></i> ${o.address}
+            </div>
+            <div class="items-box">
+                ${itemsHtml}
+                <div style="margin-top:5px; border-top:1px dashed #777; padding-top:5px; font-weight:bold;">
+                    Total: ₹${o.total} <span style="font-size:0.8rem; font-weight:normal;">(${o.paymentId ? 'Paid' : 'Unpaid'})</span>
+                </div>
+            </div>
+            <div class="actions">${buttons}</div>
+        `;
+        container.appendChild(div);
+    });
+  }
     // --- 8. SOUND ---
     function enableSound() {
       soundEnabled = true;
