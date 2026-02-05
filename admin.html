@@ -48,10 +48,11 @@
     .search-box input { width: 100%; padding: 10px 15px 10px 40px; border-radius: 10px; border: 1px solid #e2e8f0; }
     .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
     
+    /* TABLE & LISTS */
     .table-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow: hidden; flex: 1; display: flex; flex-direction: column; }
     .table-wrapper { overflow-y: auto; flex: 1; }
     table { width: 100%; border-collapse: collapse; min-width: 800px; }
-    thead th { position: sticky; top: 0; background: #f8fafc; padding: 15px; text-align: left; font-size: 0.85rem; color: var(--text-muted); border-bottom: 2px solid #e2e8f0; z-index: 10; }
+    thead th { position: sticky; top: 0; background: #f8fafc; padding: 15px; text-align: left; font-size: 0.85rem; color: var(--text-muted); border-bottom: 2px solid #e2e8f0; }
     td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
 
     .btn { padding: 8px 16px; border: none; border-radius: 6px; color: #fff; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; }
@@ -60,7 +61,7 @@
     .btn-accept { background: var(--success); }
     .btn-outline { background: #fff; border: 1px solid #cbd5e1; color: var(--slate-700); }
 
-    /* TOGGLE SWITCH */
+    /* SWITCH & CARDS */
     .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
@@ -68,19 +69,15 @@
     input:checked + .slider { background-color: var(--success); }
     input:checked + .slider:before { transform: translateX(18px); }
 
-    /* CARDS GRID */
     .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
     .info-card { background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-    .card-title { font-weight: 800; font-size: 1.1rem; color: var(--slate-800); }
 
     /* MODAL */
     #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; justify-content: center; align-items: center; }
     .modal { background: #fff; padding: 25px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
-    .modal h3 { margin-top: 0; color: var(--slate-800); }
     .form-group { margin-bottom: 15px; }
     .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; color: #555; }
     .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
-    
     .variant-row { display: flex; gap: 10px; margin-bottom: 10px; }
     .variant-row input { flex: 1; }
 
@@ -91,45 +88,27 @@
       body { overflow: auto; background: #f1f5f9; }
       #dashboard { flex-direction: column; height: auto; min-height: 100vh; }
       
-      /* Sidebar becomes Scrollable Top Nav */
-      aside { 
-        width: 100%; 
-        position: sticky; 
-        top: 0; 
-        height: auto; 
-        flex-direction: row; 
-        padding: 10px; 
-        overflow-x: auto; 
-        white-space: nowrap; 
-        background: var(--slate-800);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      }
+      /* Sidebar -> Top Nav */
+      aside { width: 100%; position: sticky; top: 0; height: auto; flex-direction: row; padding: 10px; overflow-x: auto; white-space: nowrap; background: var(--slate-800); box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 100; }
       .brand-header { display: none; }
       .nav-container { flex-direction: row; padding: 0; width: 100%; gap: 10px; }
       .nav-item { background: rgba(255,255,255,0.1); flex: none; }
       
-      /* Main Content */
+      /* Content */
       main { padding: 15px; height: auto; overflow: visible; }
       
-      /* Hide Tables, Show Mobile Lists */
+      /* Hide Desktop Tables, Show Mobile Lists */
       .table-card { display: none !important; }
       .mobile-list { display: block; }
       
-      /* Mobile Card Style */
-      .m-card { 
-        background: #fff; 
-        padding: 15px; 
-        border-radius: 12px; 
-        margin-bottom: 15px; 
-        border: 1px solid #e2e8f0; 
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      }
+      /* Mobile Cards */
+      .m-card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
       .m-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
       .m-body { margin-bottom: 12px; }
-      .m-actions { display: flex; gap: 10px; }
+      .m-actions { display: flex; gap: 10px; flex-wrap: wrap; }
       .m-actions button { flex: 1; justify-content: center; padding: 10px; }
       
-      /* Controls Stack */
+      /* Controls */
       .header-bar { flex-direction: column; align-items: stretch; gap: 10px; }
       .status-filter { width: 100%; }
       .tab { flex: 1; text-align: center; }
@@ -159,67 +138,23 @@
 <div id="modal-overlay">
   <div class="modal">
     <h3 id="modal-title">Add Menu Item</h3>
-    
-    <div class="form-group">
-      <label>Item Name</label>
-      <input id="inp-name" placeholder="e.g. Malai Chaap">
-    </div>
-
-    <div class="form-group">
-      <label>Category</label>
-      <div style="display:flex; gap:10px;">
-        <select id="inp-category" style="flex:1"></select>
-        <button class="btn btn-outline" onclick="promptNewCategory()">+ New</button>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Pricing Type</label>
-      <select id="inp-type-select" onchange="toggleVariantInputs()">
-        <option value="single">Single Price (e.g. Roti)</option>
-        <option value="variant">Variants (Half / Full)</option>
-      </select>
-    </div>
-
-    <div id="price-single" class="form-group">
-      <label>Price (₹)</label>
-      <input id="inp-price" type="number" placeholder="0">
-    </div>
-
-    <div id="price-variant" class="form-group hidden">
-      <label>Variants</label>
-      <div class="variant-row">
-        <input id="var-name-1" placeholder="Size (e.g. Half)" value="Half">
-        <input id="var-price-1" type="number" placeholder="Price">
-      </div>
-      <div class="variant-row">
-        <input id="var-name-2" placeholder="Size (e.g. Full)" value="Full">
-        <input id="var-price-2" type="number" placeholder="Price">
-      </div>
-    </div>
-
-    <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:20px;">
-      <input type="checkbox" id="inp-bestseller" style="width:auto;">
-      <label for="inp-bestseller" style="margin:0; color:var(--primary); cursor:pointer;">Mark as Bestseller ⭐</label>
-    </div>
-
-    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveMenuItem()">Save Item</button>
-    </div>
+    <div class="form-group"><label>Item Name</label><input id="inp-name" placeholder="e.g. Malai Chaap"></div>
+    <div class="form-group"><label>Category</label><div style="display:flex; gap:10px;"><select id="inp-category" style="flex:1"></select><button class="btn btn-outline" onclick="promptNewCategory()">+ New</button></div></div>
+    <div class="form-group"><label>Pricing</label><select id="inp-type-select" onchange="toggleVariantInputs()"><option value="single">Single Price</option><option value="variant">Variants (Half/Full)</option></select></div>
+    <div id="price-single" class="form-group"><label>Price (₹)</label><input id="inp-price" type="number" placeholder="0"></div>
+    <div id="price-variant" class="form-group hidden"><label>Variants</label><div class="variant-row"><input id="var-name-1" value="Half"><input id="var-price-1" type="number" placeholder="Price"></div><div class="variant-row"><input id="var-name-2" value="Full"><input id="var-price-2" type="number" placeholder="Price"></div></div>
+    <div class="form-group" style="display:flex;align-items:center;gap:10px;"><input type="checkbox" id="inp-bestseller" style="width:auto;"><label for="inp-bestseller" style="margin:0;color:var(--primary);">Bestseller ⭐</label></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveMenuItem()">Save Item</button></div>
   </div>
 </div>
 
 <div id="login-overlay">
   <div class="login-card">
     <h2 class="brand-font" style="margin-top:0;">Admin Access</h2>
-    <input id="adminUser" placeholder="Username">
-    <input id="adminPass" type="password" placeholder="Password">
-    <div style="text-align:left; margin-bottom:15px; font-size:0.9rem; color:#555;">
-      <input type="checkbox" id="rememberMe" style="width:auto;"> <label for="rememberMe">Remember me</label>
-    </div>
+    <input id="adminUser" placeholder="Username"><input id="adminPass" type="password" placeholder="Password">
+    <div style="text-align:left;margin-bottom:15px;font-size:0.9rem;color:#555;"><input type="checkbox" id="rememberMe" style="width:auto;"> <label for="rememberMe">Keep me logged in</label></div>
     <button onclick="login()">Sign In</button>
-    <p id="loginError" style="color:var(--danger); margin-top:15px;"></p>
+    <p id="loginError" style="color:var(--danger);margin-top:15px;"></p>
   </div>
 </div>
 
@@ -246,222 +181,131 @@
           <div class="tab" onclick="setFilter('Accepted')">Kitchen</div>
           <div class="tab" onclick="setFilter('Ready')">History</div>
         </div>
-        <button class="btn btn-outline" onclick="enableSound()">🔊 Sound On</button>
+        <button class="btn btn-outline" id="soundBtn" onclick="enableSound()">🔊 Enable Ringing</button>
       </div>
-      
-      <div class="table-card">
-        <div class="table-wrapper">
-          <table>
-            <thead><tr><th>Time</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
-            <tbody id="ordersTable"></tbody>
-          </table>
-        </div>
-      </div>
-      
+      <div class="table-card"><div class="table-wrapper"><table><thead><tr><th>Time</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr></thead><tbody id="ordersTable"></tbody></table></div></div>
       <div id="mobileOrders" class="mobile-list"></div>
     </div>
 
     <div id="view-menu" class="hidden">
-      <div class="header-bar">
-        <h2 style="margin:0;">Menu Inventory</h2>
-        <div style="flex:1"></div>
-        <button class="btn btn-primary" onclick="openAddModal()">➕ Add Item</button>
-      </div>
-      
-      <div class="table-card">
-        <div class="table-wrapper">
-          <table>
-            <thead><tr><th>Name</th><th>Category</th><th>Price / Variants</th><th>Bestseller</th><th>Stock</th><th>Action</th></tr></thead>
-            <tbody id="menuTable"></tbody>
-          </table>
-        </div>
-      </div>
-      
+      <div class="header-bar"><h2 style="margin:0;">Menu Inventory</h2><div style="flex:1"></div><button class="btn btn-primary" onclick="openAddModal()">➕ Add Item</button></div>
+      <div class="table-card"><div class="table-wrapper"><table><thead><tr><th>Name</th><th>Category</th><th>Price / Variants</th><th>Stock</th><th>Action</th></tr></thead><tbody id="menuTable"></tbody></table></div></div>
       <div id="mobileMenu" class="mobile-list"></div>
     </div>
 
     <div id="view-categories" class="hidden">
-      <div class="header-bar">
-        <h2 style="margin:0;">Manage Categories</h2>
-        <button class="btn btn-accept" style="margin-left:auto;" onclick="addCategory()">➕ Create Category</button>
-      </div>
+      <div class="header-bar"><h2 style="margin:0;">Categories</h2><button class="btn btn-accept" style="margin-left:auto;" onclick="addCategory()">➕ Create Category</button></div>
       <div id="category-list" class="grid-container"></div>
     </div>
 
     <div id="view-settings" class="hidden">
-      <h2 style="margin-bottom:20px;">Shop Configuration</h2>
-      <div style="background:#fff; padding:30px; border-radius:16px; max-width:600px; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
-        <div class="form-group">
-          <label>Shop Name</label>
-          <input id="cfg-name" placeholder="Do Bhai Chaap Wale">
-        </div>
-        <div class="form-group">
-          <label>Address (Visible to Customers)</label>
-          <textarea id="cfg-address" rows="3" placeholder="Full Shop Address"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Google Maps Link</label>
-          <input id="cfg-map" placeholder="http://googleusercontent.com/maps.google.com/...">
-        </div>
-        <div class="form-group">
-          <label>Support Phone</label>
-          <input id="cfg-phone" placeholder="+91...">
-        </div>
+      <h2 style="margin-bottom:20px;">Shop Settings</h2>
+      <div style="background:#fff; padding:30px; border-radius:16px; max-width:600px;">
+        <div class="form-group"><label>Shop Name</label><input id="cfg-name"></div>
+        <div class="form-group"><label>Address</label><textarea id="cfg-address" rows="3"></textarea></div>
+        <div class="form-group"><label>Maps Link</label><input id="cfg-map"></div>
         <button class="btn btn-primary" onclick="saveSettings()">Save Configuration</button>
       </div>
     </div>
 
     <div id="view-coupons" class="hidden">
-      <div class="header-bar">
-        <h2 style="margin:0;">Coupons</h2>
-        <button class="btn btn-accept" style="margin-left:auto;" onclick="addCoupon()">➕ Add Coupon</button>
-      </div>
+      <div class="header-bar"><h2 style="margin:0;">Coupons</h2><button class="btn btn-accept" style="margin-left:auto;" onclick="addCoupon()">➕ Add Coupon</button></div>
       <div id="coupon-list" class="grid-container"></div>
     </div>
 
     <div id="view-payouts" class="hidden">
       <h2>Analytics</h2>
-      <div style="background:#fff; padding:20px; border-radius:12px; margin-bottom:20px;">
-        <h3>Total Revenue: <span id="pay-total" style="color:var(--success)">₹0</span></h3>
-        <p>Total Orders: <span id="stat-orders">0</span></p>
-      </div>
+      <div style="background:#fff; padding:20px; border-radius:12px;"><h3>Revenue: <span id="pay-total" style="color:var(--success)">₹0</span></h3><p>Orders: <span id="stat-orders">0</span></p></div>
     </div>
   </main>
 </div>
 
 <script>
-/* ================= CONFIG ================= */
-const firebaseConfig = {
-  apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4",
-  authDomain: "dobhaichaapwale1.firebaseapp.com",
-  projectId: "dobhaichaapwale1",
-  storageBucket: "dobhaichaapwale1.firebasestorage.app",
-  messagingSenderId: "141034963645",
-  appId: "1:141034963645:web:442a93b6e87643b3bf2dd4"
-};
+/* CONFIG */
+const firebaseConfig = { apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4", authDomain: "dobhaichaapwale1.firebaseapp.com", projectId: "dobhaichaapwale1", storageBucket: "dobhaichaapwale1.firebasestorage.app", messagingSenderId: "141034963645", appId: "1:141034963645:web:442a93b6e87643b3bf2dd4" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const messaging = firebase.messaging();
-const alarmSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
 
-/* ================= INIT ================= */
+// SOUND ENGINE (Continuous Loop)
+const alarmSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+alarmSound.loop = true; // KEEP RINGING
+let wakeLock = null;
+
+/* INIT */
 window.onload = function() {
     if (localStorage.getItem('isLoggedIn') === 'true') {
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('dashboard').classList.remove('hidden');
         initApp();
     }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/firebase-messaging-sw.js');
 };
 
 function login() {
-  const u = document.getElementById('adminUser').value;
-  const p = document.getElementById('adminPass').value;
-  if(u === "admin" && p === "A90Anshu@") {
+  if(document.getElementById('adminUser').value==="admin" && document.getElementById('adminPass').value==="A90Anshu@") {
     if(document.getElementById('rememberMe').checked) localStorage.setItem('isLoggedIn', 'true');
-    document.getElementById('login-overlay').style.display = 'none';
-    document.getElementById('dashboard').classList.remove('hidden');
-    initApp();
-  } else { document.getElementById('loginError').innerText = "Invalid Credentials"; }
+    document.getElementById('login-overlay').style.display='none'; document.getElementById('dashboard').classList.remove('hidden'); initApp();
+  } else document.getElementById('loginError').innerText="Invalid Credentials";
 }
-
 function logout() { localStorage.removeItem('isLoggedIn'); location.reload(); }
+function initApp() { loadOrders(); loadMenu(); loadSettings(); loadCategories(); loadCoupons(); }
+function switchView(v) { ['orders','menu','settings','categories','coupons','payouts'].forEach(id=>document.getElementById('view-'+id).classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); }
 
-function initApp() {
-    loadOrders();
-    loadMenu();
-    loadSettings();
-    loadCategories();
-    loadCoupons();
-}
-
-function switchView(v) {
-  ['orders','menu','settings','categories','coupons','payouts'].forEach(id => document.getElementById('view-'+id).classList.add('hidden'));
-  document.getElementById('view-'+v).classList.remove('hidden');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if(event) event.currentTarget.classList.add('active');
-}
-
-/* ================= ORDERS ================= */
-let ordersData = [];
-let currentFilter = "Pending";
-let isFirstLoad = true;
-
+/* ORDERS & SOUND */
+let ordersData=[], currentFilter="Pending", isFirst=true;
 function loadOrders() {
     db.collection("orders").orderBy("created", "desc").onSnapshot(snap => {
-        const newOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const newOrders = snap.docs.map(d => ({id:d.id, ...d.data()}));
+        const newPending = newOrders.filter(o=>(o.status||"Pending")==="Pending").length;
+        const oldPending = ordersData.filter(o=>(o.status||"Pending")==="Pending").length;
         
-        // CHECK FOR NEW PENDING ORDERS
-        const newPendingCount = newOrders.filter(o => (o.status || "Pending") === "Pending").length;
-        const oldPendingCount = ordersData.filter(o => (o.status || "Pending") === "Pending").length;
-
-        if (!isFirstLoad && newPendingCount > oldPendingCount) {
-            // New order arrived!
-            alarmSound.play().catch(e => console.log("Sound locked", e));
-            if(navigator.vibrate) navigator.vibrate([500,500,500]);
-            showToast("🔔 New Order Received!");
+        // TRIGGER CONTINUOUS ALARM if new pending order appears
+        if(!isFirst && newPending > oldPending) {
+            triggerAlarm();
+            if(navigator.vibrate) navigator.vibrate([1000, 500, 1000]); // Long vibrate
+            showToast("🔔 New Order!");
         }
-
-        ordersData = newOrders;
-        renderOrders();
-        updateStats();
-        isFirstLoad = false;
+        ordersData=newOrders; renderOrders(); updateStats(); isFirst=false;
     });
 }
 
-function setFilter(f) {
-    currentFilter = f;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    renderOrders();
+function triggerAlarm() {
+    alarmSound.currentTime = 0;
+    alarmSound.play().catch(e => console.log("Audio permission blocked. Click 'Enable Ringing'."));
 }
 
+function stopAlarm() {
+    alarmSound.pause();
+    alarmSound.currentTime = 0;
+}
+
+function setFilter(f) { currentFilter=f; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); event.target.classList.add('active'); renderOrders(); }
 function renderOrders() {
-    const filtered = ordersData.filter(o => {
-        const s = o.status || "Pending";
-        return currentFilter === "Ready" ? (s === "Ready" || s === "Completed") : s === currentFilter;
-    });
-
-    const tbody = document.getElementById('ordersTable');
-    const mlist = document.getElementById('mobileOrders');
-    tbody.innerHTML = ""; mlist.innerHTML = "";
-
+    const filtered = ordersData.filter(o => { const s = o.status||"Pending"; return currentFilter==="Ready" ? (s==="Ready"||s==="Completed") : s===currentFilter; });
+    const tbody = document.getElementById('ordersTable'); const mlist = document.getElementById('mobileOrders');
+    tbody.innerHTML=""; mlist.innerHTML="";
+    
     filtered.forEach(o => {
-        const itemsHtml = (o.items || []).map(i => `<div>${i.name} x${i.qty}</div>`).join('');
-        let btns = "";
+        const items = (o.items||[]).map(i=>`<div>${i.name} x${i.qty}</div>`).join('');
         
-        // Buttons
-        if((o.status||"Pending")==="Pending") 
-            btns = `<button class="btn btn-accept" style="width:100%" onclick="updOrder('${o.id}','Accepted')">Accept</button>`;
-        else if(o.status==="Accepted") 
-            btns = `<button class="btn btn-primary" style="width:100%" onclick="updOrder('${o.id}','Ready')">Ready</button>`;
-        else 
-            btns = `<span style="color:green;font-weight:bold;display:block;text-align:center;">${o.status}</span>`;
-
-        // Desktop Row
-        tbody.innerHTML += `<tr><td>${o.created?.toDate?o.created.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</td><td><b>${o.name}</b><br>${o.mobile}</td><td>${itemsHtml}</td><td>₹${o.total}</td><td>${btns}</td></tr>`;
+        // Accept button stops the alarm
+        let btns = (o.status||"Pending")==="Pending" ? `<button class="btn btn-accept" onclick="updOrder('${o.id}','Accepted')">Accept (Stop Alarm)</button>` : ((o.status==="Accepted") ? `<button class="btn btn-primary" onclick="updOrder('${o.id}','Ready')">Ready</button>` : `<span style="color:green;font-weight:bold">${o.status}</span>`);
         
-        // Mobile Card
-        mlist.innerHTML += `
-        <div class="m-card">
-            <div class="m-header">
-                <span style="font-weight:bold">${o.name}</span>
-                <span style="color:var(--primary); font-weight:bold">₹${o.total}</span>
-            </div>
-            <div style="font-size:0.9rem; color:#555; margin-bottom:5px;">${o.mobile}</div>
-            <div class="m-body" style="background:#f9f9f9; padding:10px; border-radius:8px;">${itemsHtml}</div>
-            <div class="m-actions">${btns}</div>
-        </div>`;
+        tbody.innerHTML += `<tr><td>${o.created?.toDate?o.created.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</td><td><b>${o.name}</b><br>${o.mobile}</td><td>${items}</td><td>₹${o.total}</td><td>${btns}</td></tr>`;
+        mlist.innerHTML += `<div class="m-card"><div class="m-header"><span>${o.name}</span><span style="color:var(--primary);font-weight:bold">₹${o.total}</span></div><div class="m-body" style="font-size:0.9rem">${items}</div><div class="m-actions">${btns.replace('btn','btn style="width:100%"')}</div></div>`;
     });
 }
-function updOrder(id, s) { db.collection("orders").doc(id).update({status:s}); showToast("Order Updated"); }
+function updOrder(id, s) { 
+    db.collection("orders").doc(id).update({status:s}); 
+    stopAlarm(); // STOP ALARM ON ACTION
+}
 
-/* ================= MENU & CATEGORIES ================= */
+/* MENU & CATEGORIES */
 function loadCategories() {
     db.collection("categories").orderBy("name").onSnapshot(snap => {
-        const d = document.getElementById("category-list");
-        const s = document.getElementById("inp-category");
+        const d = document.getElementById("category-list"), s = document.getElementById("inp-category");
         d.innerHTML = ""; s.innerHTML = "";
-        
         snap.forEach(doc => {
             const cat = doc.data().name;
             d.innerHTML += `<div class="info-card"><span class="card-title">${cat}</span><button class="btn btn-danger" onclick="if(confirm('Delete?')) db.collection('categories').doc('${doc.id}').delete()"><i class="fas fa-trash"></i></button></div>`;
@@ -470,177 +314,75 @@ function loadCategories() {
         if(s.innerHTML === "") s.innerHTML = "<option>Create Category First</option>";
     });
 }
-
-function addCategory() {
-    const name = prompt("New Category Name (e.g. Starters):");
-    if(name) db.collection("categories").add({name}).then(() => showToast("Category Added"));
-}
-
-function promptNewCategory() {
-    const name = prompt("Enter new Category Name:");
-    if(name) db.collection("categories").add({name});
-}
+function addCategory() { const n = prompt("Category Name:"); if(n) db.collection("categories").add({name:n}); }
+function promptNewCategory() { const n = prompt("Category Name:"); if(n) db.collection("categories").add({name:n}); }
 
 function loadMenu() {
     db.collection("menu").orderBy("category").onSnapshot(snap => {
-        const tbody = document.getElementById('menuTable');
-        const mlist = document.getElementById('mobileMenu');
+        const tbody = document.getElementById('menuTable'); const mlist = document.getElementById('mobileMenu');
         tbody.innerHTML = ""; mlist.innerHTML = "";
         
         snap.forEach(doc => {
             const m = doc.data();
-            let priceDisplay = "";
-            if(m.type === "variant" && m.variants) {
-                priceDisplay = m.variants.map(v => `<span style="font-size:0.8rem;background:#f1f5f9;padding:2px 5px;margin-right:5px;border-radius:4px;">${v.name}: ₹${v.price}</span>`).join(" ");
-            } else {
-                priceDisplay = `₹${m.price}`;
-            }
-
-            const star = m.isBestseller ? "⭐" : "";
+            let price = (m.type==="variant" && m.variants) ? m.variants.map(v=>`${v.name}: ₹${v.price}`).join(", ") : `₹${m.price}`;
+            const row = `<td><b>${m.name}</b> ${m.isBestseller?'⭐':''}</td><td>${m.category}</td><td>${price}</td><td><label class="switch"><input type="checkbox" ${m.available?'checked':''} onchange="db.collection('menu').doc('${doc.id}').update({available:this.checked})"><span class="slider"></span></label></td><td><button class="btn btn-danger" onclick="if(confirm('Delete?')) db.collection('menu').doc('${doc.id}').delete()"><i class="fas fa-trash"></i></button></td>`;
             
-            // Desktop Row
-            tbody.innerHTML += `
-            <tr>
-                <td><b>${m.name}</b> ${star}</td>
-                <td><span style="background:#e0f2fe;color:#0284c7;padding:3px 8px;border-radius:10px;font-size:0.8rem;">${m.category}</span></td>
-                <td>${priceDisplay}</td>
-                <td>${m.isBestseller ? "Yes" : "No"}</td>
-                <td>
-                    <label class="switch">
-                        <input type="checkbox" ${m.available?'checked':''} onchange="db.collection('menu').doc('${doc.id}').update({available:this.checked})">
-                        <span class="slider"></span>
-                    </label>
-                </td>
-                <td><button class="btn btn-danger" onclick="if(confirm('Delete?')) db.collection('menu').doc('${doc.id}').delete()"><i class="fas fa-trash"></i></button></td>
-            </tr>`;
-
-            // Mobile Card
-            mlist.innerHTML += `
-            <div class="m-card">
-                <div class="m-header">
-                    <b>${m.name} ${star}</b>
-                    <label class="switch">
-                        <input type="checkbox" ${m.available?'checked':''} onchange="db.collection('menu').doc('${doc.id}').update({available:this.checked})">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div style="font-size:0.9rem; margin-bottom:8px;">${priceDisplay}</div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="background:#e0f2fe;color:#0284c7;padding:2px 8px;border-radius:4px;font-size:0.8rem;">${m.category}</span>
-                    <button class="btn btn-danger" style="width:auto; padding:5px 10px;" onclick="if(confirm('Delete?')) db.collection('menu').doc('${doc.id}').delete()"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>`;
+            tbody.innerHTML += `<tr>${row}</tr>`;
+            mlist.innerHTML += `<div class="m-card"><div class="m-header"><b>${m.name}</b> <small>${price}</small></div><div class="m-actions"><label class="switch"><input type="checkbox" ${m.available?'checked':''} onchange="db.collection('menu').doc('${doc.id}').update({available:this.checked})"><span class="slider"></span></label><button class="btn btn-danger" onclick="if(confirm('Delete?')) db.collection('menu').doc('${doc.id}').delete()">Delete</button></div></div>`;
         });
     });
 }
 
-/* ================= MODAL LOGIC ================= */
+/* MODALS & FORMS */
 function openAddModal() { document.getElementById('modal-overlay').style.display='flex'; }
 function closeModal() { document.getElementById('modal-overlay').style.display='none'; }
-
 function toggleVariantInputs() {
-    const type = document.getElementById('inp-type-select').value;
-    if(type === 'variant') {
-        document.getElementById('price-single').classList.add('hidden');
-        document.getElementById('price-variant').classList.remove('hidden');
-    } else {
-        document.getElementById('price-single').classList.remove('hidden');
-        document.getElementById('price-variant').classList.add('hidden');
-    }
+    const t = document.getElementById('inp-type-select').value;
+    document.getElementById('price-single').classList.toggle('hidden', t==='variant');
+    document.getElementById('price-variant').classList.toggle('hidden', t==='single');
 }
-
 function saveMenuItem() {
     const name = document.getElementById('inp-name').value;
-    const category = document.getElementById('inp-category').value;
+    const cat = document.getElementById('inp-category').value;
     const type = document.getElementById('inp-type-select').value;
-    const isBestseller = document.getElementById('inp-bestseller').checked;
-
-    if(!name || !category) return alert("Name and Category required");
-
-    let data = { name, category, type, isBestseller, available: true };
-
+    const best = document.getElementById('inp-bestseller').checked;
+    
+    let data = { name, category: cat, type, isBestseller: best, available: true };
     if(type === 'variant') {
-        const v1n = document.getElementById('var-name-1').value;
-        const v1p = document.getElementById('var-price-1').value;
-        const v2n = document.getElementById('var-name-2').value;
-        const v2p = document.getElementById('var-price-2').value;
-        
-        if(!v1p) return alert("At least first variant price required");
-        
-        data.variants = [{ name: v1n, price: Number(v1p) }];
-        if(v2p) data.variants.push({ name: v2n, price: Number(v2p) });
+        const v1n = document.getElementById('var-name-1').value, v1p = document.getElementById('var-price-1').value;
+        const v2n = document.getElementById('var-name-2').value, v2p = document.getElementById('var-price-2').value;
+        if(!v1p) return alert("Price required");
+        data.variants = [{name:v1n, price:Number(v1p)}];
+        if(v2p) data.variants.push({name:v2n, price:Number(v2p)});
     } else {
         const p = document.getElementById('inp-price').value;
         if(!p) return alert("Price required");
         data.price = Number(p);
     }
-
-    db.collection("menu").add(data).then(() => {
-        closeModal();
-        showToast("Item Added Successfully");
-        document.getElementById('inp-name').value = "";
-        document.getElementById('inp-price').value = "";
-    });
+    db.collection("menu").add(data).then(()=>{ closeModal(); showToast("Added"); });
 }
 
-/* ================= SETTINGS ================= */
-function loadSettings() {
-    db.collection("settings").doc("config").get().then(doc => {
-        if(doc.exists) {
-            const d = doc.data();
-            document.getElementById('cfg-name').value = d.shopName || "";
-            document.getElementById('cfg-address').value = d.address || "";
-            document.getElementById('cfg-map').value = d.mapLink || "";
-            document.getElementById('cfg-phone').value = d.phone || "";
+/* SETTINGS & COUPONS */
+function loadSettings() { db.collection("settings").doc("config").get().then(d => { if(d.exists) { const v=d.data(); document.getElementById('cfg-name').value=v.shopName||""; document.getElementById('cfg-address').value=v.address||""; document.getElementById('cfg-map').value=v.mapLink||""; } }); }
+function saveSettings() { db.collection("settings").doc("config").set({ shopName:document.getElementById('cfg-name').value, address:document.getElementById('cfg-address').value, mapLink:document.getElementById('cfg-map').value }, {merge:true}).then(()=>showToast("Saved")); }
+function loadCoupons() { db.collection("coupons").onSnapshot(snap=>{ const l=document.getElementById('coupon-list'); l.innerHTML=""; snap.forEach(d=>{ const c=d.data(); l.innerHTML+=`<div class="info-card"><div><b>${c.code}</b><br>${c.desc}</div><button class="btn btn-danger" onclick="db.collection('coupons').doc('${d.id}').delete()">Del</button></div>`; }); }); }
+function addCoupon() { const c=prompt("Code:"), d=prompt("Desc:"); if(c) db.collection("coupons").add({code:c, desc:d}); }
+
+/* UTILS */
+function updateStats() { document.getElementById("pay-total").innerText = "₹" + ordersData.reduce((a,b)=>a+Number(b.total||0),0); document.getElementById("stat-orders").innerText = ordersData.length; }
+function showToast(msg) { const b=document.getElementById('toast-box'), d=document.createElement('div'); d.className='toast'; d.innerHTML=`🔔 ${msg}`; b.appendChild(d); setTimeout(()=>d.remove(),3000); }
+
+async function enableSound() {
+    try {
+        alarmSound.play().then(()=>{ alarmSound.pause(); alarmSound.currentTime=0; }); // Preroll to unlock audio
+        if ('wakeLock' in navigator) { 
+            wakeLock = await navigator.wakeLock.request('screen'); 
+            showToast("Screen Kept Awake");
         }
-    });
-}
-
-function saveSettings() {
-    const data = {
-        shopName: document.getElementById('cfg-name').value,
-        address: document.getElementById('cfg-address').value,
-        mapLink: document.getElementById('cfg-map').value,
-        phone: document.getElementById('cfg-phone').value
-    };
-    db.collection("settings").doc("config").set(data, {merge:true})
-      .then(() => showToast("Settings Saved"));
-}
-
-/* ================= COUPONS ================= */
-function loadCoupons() {
-    db.collection("coupons").onSnapshot(snap => {
-        const list = document.getElementById('coupon-list');
-        list.innerHTML = "";
-        snap.forEach(doc => {
-            const c = doc.data();
-            list.innerHTML += `
-            <div class="info-card">
-                <div><div style="font-weight:800;color:var(--primary)">${c.code}</div><div>${c.desc}</div></div>
-                <button class="btn btn-danger" onclick="if(confirm('Delete?')) db.collection('coupons').doc('${doc.id}').delete()"><i class="fas fa-trash"></i></button>
-            </div>`;
-        });
-    });
-}
-function addCoupon() {
-    const code = prompt("Code (e.g. WELCOME50):");
-    const desc = prompt("Description:");
-    if(code) db.collection("coupons").add({code, desc});
-}
-
-/* ================= UTILS ================= */
-function updateStats() {
-  document.getElementById("pay-total").innerText = "₹" + ordersData.reduce((a,b)=>a+Number(b.total||0),0);
-  document.getElementById("stat-orders").innerText = ordersData.length;
-}
-function showToast(msg) {
-  const box = document.getElementById('toast-box');
-  const d = document.createElement('div');
-  d.className = 'toast'; d.innerHTML = `🔔 ${msg}`;
-  box.appendChild(d); setTimeout(()=>d.remove(),3000);
-}
-function enableSound() {
-    alarmSound.play().then(()=>{ alarmSound.pause(); alarmSound.currentTime=0; showToast("Sound Enabled"); }).catch(()=>{});
+        document.getElementById('soundBtn').innerText = "🔊 Ringing Active";
+        document.getElementById('soundBtn').style.background = "#dcfce7";
+        document.getElementById('soundBtn').style.color = "#166534";
+    } catch(err) { console.log(err); alert("Click 'Enable Ringing' again!"); }
 }
 </script>
 </body>
