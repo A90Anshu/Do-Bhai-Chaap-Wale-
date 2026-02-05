@@ -330,6 +330,12 @@ if (user) {
 
   alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
 
+  // 🔔 RING ADMIN PHONES
+ringAdmins({
+  name: name,
+  total: total
+});
+
   cart = [];
   updateCart();
 },
