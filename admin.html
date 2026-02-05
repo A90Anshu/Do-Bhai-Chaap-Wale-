@@ -17,35 +17,18 @@
   <style>
     /* ================= MODERN COLOR PALETTE ================= */
     :root {
-      /* Brand */
       --primary: #e91e63;
       --primary-hover: #be124e;
-      
-      /* Sidebar / Dark Accents */
       --slate-900: #0f172a;
       --slate-800: #1e293b;
       --slate-700: #334155;
-      
-      /* Backgrounds */
       --bg-body: #f1f5f9;
-      --bg-surface: #ffffff;
-      
-      /* Text */
       --text-main: #1e293b;
       --text-muted: #64748b;
-      
-      /* Functional Colors */
       --success-bg: #dcfce7;
       --success-text: #166534;
       --warning-bg: #fef9c3;
       --warning-text: #854d0e;
-      --info-bg: #dbeafe;
-      --info-text: #1e40af;
-      
-      /* Shadows */
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
     * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -62,412 +45,177 @@
     h1, h2, h3, .brand-font { font-family: 'Poppins', sans-serif; }
     .hidden { display: none !important; }
 
-    /* ================= LOADER (FIXED) ================= */
+    /* ================= KITCHEN MODE (FULLSCREEN) ================= */
+    body.kitchen-mode aside { display: none; }
+    body.kitchen-mode main { padding: 0; }
+    body.kitchen-mode .header-bar { padding: 15px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 0; }
+    body.kitchen-mode .table-card { border-radius: 0; border: none; height: calc(100vh - 80px); }
+    body.kitchen-mode td { font-size: 1.1rem; padding: 20px; }
+    body.kitchen-mode .item-list { font-size: 1.25rem; font-weight: 700; line-height: 1.6; }
+    body.kitchen-mode .qty-badge { font-size: 1rem; padding: 4px 10px; }
+
+    /* ================= LOADER & LOGIN ================= */
     #page-loader {
-      position: fixed;
-      inset: 0;
-      background: #fff;
-      z-index: 9999;
-      display: none; /* FIXED: Hidden by default so you can see login */
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
+      position: fixed; inset: 0; background: #fff; z-index: 9999;
+      display: none; justify-content: center; align-items: center; flex-direction: column;
       transition: opacity 0.5s ease;
     }
     .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid var(--primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+      width: 40px; height: 40px; border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* ================= TOAST NOTIFICATION ================= */
-    #toast-box {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .toast {
-      background: var(--slate-800);
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 8px;
-      box-shadow: var(--shadow-lg);
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      animation: slideIn 0.3s ease;
-      min-width: 250px;
-      border-left: 4px solid var(--primary);
-    }
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-    /* ================= LOGIN ================= */
     #login-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--slate-900);
-      background-image: radial-gradient(circle at center, #334155 0%, #0f172a 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+      position: fixed; inset: 0; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      display: flex; justify-content: center; align-items: center; z-index: 1000;
     }
-
     .login-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 40px;
-      border-radius: 16px;
-      width: 90%;
-      max-width: 380px;
-      text-align: center;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      background: rgba(255,255,255,0.95); padding: 40px; border-radius: 16px; width: 90%; max-width: 380px; text-align: center;
     }
+    .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 8px; }
+    .login-card button { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-    .login-card input {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 15px;
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      transition: 0.3s;
-    }
-    .login-card input:focus { border-color: var(--primary); }
-    
-    .login-card button {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: 0.2s;
-    }
-    .login-card button:hover { background: var(--primary-hover); }
-
-    /* ================= SIDEBAR ================= */
+    /* ================= LAYOUT ================= */
     #dashboard { display: flex; height: 100vh; }
+    aside { width: 270px; background: var(--slate-800); color: #fff; display: flex; flex-direction: column; z-index: 50; }
+    .brand-header { padding: 25px; border-bottom: 1px solid var(--slate-700); }
+    .nav-container { padding: 20px 10px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .nav-item { padding: 12px 20px; border-radius: 8px; cursor: pointer; color: #94a3b8; display: flex; align-items: center; gap: 12px; font-weight: 500; transition: 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .nav-item.active { background: var(--primary); color: #fff; }
+    
+    main { flex: 1; padding: 25px; overflow-y: auto; position: relative; display: flex; flex-direction: column; }
 
-    aside {
-      width: 270px;
-      background: var(--slate-800);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      z-index: 50;
-    }
-
-    .brand-header {
-      padding: 30px;
-      text-align: left;
-      border-bottom: 1px solid var(--slate-700);
-    }
-    .brand-header h1 { margin: 0; font-size: 1.3rem; letter-spacing: -0.5px; }
-    .brand-header span { color: var(--primary); }
-
-    .nav-container { padding: 20px 10px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
-
-    .nav-item {
-      padding: 12px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      color: #94a3b8;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: all 0.2s;
-    }
-    .nav-item:hover { background: var(--slate-700); color: #fff; }
-    .nav-item.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4); }
-
-    /* ================= MAIN AREA ================= */
-    main {
-      flex: 1;
-      padding: 30px;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-    }
-
-    /* Tabs */
-    .status-filter {
-      background: #fff;
-      padding: 6px;
-      border-radius: 12px;
-      box-shadow: var(--shadow-sm);
-      display: inline-flex;
-      border: 1px solid #e2e8f0;
-    }
-    .tab {
-      padding: 8px 24px;
-      border-radius: 8px;
-      cursor: pointer;
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: 0.2s;
-    }
+    /* ================= CONTROLS ================= */
+    .header-bar { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+    
+    .status-filter { background: #fff; padding: 5px; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; }
+    .tab { padding: 8px 20px; border-radius: 8px; cursor: pointer; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
     .tab.active { background: var(--slate-800); color: #fff; }
 
-    /* ================= TABLE DESIGN ================= */
-    .table-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: var(--shadow-md);
-      overflow: hidden;
-      border: 1px solid #e2e8f0;
+    .search-box {
+      flex: 1; position: relative; min-width: 200px;
     }
-    
-    .table-wrapper {
-      max-height: calc(100vh - 200px);
-      overflow-y: auto;
+    .search-box input {
+      width: 100%; padding: 10px 15px 10px 40px; border-radius: 10px; border: 1px solid #e2e8f0; font-family: inherit;
     }
+    .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
 
+    /* ================= TABLE ================= */
+    .table-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #e2e8f0; flex: 1; display: flex; flex-direction: column; }
+    .table-wrapper { overflow-y: auto; flex: 1; }
+    
     table { width: 100%; border-collapse: collapse; min-width: 800px; }
+    thead th { position: sticky; top: 0; background: #f8fafc; padding: 15px 20px; text-align: left; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid #e2e8f0; z-index: 10; }
+    td { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; vertical-align: top; font-size: 0.95rem; }
     
-    thead th {
-      position: sticky;
-      top: 0;
-      background: #f8fafc;
-      padding: 18px 24px;
-      text-align: left;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      border-bottom: 2px solid #e2e8f0;
-      z-index: 10;
-    }
+    .item-list { color: var(--text-main); }
+    .item-row { margin-bottom: 6px; }
+    .qty-badge { background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; margin-left: 5px; color: var(--slate-700); }
 
-    tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
-    tbody tr:hover { background: #f8fafc; }
-    
-    td { padding: 20px 24px; vertical-align: middle; font-size: 0.95rem; }
-
-    /* Items List Styling */
-    .item-list { font-size: 0.9rem; color: var(--text-main); }
-    .item-qty { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; margin-left: 5px; color: var(--text-muted); font-weight: 600; }
-
-    /* Action Buttons */
-    .btn {
-      padding: 10px 18px;
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 0.85rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: transform 0.1s;
-    }
-    .btn:active { transform: scale(0.96); }
-    
+    /* Buttons */
+    .btn { padding: 8px 16px; border: none; border-radius: 6px; color: #fff; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; font-weight: 500; transition: 0.2s; }
+    .btn:hover { opacity: 0.9; }
     .btn-accept { background: #10b981; }
-    .btn-accept:hover { background: #059669; }
-    
     .btn-ready { background: var(--primary); }
-    .btn-ready:hover { background: var(--primary-hover); }
-    
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #cbd5e1;
-      color: var(--text-main);
-    }
+    .btn-outline { background: #fff; border: 1px solid #cbd5e1; color: var(--slate-700); }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; justify-content: center; align-items: center; padding: 0; font-size: 1rem; }
 
-    /* ================= STATS CARDS ================= */
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 24px;
-    }
-    .stat-card {
-      background: #fff;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid #e2e8f0;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .icon-box {
-      width: 54px;
-      height: 54px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-    }
-    .stat-txt h4 { margin: 0 0 5px; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
-    .stat-txt .val { font-size: 1.6rem; font-weight: 700; color: var(--slate-800); }
-
-    /* Specific Card Colors */
-    .c-pending .icon-box { background: var(--warning-bg); color: var(--warning-text); }
-    .c-orders .icon-box { background: var(--info-bg); color: var(--info-text); }
-    .c-revenue .icon-box { background: var(--success-bg); color: var(--success-text); }
-    
-    .total-card {
-      background: linear-gradient(135deg, var(--slate-800) 0%, #0f172a 100%);
-      color: #fff;
-    }
-    .total-card .icon-box { background: rgba(255,255,255,0.1); color: #fff; }
-    .total-card h4 { color: rgba(255,255,255,0.7); }
-    .total-card .val { color: #fff; }
-
-    /* ================= MOBILE ================= */
+    /* Mobile */
     .mobile-list { display: none; }
-    .m-card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 16px;
-      border: 1px solid #e2e8f0;
-    }
-    .m-head { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; }
-    .m-body { margin-bottom: 15px; }
-    .m-name { font-weight: 700; font-size: 1.1rem; color: var(--slate-800); }
-    .m-items { margin: 8px 0; line-height: 1.5; color: var(--text-muted); }
-
-    /* ================= RESPONSIVE ================= */
     @media (max-width: 900px) {
-      body { overflow: auto; }
-      #dashboard { flex-direction: column; height: auto; }
-      
-      aside {
-        width: 100%;
-        position: sticky;
-        top: 0;
-        flex-direction: row;
-        align-items: center;
-        padding: 0 15px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      }
-      .brand-header { display: none; }
-      .nav-container { flex-direction: row; padding: 10px 0; overflow-x: auto; }
-      .nav-item { padding: 8px 12px; white-space: nowrap; font-size: 0.85rem; background: rgba(255,255,255,0.1); }
-      
-      main { padding: 15px; }
+      aside { display: none; }
       table { display: none; }
       .mobile-list { display: block; }
+      .table-card { background: transparent; border: none; box-shadow: none; overflow: visible; }
       
-      .header-bar { flex-direction: column; gap: 15px; align-items: stretch; }
-      .status-filter { display: flex; }
-      .tab { flex: 1; text-align: center; padding: 10px; }
-      
-      .btn { width: 100%; justify-content: center; padding: 12px; }
+      .m-card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+      .m-top { display: flex; justify-content: space-between; font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px; }
+      .m-main { font-weight: 600; font-size: 1.1rem; margin-bottom: 10px; }
+      .m-actions { display: flex; gap: 10px; margin-top: 15px; }
+      .m-actions .btn { flex: 1; justify-content: center; }
     }
 
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-muted);
-    }
-    .empty-state i { font-size: 3rem; margin-bottom: 15px; opacity: 0.3; }
+    /* Toast */
+    #toast-box { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: var(--slate-800); color: #fff; padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); display: flex; gap: 10px; animation: slideIn 0.3s ease; border-left: 4px solid var(--primary); }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
   </style>
 </head>
 
 <body>
 
+<div id="toast-box"></div>
+
 <div id="page-loader">
   <div class="spinner"></div>
-  <p style="margin-top:15px; color:#666; font-size:0.9rem;">Loading Dashboard...</p>
+  <p style="margin-top:15px; color:#666;">Syncing Orders...</p>
 </div>
-
-<div id="toast-box"></div>
 
 <div id="login-overlay">
   <div class="login-card">
     <div style="font-size:3rem; margin-bottom:10px;">🥘</div>
-    <h2 class="brand-font" style="margin-top:0; color:var(--text-main);">Admin Access</h2>
-    <p style="color:var(--text-muted); margin-bottom:25px;">Enter credentials to manage orders</p>
-    
+    <h2 class="brand-font" style="margin-top:0;">Admin Access</h2>
     <input id="adminUser" placeholder="Username">
     <input id="adminPass" type="password" placeholder="Password">
     <button onclick="login()">Sign In</button>
-    <p id="loginError" style="color:#ef4444; margin-top:15px; font-size:0.9rem;"></p>
+    <p id="loginError" style="color:#ef4444; margin-top:15px;"></p>
   </div>
 </div>
 
 <div id="dashboard" class="hidden">
   <aside>
     <div class="brand-header">
-      <h1 class="brand-font">Do Bhai <span>Chaap</span></h1>
-      <small style="color:#94a3b8; letter-spacing:1px; text-transform:uppercase; font-size:0.7rem;">Admin Console</small>
+      <h1 class="brand-font" style="margin:0;">Do Bhai <span>Chaap</span></h1>
     </div>
     <div class="nav-container">
-      <div class="nav-item active" onclick="switchView('orders')">
-        <i class="fas fa-list-ul"></i> Live Orders
-      </div>
-      <div class="nav-item" onclick="switchView('payouts')">
-        <i class="fas fa-chart-pie"></i> Analytics
-      </div>
-      <div class="nav-item" onclick="exportCSV()">
-        <i class="fas fa-download"></i> Export Data
-      </div>
-      <div class="nav-item" onclick="logout()" style="margin-top:auto; color:#f87171;">
-        <i class="fas fa-power-off"></i> Logout
-      </div>
+      <div class="nav-item active" onclick="switchView('orders')"><i class="fas fa-list"></i> Live Orders</div>
+      <div class="nav-item" onclick="switchView('payouts')"><i class="fas fa-chart-pie"></i> Analytics</div>
+      <div class="nav-item" onclick="toggleKitchen()"><i class="fas fa-expand"></i> Kitchen Mode</div>
+      <div class="nav-item" onclick="exportCSV()"><i class="fas fa-file-csv"></i> Export CSV</div>
+      <div class="nav-item" onclick="logout()" style="margin-top:auto; color:#f87171;"><i class="fas fa-power-off"></i> Logout</div>
     </div>
   </aside>
 
   <main>
-    
-    <div id="view-orders" class="view-section">
+    <div id="view-orders">
       <div class="header-bar">
         <div class="status-filter">
           <div class="tab active" onclick="setFilter('Pending')">Pending</div>
           <div class="tab" onclick="setFilter('Accepted')">Kitchen</div>
           <div class="tab" onclick="setFilter('Ready')">History</div>
         </div>
+        
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input id="searchInput" placeholder="Search by name, phone or ID..." onkeyup="renderOrders()">
+        </div>
 
-        <button class="btn btn-outline" onclick="enableBackgroundRinging()">
-          <i class="fas fa-bell"></i> Enable Sound
+        <button class="btn btn-outline" onclick="enableSoundAndNotifications()">
+          <i class="fas fa-volume-up"></i> Enable Sound
         </button>
       </div>
 
       <div class="table-card">
         <div class="table-wrapper">
-          <table>
+          <table id="mainTable">
             <thead>
               <tr>
-                <th width="15%">Time</th>
+                <th width="12%">Time</th>
                 <th width="20%">Customer</th>
-                <th width="40%">Order Details</th>
+                <th width="35%">Items</th>
                 <th width="10%">Total</th>
-                <th width="15%">Actions</th>
+                <th width="23%">Actions</th>
               </tr>
             </thead>
             <tbody id="ordersTable"></tbody>
           </table>
-          <div id="empty-msg" class="empty-state hidden">
-            <i class="fas fa-clipboard-check"></i>
-            <p>No orders found in this category.</p>
+          
+          <div id="empty-msg" style="padding:40px; text-align:center; color:#94a3b8; display:none;">
+            <i class="fas fa-clipboard-check" style="font-size:3rem; margin-bottom:15px; opacity:0.3;"></i>
+            <p>No orders found in this view.</p>
           </div>
         </div>
       </div>
@@ -475,63 +223,43 @@
       <div id="mobileOrders" class="mobile-list"></div>
     </div>
 
-    <div id="view-payouts" class="view-section hidden">
-      <h2 style="margin-bottom:25px;">Business Overview</h2>
-      
-      <div class="stats-container">
-        <div class="stat-card c-pending">
-          <div class="icon-box"><i class="fas fa-clock"></i></div>
-          <div class="stat-txt">
-            <h4>Pending Orders</h4>
-            <div class="val" id="stat-pending">0</div>
-          </div>
+    <div id="view-payouts" class="hidden">
+      <h2>Analytics</h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px;">
+        <div style="background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+          <small style="color:#64748b;">Pending</small>
+          <div style="font-size:2rem; font-weight:700;" id="stat-pending">0</div>
         </div>
-
-        <div class="stat-card c-orders">
-          <div class="icon-box"><i class="fas fa-shopping-bag"></i></div>
-          <div class="stat-txt">
-            <h4>Today's Count</h4>
-            <div class="val" id="stat-orders">0</div>
-          </div>
+        <div style="background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+          <small style="color:#64748b;">Total Orders</small>
+          <div style="font-size:2rem; font-weight:700;" id="stat-orders">0</div>
         </div>
-
-        <div class="stat-card c-revenue">
-          <div class="icon-box"><i class="fas fa-rupee-sign"></i></div>
-          <div class="stat-txt">
-            <h4>Today's Sales</h4>
-            <div class="val" id="stat-today">₹0</div>
-          </div>
-        </div>
-
-        <div class="stat-card total-card">
-          <div class="icon-box"><i class="fas fa-wallet"></i></div>
-          <div class="stat-txt">
-            <h4>Lifetime Revenue</h4>
-            <div class="val" id="pay-total">₹0</div>
-          </div>
+        <div style="background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+          <small style="color:#64748b;">Lifetime Revenue</small>
+          <div style="font-size:2rem; font-weight:700; color:#e91e63;" id="pay-total">₹0</div>
         </div>
       </div>
     </div>
-
   </main>
 </div>
 
 <script>
-// Pre-load the loud alarm sound so it's ready instantly
-const alarmSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-alarmSound.load();
+/* ================= SYSTEM LOGIC ================= */
 
-// UI HELPER: Custom Toast Notification
-function showToast(msg, type='info') {
+// 1. Audio Setup
+const alarmSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+alarmSound.loop = false;
+
+function showToast(msg) {
   const box = document.getElementById('toast-box');
   const div = document.createElement('div');
   div.className = 'toast';
-  div.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i> ${msg}`;
+  div.innerHTML = `<span>🔔</span> ${msg}`;
   box.appendChild(div);
   setTimeout(() => div.remove(), 4000);
 }
 
-/* ================= FIREBASE CONFIG (UNCHANGED) ================= */
+// 2. Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4",
   authDomain: "dobhaichaapwale1.firebaseapp.com",
@@ -540,174 +268,202 @@ const firebaseConfig = {
   messagingSenderId: "141034963645",
   appId: "1:141034963645:web:442a93b6e87643b3bf2dd4"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const messaging = firebase.messaging();
 
-/* ================= LOGIN LOGIC ================= */
+// 3. Login Logic
 const ADMIN_USER = "admin";
 const ADMIN_PASS = "A90Anshu@";
 
 function login() {
-  const btn = document.querySelector('button[onclick="login()"]');
-  btn.innerText = "Checking...";
-  
-  if (adminUser.value === ADMIN_USER && adminPass.value === ADMIN_PASS) {
-    document.getElementById("login-overlay").style.display = "none";
-    
-    // Show loader only AFTER login
-    document.getElementById("page-loader").style.display = "flex";
-    
-    document.getElementById("dashboard").classList.remove("hidden");
+  const u = document.getElementById('adminUser').value;
+  const p = document.getElementById('adminPass').value;
+  if(u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('page-loader').style.display = 'flex';
+    document.getElementById('dashboard').classList.remove('hidden');
     loadOrders();
-    showToast("Welcome back, Admin!");
   } else {
-    loginError.innerText = "Invalid credentials";
-    btn.innerText = "Sign In";
+    document.getElementById('loginError').innerText = "Invalid Credentials";
   }
 }
 
 function logout() { location.reload(); }
 
-/* ================= NAVIGATION ================= */
+// 4. View Switching
 function switchView(v) {
-  // Hide all sections
-  document.getElementById("view-orders").classList.add("hidden");
-  document.getElementById("view-payouts").classList.add("hidden");
+  document.getElementById('view-orders').classList.add('hidden');
+  document.getElementById('view-payouts').classList.add('hidden');
+  document.getElementById('view-' + v).classList.remove('hidden');
   
-  // Show selected
-  document.getElementById("view-" + v).classList.remove("hidden");
-  
-  // Update Tabs
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-  
-  // Highlighting Logic
-  const navs = document.querySelectorAll('.nav-item');
-  if(v === 'orders') navs[0].classList.add('active');
-  if(v === 'payouts') navs[1].classList.add('active');
+  // Highlight Nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
 }
 
-/* ================= ORDERS LOGIC ================= */
+function toggleKitchen() {
+  document.body.classList.toggle('kitchen-mode');
+  showToast(document.body.classList.contains('kitchen-mode') ? "Kitchen Mode ON" : "Kitchen Mode OFF");
+}
+
+// 5. Data Logic
 let ordersData = [];
 let currentFilter = "Pending";
+let isFirstLoad = true;
 
 function loadOrders() {
-  db.collection("orders").orderBy("created", "desc")
-    .onSnapshot(snap => {
-      // Hide loader when data arrives
-      const loader = document.getElementById("page-loader");
-      if(loader) {
-        loader.style.opacity = '0';
-        setTimeout(() => { loader.style.display = 'none'; }, 500);
+  db.collection("orders").orderBy("created", "desc").onSnapshot(snap => {
+      // Hide loader
+      const loader = document.getElementById('page-loader');
+      if(loader) { loader.style.opacity = '0'; setTimeout(()=>loader.style.display='none', 500); }
+
+      const newOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      
+      // CHECK FOR NEW ORDERS (For Sound)
+      if (!isFirstLoad && newOrders.length > ordersData.length) {
+        // Simple check: if we have more orders than before, ring!
+        alarmSound.play().catch(e => console.log("Audio blocked", e));
+        if(navigator.vibrate) navigator.vibrate([500,500,500]);
+        showToast("New Order Received!");
       }
 
-      ordersData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      ordersData = newOrders;
       renderOrders();
       updateStats();
+      isFirstLoad = false;
+    }, err => {
+      console.error("Firestore Error:", err);
+      if(err.message.includes("index")) alert("Admin Warning: Firebase Index missing. Check Console.");
     });
 }
 
 function setFilter(f) {
   currentFilter = f;
-  
-  // Visual Update for Tabs
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  // Find the tab that was clicked (approximate logic)
-  const tabs = document.querySelectorAll('.tab');
-  if(f === 'Pending') tabs[0].classList.add('active');
-  if(f === 'Accepted') tabs[1].classList.add('active');
-  if(f === 'Ready') tabs[2].classList.add('active');
-
+  event.target.classList.add('active');
   renderOrders();
 }
 
 function renderOrders() {
-  const filtered = currentFilter === "Ready"
-    ? ordersData.filter(o => o.status === "Ready" || o.status === "Completed")
-    : ordersData.filter(o => (o.status || "Pending") === currentFilter);
+  const searchVal = document.getElementById('searchInput').value.toLowerCase();
+  
+  let filtered = ordersData.filter(o => {
+    // 1. Status Filter
+    const statusMatch = currentFilter === "Ready" 
+      ? (o.status === "Ready" || o.status === "Completed")
+      : (o.status || "Pending") === currentFilter;
+    
+    // 2. Search Filter
+    const searchMatch = !searchVal || 
+      o.name.toLowerCase().includes(searchVal) || 
+      o.mobile.includes(searchVal) || 
+      o.id.includes(searchVal);
 
-  ordersTable.innerHTML = "";
-  mobileOrders.innerHTML = "";
+    return statusMatch && searchMatch;
+  });
 
-  // Handle Empty State
-  if (filtered.length === 0) {
-    document.getElementById("empty-msg").classList.remove("hidden");
+  const tableBody = document.getElementById('ordersTable');
+  const mobileList = document.getElementById('mobileOrders');
+  
+  tableBody.innerHTML = "";
+  mobileList.innerHTML = "";
+
+  if(filtered.length === 0) {
+    document.getElementById('empty-msg').style.display = 'block';
   } else {
-    document.getElementById("empty-msg").classList.add("hidden");
+    document.getElementById('empty-msg').style.display = 'none';
   }
 
   filtered.forEach(o => {
-    const time = o.created?.toDate ? o.created.toDate().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}) : "--:--";
+    const time = o.created?.toDate ? o.created.toDate().toLocaleTimeString("en-IN",{hour:'2-digit',minute:'2-digit'}) : "Just now";
     
-    // Formatting Items nicely
-    const items = (o.items || []).map(i => 
-      `<div>${i.name} <span class="item-qty">x${i.qty}</span></div>`
+    // Format Items
+    const itemsHtml = (o.items || []).map(i => 
+      `<div class="item-row">${i.name} <span class="qty-badge">x${i.qty}</span></div>`
     ).join("");
 
-    let btn = "";
-    if ((o.status || "Pending") === "Pending")
-      btn = `<button class="btn btn-accept" onclick="updateStatus('${o.id}','Accepted')"><i class="fas fa-check"></i> Accept</button>`;
-    else if (o.status === "Accepted")
-      btn = `<button class="btn btn-ready" onclick="updateStatus('${o.id}','Ready')"><i class="fas fa-bell"></i> Notify Ready</button>`;
-    else 
-      btn = `<span style="color:#10b981; font-weight:600;"><i class="fas fa-check-double"></i> Completed</span>`;
+    // Buttons
+    let btns = "";
+    if((o.status || "Pending") === "Pending") {
+      btns = `<button class="btn btn-accept" onclick="updateStatus('${o.id}', 'Accepted')"><i class="fas fa-check"></i> Accept</button>
+              <button class="btn btn-outline btn-icon" onclick="printKOT('${o.id}')" title="Print KOT"><i class="fas fa-print"></i></button>`;
+    } else if (o.status === "Accepted") {
+      btns = `<button class="btn btn-ready" onclick="updateStatus('${o.id}', 'Ready')"><i class="fas fa-bell"></i> Ready</button>
+              <button class="btn btn-outline btn-icon" onclick="printKOT('${o.id}')"><i class="fas fa-print"></i></button>`;
+    } else {
+      btns = `<span style="color:#10b981; font-weight:600;">Completed</span>`;
+    }
 
     // Desktop Row
-    ordersTable.innerHTML += `
+    tableBody.innerHTML += `
       <tr>
-        <td style="color:var(--text-muted); font-weight:500;">${time}</td>
+        <td style="color:#64748b;">${time}</td>
         <td>
-          <div style="font-weight:600; color:var(--text-main);">${o.name}</div>
-          <div style="font-size:0.85rem; color:var(--text-muted);">${o.mobile}</div>
+          <div style="font-weight:600;">${o.name}</div>
+          <div style="font-size:0.85rem; color:#64748b;">${o.mobile}</div>
         </td>
-        <td class="item-list">${items}</td>
-        <td style="font-weight:700; color:var(--primary);">₹${o.total}</td>
-        <td>${btn}</td>
-      </tr>`;
+        <td class="item-list">${itemsHtml}</td>
+        <td style="font-weight:700; color:#e91e63;">₹${o.total}</td>
+        <td style="display:flex; gap:8px;">${btns}</td>
+      </tr>
+    `;
 
     // Mobile Card
     mobileOrders.innerHTML += `
       <div class="m-card">
-        <div class="m-head">
-          <span>#${o.id.slice(-4)}</span>
-          <span>${time}</span>
-        </div>
-        <div class="m-body">
-          <div class="m-name">${o.name}</div>
-          <div style="font-size:0.9rem; color:#64748b;">${o.mobile}</div>
-          <div class="m-items">${items}</div>
-          <div style="font-weight:700; color:var(--primary); margin-top:10px;">Total: ₹${o.total}</div>
-        </div>
-        <div style="display:flex;">${btn.replace('width:100%','flex:1')}</div>
-      </div>`;
+        <div class="m-top"><span>#${o.id.slice(-4)}</span> <span>${time}</span></div>
+        <div class="m-main">${o.name} <span style="font-weight:400; color:#64748b;">(${o.mobile})</span></div>
+        <div class="item-list" style="margin-bottom:10px;">${itemsHtml}</div>
+        <div style="font-weight:700; color:#e91e63;">Total: ₹${o.total}</div>
+        <div class="m-actions">${btns}</div>
+      </div>
+    `;
   });
 }
 
 function updateStatus(id, status) {
-  // Optimistic UI update handled by Snapshot, but we show a toast
-  db.collection("orders").doc(id).update({ status })
-    .then(() => showToast(`Order marked as ${status}`));
+  db.collection("orders").doc(id).update({ status: status });
+  showToast(`Order marked as ${status}`);
 }
 
-/* ================= STATS LOGIC ================= */
 function updateStats() {
-  document.getElementById("stat-pending").innerText =
-    ordersData.filter(o => (o.status || "Pending") === "Pending").length;
-
+  document.getElementById("stat-pending").innerText = ordersData.filter(o => (o.status || "Pending") === "Pending").length;
   document.getElementById("stat-orders").innerText = ordersData.length;
-
-  const today = new Date().toDateString();
-  const todayRevenue = ordersData.filter(o =>
-    o.created?.toDate && o.created.toDate().toDateString() === today
-  ).reduce((a,b)=>a+Number(b.total||0),0);
-
-  document.getElementById("stat-today").innerText = "₹" + todayRevenue;
-  document.getElementById("pay-total").innerText =
-    "₹" + ordersData.reduce((a,b)=>a+Number(b.total||0),0);
+  const total = ordersData.reduce((acc, curr) => acc + Number(curr.total || 0), 0);
+  document.getElementById("pay-total").innerText = "₹" + total;
 }
 
-/* ================= CSV EXPORT ================= */
+// 6. Thermal Print Function (KOT)
+function printKOT(id) {
+  const order = ordersData.find(o => o.id === id);
+  if(!order) return;
+
+  const w = window.open('', '', 'width=300,height=600');
+  const items = (order.items || []).map(i => `
+    <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-weight:600;">
+      <span>${i.name}</span> <span>x${i.qty}</span>
+    </div>`).join('');
+
+  w.document.write(`
+    <html>
+      <body style="font-family:monospace; width:280px; padding:10px;">
+        <h3 style="text-align:center; margin:0;">KITCHEN TICKET</h3>
+        <p style="text-align:center; margin:5px 0;">#${order.id.slice(-4)}</p>
+        <hr style="border-top:1px dashed #000;">
+        <p><strong>Cust:</strong> ${order.name}</p>
+        <hr style="border-top:1px dashed #000;">
+        ${items}
+        <hr style="border-top:1px dashed #000;">
+        <p style="text-align:right;">Total: ₹${order.total}</p>
+      </body>
+    </html>
+  `);
+  w.document.close();
+  setTimeout(() => { w.print(); w.close(); }, 500);
+}
+
+// 7. RESTORED: Export CSV Function
 function exportCSV() {
   let csv = "Name,Mobile,Total,Status\n";
   ordersData.forEach(o => {
@@ -715,49 +471,44 @@ function exportCSV() {
   });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([csv]));
-  a.download = "DoBhai_Orders.csv";
+  a.download = "orders.csv";
   a.click();
 }
 
-/* ================= NOTIFICATIONS & LOUD ALARM ================= */
+// 8. RESTORED: Notifications + Audio
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/firebase-messaging-sw.js")
     .then(reg => messaging.useServiceWorker(reg));
 }
 
-function enableBackgroundRinging() {
+function enableSoundAndNotifications() {
+  // A. Unlock Audio
+  alarmSound.play().then(() => {
+    alarmSound.pause();
+    alarmSound.currentTime = 0;
+  }).catch(e => console.log("Audio unlock failed", e));
+
+  // B. Register Token (Backend requirement)
   Notification.requestPermission().then(p => {
     if (p !== "granted") {
-      showToast("Permission denied for notifications", "error");
+      alert("Please allow notifications");
       return;
     }
-    
-    // TRICK: Play and pause immediately to unlock audio on iOS/Android
-    alarmSound.play().then(() => {
-      alarmSound.pause();
-      alarmSound.currentTime = 0;
-    }).catch(e => console.log("Audio unlock failed (user interaction needed)", e));
-
     messaging.getToken().then(token => {
       if (!token) return;
+      // This line is CRITICAL for backend to know who to ring
       db.collection("adminTokens").doc(token).set({ created: new Date() });
-      showToast("🔔 Loud order ringing enabled");
+      showToast("🔔 Sound & Notifications Enabled");
     });
   });
 }
 
 messaging.onMessage(() => {
-  // 1. Play Loud Sound
   alarmSound.currentTime = 0;
-  alarmSound.play().catch(e => console.log("Sound play failed", e));
-  
-  // 2. Vibrate Phone
+  alarmSound.play();
   if (navigator.vibrate) navigator.vibrate([500,500,500,500]);
-  
-  // 3. Show Visual Toast
   showToast("🔔 New Order Received!");
 });
 </script>
-
 </body>
 </html>
