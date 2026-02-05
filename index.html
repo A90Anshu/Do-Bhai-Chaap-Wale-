@@ -3,383 +3,158 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <meta name="description" content="Order authentic Chaap from Do Bhai Chaap Wale, Nangloi.">
-  <meta name="theme-color" content="#e91e63">
-  
-  <title>Do Bhai Chaap Wale | Order Online</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#ff5252">
+  <title>Order Online | Do Bhai Chaap Wale</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   
   <style>
-    /* --- CSS VARIABLES --- */
-    :root {
-      --primary: #e91e63;
-      --primary-dark: #c2185b;
-      --bg: #f4f6f8;
-      --card-bg: #ffffff;
-      --text-main: #2d3436;
-      --text-light: #636e72;
-      --border: #dfe6e9;
-      --shadow: 0 4px 12px rgba(0,0,0,0.08);
-      --radius: 12px;
-      --success: #2ecc71;
-    }
-
-    * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+    /* VARIABLES */
+    :root { --primary:#ff5252; --primary-soft:#ffebee; --bg:#f4f6f8; --text:#1c1c1c; --gray:#696969; --success:#26a541; --radius:12px; }
+    * { box-sizing:border-box; outline:none; -webkit-tap-highlight-color:transparent; }
+    body { margin:0; font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); padding-bottom:100px; }
     
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: var(--bg);
-      color: var(--text-main);
-      padding-bottom: 100px; /* Space for bottom nav/cart */
-    }
+    /* HEADER */
+    header { background:#fff; padding:15px; position:sticky; top:0; z-index:99; box-shadow:0 2px 10px rgba(0,0,0,0.03); }
+    .top-bar { display:flex; justify-content:space-between; align-items:center; }
+    .brand h1 { margin:0; font-size:1.1rem; color:var(--primary); font-weight:800; }
+    .status { background:var(--bg); padding:5px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; }
+    .status.active { background:#e8f5e9; color:var(--success); }
 
-    /* --- HEADER --- */
-    header {
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
-      color: #fff;
-      padding: 20px 20px 50px; /* Increased bottom padding for overlap */
-      border-bottom-left-radius: 25px;
-      border-bottom-right-radius: 25px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      position: relative;
-      z-index: 10; /* Lower than tabs */
-    }
+    /* MENU */
+    .cat-scroll { display:flex; gap:10px; overflow-x:auto; padding:10px 15px; background:#fff; border-bottom:1px solid #eee; }
+    .cat-chip { white-space:nowrap; padding:8px 16px; background:#f9f9f9; border:1px solid #eee; border-radius:50px; font-weight:600; font-size:0.85rem; color:var(--gray); transition:0.2s; cursor:pointer; }
+    .cat-chip.active { background:var(--primary); color:#fff; border-color:var(--primary); }
     
-    .header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    header h1 { margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-    .tagline { margin: 5px 0 0; opacity: 0.8; font-size: 0.8rem; }
+    .menu-grid { padding:15px; display:grid; gap:15px; }
+    .menu-card { background:#fff; padding:15px; border-radius:var(--radius); box-shadow:0 2px 8px rgba(0,0,0,0.04); position:relative; }
+    .bestseller-tag { position:absolute; top:-8px; left:-8px; background:#f59e0b; color:#fff; font-size:0.6rem; padding:4px 8px; border-radius:4px; font-weight:800; text-transform:uppercase; z-index:10; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
     
-    /* Login Status Badge */
-    .status-badge {
-        font-size: 0.75rem; background: rgba(255,255,255,0.1); 
-        padding: 4px 10px; border-radius: 20px; color: #ccc;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-    .status-badge.active { color: #2ecc71; background: rgba(46, 204, 113, 0.15); border-color: rgba(46, 204, 113, 0.3); }
-
-    /* --- NAVIGATION TABS (FIXED VISIBILITY) --- */
-    .nav-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: -30px; /* Pulls tabs up into header */
-      margin-bottom: 25px;
-      padding: 0 10px;
-      overflow-x: auto;
-      
-      /* KEY FIXES HERE: */
-      position: sticky; /* Stays visible when scrolling */
-      top: 10px;        /* Distance from top when sticking */
-      z-index: 100;     /* Force tabs ON TOP of header */
-    }
+    .item-top { display:flex; justify-content:space-between; align-items:flex-start; }
+    .item-name { font-weight:700; font-size:1rem; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+    .veg-dot { width:12px; height:12px; border:1px solid var(--success); padding:2px; display:inline-block; border-radius:2px; }
+    .veg-dot div { width:6px; height:6px; background:var(--success); border-radius:50%; }
     
-    .nav-btn {
-      background: #fff;
-      color: var(--text-light);
-      border: none;
-      padding: 12px 18px;
-      border-radius: 30px;
-      font-weight: 600;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      font-size: 0.85rem;
-      flex: 1;
-      min-width: 80px;
-      transition: all 0.3s;
-      white-space: nowrap;
-      cursor: pointer;
-    }
+    .btn-add { background:#fff; color:var(--success); border:1px solid #eee; padding:8px 25px; border-radius:8px; font-weight:800; font-size:0.9rem; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
     
-    .nav-btn.active {
-      background: var(--primary);
-      color: #fff;
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(233, 30, 99, 0.4);
-    }
+    /* VARIANT MODAL */
+    #variant-modal { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; display:none; justify-content:center; align-items:center; }
+    .v-card { background:#fff; width:90%; max-width:350px; border-radius:16px; padding:20px; animation:popIn 0.2s; }
+    @keyframes popIn { from{transform:scale(0.9)} to{transform:scale(1)} }
+    .v-opt { display:flex; justify-content:space-between; padding:12px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer; font-weight:600; }
+    .v-opt:hover { border-color:var(--primary); background:var(--primary-soft); color:var(--primary); }
 
-    /* --- SECTIONS --- */
-    section {
-      max-width: 800px;
-      margin: 0 auto 30px;
-      padding: 0 15px;
-      display: none;
-      /* Add padding so content doesn't get hidden behind sticky tabs */
-      scroll-margin-top: 80px; 
-    }
-    section.active-section { display: block; animation: fadeIn 0.4s ease; }
-
-    h2 {
-      font-size: 1.3rem;
-      border-left: 5px solid var(--primary);
-      padding-left: 15px;
-      margin: 10px 0 20px; /* Adjusted spacing */
-      color: var(--text-main);
-    }
-
-    /* --- MENU GRID --- */
-    .menu-grid {
-      display: grid;
-      gap: 15px;
-      grid-template-columns: 1fr;
-    }
-    @media(min-width: 600px) { .menu-grid { grid-template-columns: 1fr 1fr; } }
+    /* CART & BOTTOM NAV */
+    .fab-cart { position:fixed; bottom:90px; left:15px; right:15px; background:#111; color:#fff; padding:16px; border-radius:12px; display:none; justify-content:space-between; align-items:center; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:800; }
+    .bottom-nav { position:fixed; bottom:0; width:100%; background:#fff; display:flex; justify-content:space-around; padding:12px 0; box-shadow:0 -5px 20px rgba(0,0,0,0.05); z-index:900; }
+    .nav-icon { text-align:center; color:#ccc; font-size:0.75rem; font-weight:600; }
+    .nav-icon.active { color:var(--primary); } .nav-icon i { display:block; font-size:1.4rem; margin-bottom:4px; }
     
-    .menu-item {
-      background: var(--card-bg);
-      padding: 15px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      border: 1px solid rgba(0,0,0,0.03);
-    }
+    /* UTILS */
+    .hidden { display:none !important; }
+    section { display:none; animation:fadeIn 0.3s; } section.active { display:block; } @keyframes fadeIn { from{opacity:0}to{opacity:1} }
+    #toast { visibility:hidden; min-width:250px; background:#333; color:#fff; text-align:center; border-radius:50px; padding:12px; position:fixed; z-index:2000; left:50%; bottom:100px; transform:translateX(-50%); }
+    #toast.show { visibility:visible; animation:fadein 0.5s, fadeout 0.5s 2.5s; } @keyframes fadein { from{bottom:80px; opacity:0;} to{bottom:100px; opacity:1;} } @keyframes fadeout { from{bottom:100px; opacity:1;} to{bottom:80px; opacity:0;} }
     
-    .menu-item-header {
-      display: flex; justify-content: space-between; margin-bottom: 10px;
-    }
-    .item-name { font-weight: 600; font-size: 1rem; }
-    .item-price { color: var(--primary); font-weight: 700; }
-    
-    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    /* --- BUTTONS --- */
-    .btn-primary {
-      background: var(--primary);
-      color: #fff; border: none; padding: 12px 20px;
-      border-radius: 50px; font-weight: 600; cursor: pointer;
-      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
-      transition: transform 0.2s;
-    }
-    .btn-primary:active { transform: scale(0.97); }
-    .btn-primary:disabled { background: #ccc; cursor: wait; box-shadow: none; transform: none; }
-    
-    .btn-small { padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; flex:1; white-space: nowrap; }
-    .btn-logout { background: #333; margin-top: 15px; width: 100%; }
-
-    /* --- FORMS & INPUTS --- */
-    input, textarea {
-      width: 100%; padding: 14px; margin-bottom: 15px;
-      border: 1px solid var(--border); border-radius: 8px;
-      font-family: inherit; font-size: 1rem;
-      background: #fafafa;
-    }
-    input:focus, textarea:focus { background: #fff; border-color: var(--primary); }
-    
-    /* --- DELIVERY TOGGLE --- */
-    .order-type-switch {
-        display: flex; gap: 10px; margin-bottom: 25px;
-    }
-    .type-option {
-        flex: 1; text-align: center; padding: 14px;
-        border: 2px solid #eee; border-radius: 12px;
-        cursor: pointer; font-weight: 600; color: #777;
-        background: #fff; transition: all 0.2s;
-    }
-    .type-option.selected {
-        border-color: var(--primary); color: var(--primary);
-        background: #fff0f5; box-shadow: 0 2px 8px rgba(233, 30, 99, 0.1);
-    }
-    
-    /* --- MY ORDERS HISTORY --- */
-    .order-card {
-      background: #fff;
-      border-radius: var(--radius);
-      padding: 15px;
-      margin-bottom: 15px;
-      border-left: 5px solid #ccc;
-      box-shadow: var(--shadow);
-    }
-    .order-card.status-paid { border-left-color: var(--success); }
-    .order-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #777; margin-bottom: 8px; }
-    .order-items { font-size: 0.95rem; font-weight: 500; margin-bottom: 8px; line-height: 1.5; }
-    .order-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 8px; }
-    .order-total { font-weight: 700; color: var(--primary); }
-
-    /* --- CART FLOATING BTN --- */
-    .fab-cart {
-      position: fixed; bottom: 25px; right: 25px;
-      background: #1a1a1a; color: #fff;
-      padding: 15px 25px; border-radius: 50px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-      font-weight: 600; border: none; cursor: pointer;
-      display: none; z-index: 1000;
-      font-size: 1rem;
-    }
-
-    /* --- ANIMATIONS & UTILS --- */
-    .hidden { display: none !important; }
-    .loader { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid #fff; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
-    .loader-dark { border-top-color: var(--primary); }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
-    /* Success Checkmark */
-    .success-animation { margin: 20px auto; }
-    .checkmark { width: 56px; height: 56px; border-radius: 50%; display: block; stroke-width: 2; stroke: #fff; stroke-miterlimit: 10; box-shadow: inset 0px 0px 0px var(--success); animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; }
-    .checkmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--success); fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
-    .checkmark__check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
-    @keyframes stroke { 100% { stroke-dashoffset: 0; } }
-    @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
-    @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 30px var(--success); } }
-
-    /* Toast */
-    #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 2000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; }
-    #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-
+    /* FORM & CART STYLES */
+    .cart-box { background:#fff; padding:20px; border-radius:12px; margin:15px; }
+    input, textarea { width:100%; padding:14px; background:#f9f9f9; border:1px solid #eee; border-radius:10px; margin-bottom:12px; font-family:inherit; }
+    .btn-primary { width:100%; padding:15px; background:var(--primary); color:#fff; border:none; border-radius:10px; font-weight:700; font-size:1rem; }
+    .type-opt { flex:1; text-align:center; padding:10px; background:#fff; border-radius:8px; font-weight:600; color:#999; }
+    .type-opt.selected { background:#fff; color:var(--primary); box-shadow:0 2px 5px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="header-content">
-    <div>
-      <h1>Do Bhai Chaap Wale</h1>
-      <p class="tagline">Nangloi's Authentic Taste</p>
-    </div>
-    <div id="header-status" class="status-badge">Guest</div>
+  <div class="top-bar">
+    <div class="brand"><h1>Do Bhai Chaap</h1><small id="shop-addr-short" style="color:#777">Pure Veg • Nangloi</small></div>
+    <div id="user-status" class="status">Guest</div>
   </div>
 </header>
 
-<div class="nav-tabs">
-  <button class="nav-btn active" onclick="switchTab('menu')">Menu</button>
-  <button class="nav-btn" onclick="switchTab('cart')">Cart</button>
-  <button class="nav-btn" onclick="switchTab('orders')">History</button>
-  <button class="nav-btn" onclick="switchTab('profile')">Profile</button>
+<section id="menu-view" class="active">
+  
+  <div style="padding:15px; background:#fff;">
+    <input type="text" id="search" placeholder="Search for Chaap, Rolls..." style="width:100%; padding:12px; border-radius:50px; border:1px solid #eee; background:#f9f9f9;" onkeyup="filterMenu()">
+  </div>
+
+  <div id="cat-scroll" class="cat-scroll">
+      </div>
+
+  <div id="menu-list" class="menu-grid">
+    <div style="text-align:center; padding:40px; color:#999;">Loading Menu...</div>
+  </div>
+  
+  <div style="margin:20px 15px; padding:20px; background:#fff; border-radius:12px; text-align:center;">
+      <h3 style="margin-top:0;">📍 Visit Us</h3>
+      <p id="footer-addr" style="color:#666; font-size:0.9rem;">Loading address...</p>
+      <a id="footer-map" href="#" target="_blank" style="color:var(--primary); font-weight:700; text-decoration:none;">Open in Google Maps</a>
+  </div>
+</section>
+
+<div id="variant-modal" onclick="if(event.target===this) this.style.display='none'">
+    <div class="v-card">
+        <h3 id="v-title" style="margin-top:0;">Select Size</h3>
+        <div id="v-options"></div>
+        <button onclick="document.getElementById('variant-modal').style.display='none'" style="width:100%; padding:10px; border:none; background:#eee; border-radius:8px; margin-top:10px;">Cancel</button>
+    </div>
 </div>
 
-<section id="menu-section" class="active-section">
-  <h2>🔥 Our Menu</h2>
-  <div id="menu-list" class="menu-grid"></div>
+<section id="cart-view">
+  <div class="cart-box">
+    <h2 style="margin-top:0;">Your Cart</h2>
+    <div id="cart-list"><p style="color:#999; text-align:center;">Empty Cart</p></div>
+    <div style="display:flex; justify-content:space-between; margin-top:15px; border-top:1px dashed #eee; padding-top:15px;">
+       <span>Total</span><span id="cart-total-display" style="font-weight:800;">₹0</span>
+    </div>
+  </div>
+
+  <div id="checkout-form" class="cart-box">
+    <div style="display:flex; background:#f0f0f0; padding:4px; border-radius:10px; margin-bottom:20px;">
+        <div class="type-opt selected" id="opt-del" onclick="setType('Delivery')">Delivery</div>
+        <div class="type-opt" id="opt-take" onclick="setType('Takeaway')">Takeaway</div>
+    </div>
+    <input id="c-name" placeholder="Name">
+    <input id="c-phone" type="tel" placeholder="Mobile">
+    <textarea id="c-addr" placeholder="Address"></textarea>
+    <button onclick="checkout()" id="btn-pay" class="btn-primary">Place Order</button>
+  </div>
   
-  <div style="text-align:center; margin-top:30px; padding:20px; background:#fff; border-radius:12px; box-shadow:var(--shadow);">
-    <h3 style="margin-top:0;">📍 Visit Us</h3>
-    <p style="color:#666; font-size:0.9rem;">
-      Do Bhai Chaap Wale<br>
-      Main Nilothi More Opp. Ishwar Vatika Nangloi
-    </p>
-    <a href="https://maps.app.goo.gl/NnETdmvhN1QpydjaA" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:none;">Open in Google Maps</a>
+  <div id="success-msg" class="cart-box hidden" style="text-align:center;">
+    <h2 style="color:var(--success)">Order Placed!</h2>
+    <p>Please send order to WhatsApp.</p>
+    <button id="wa-btn" class="btn-primary" style="background:#25D366">WhatsApp</button>
   </div>
 </section>
 
-
-<section id="cart-section">
-  <h2>🛒 Your Cart</h2>
-  
-  <div id="cart-items" style="background:#fff; padding:15px; border-radius:12px; margin-bottom:20px;">
-    <p style="text-align:center; color:#999;">Your cart is empty.</p>
-  </div>
-  
-  <div style="text-align:right; font-size:1.4rem; font-weight:700; margin-bottom:20px;">
-    Total: <span id="cart-total">₹0</span>
-  </div>
-
-  <div id="checkout-form">
-    <h3>📝 Order Details</h3>
-    
-    <div class="order-type-switch">
-        <div class="type-option selected" id="opt-delivery" onclick="setOrderType('Delivery')">
-            🛵 Delivery
-        </div>
-        <div class="type-option" id="opt-takeaway" onclick="setOrderType('Takeaway')">
-            🥡 Takeaway
-        </div>
-    </div>
-
-    <input type="text" id="cust-name" placeholder="Full Name (Required)">
-    <input type="tel" id="cust-mobile" placeholder="Mobile Number (Required)" maxlength="10">
-    <textarea id="cust-address" rows="3" placeholder="Full Address (House No, Street, Landmark)"></textarea>
-    <button type="button" onclick="geoLocate()" id="btn-location" 
-        style="background:#27ae60; color:white; border:none; padding:8px 15px; border-radius:6px; font-size:0.85rem; cursor:pointer; margin-bottom:15px; display:flex; align-items:center; gap:5px;">
-  <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
-  Auto-Detect My Location
-</button>
-
-    <button onclick="handleCheckout()" id="btn-checkout" class="btn-primary" style="width:100%; font-size:1.1rem; padding:15px;">
-      Proceed to Pay
-    </button>
-    
-    <p style="text-align:center; font-size:0.8rem; color:#888; margin-top:15px;">
-      * Guest checkout available. Login in Profile tab to save details.
-    </p>
-  </div>
-
-  <div id="success-box" class="hidden" style="text-align:center; background:#fff; padding:30px; border-radius:12px; margin-top:20px; border:1px solid #eee;">
-    <div class="success-animation">
-      <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-      </svg>
-    </div>
-    <h3 style="color:#2ecc71; margin:10px 0;">Order Placed!</h3>
-    <p>Please confirm your order on WhatsApp.</p>
-    <button id="waBtn" class="btn-primary" style="background:#25D366; width:100%;">
-      📲 Send to WhatsApp
-    </button>
-  </div>
-</section>
-
-
-<section id="profile-section">
-  <h2>👤 My Profile</h2>
-  
-  <div id="profile-logged-out">
-    <p style="margin-bottom:20px; color:#666;">Login to save your address and view order history.</p>
-    
-    <div style="background:#fff; padding:20px; border-radius:12px; box-shadow:var(--shadow);">
-        <label style="font-weight:600;">Mobile Login</label>
-        <input type="tel" id="login-phone" placeholder="Enter 10-digit number" maxlength="10" style="margin-top:10px;">
-        <div id="recaptcha-container"></div>
-        
-        <button onclick="sendOTP()" id="btn-send-otp" class="btn-primary" style="width:100%">Send OTP</button>
-
-        <div id="otp-box" class="hidden" style="margin-top:15px;">
-            <input type="text" id="otp-code" placeholder="Enter 6-digit OTP">
-            <button onclick="verifyOTP()" id="btn-verify-otp" class="btn-primary" style="width:100%">Verify OTP</button>
+<section id="orders-view"><div class="cart-box"><h2>History</h2><div id="history-list">Login to view history</div></div></section>
+<section id="profile-view"><div class="cart-box">
+    <h2>Profile</h2>
+    <div id="login-box">
+        <input id="l-phone" placeholder="Mobile Number"><div id="recaptcha"></div>
+        <button onclick="sendOTP()" class="btn-primary">Login</button>
+        <div id="otp-area" class="hidden" style="margin-top:10px;">
+            <input id="l-otp" placeholder="OTP">
+            <button onclick="verifyOTP()" class="btn-primary">Verify</button>
         </div>
     </div>
-  </div>
-
-  <div id="profile-logged-in" class="hidden">
-    <div style="background:#fff; padding:20px; border-radius:12px; box-shadow:var(--shadow);">
-        <h3 style="margin-top:0;">Edit Default Details</h3>
-        <p style="font-size:0.85rem; color:#888;">These details will autofill when you order.</p>
-        
-        <label>Your Name</label>
-        <input type="text" id="profile-name">
-        
-        <label>Mobile Number</label>
-        <input type="text" id="profile-mobile" readonly style="background:#eee; color:#777;">
-        
-        <label>Default Address</label>
-        <textarea id="profile-address" rows="3"></textarea>
-        
-        <button onclick="saveUserProfile()" id="btn-save-profile" class="btn-primary" style="width:100%">Save Details</button>
-        <button onclick="logout()" class="btn-primary btn-logout">Logout</button>
+    <div id="user-box" class="hidden">
+        <p>Logged in as <b id="u-mobile"></b></p>
+        <button onclick="logout()" class="btn-primary" style="background:#333">Logout</button>
     </div>
-  </div>
-</section>
+</div></section>
 
+<div id="fab-cart" class="fab-cart" onclick="nav('cart')">
+  <div><span id="fab-count">0 ITEMS</span> | <span id="fab-total">₹0</span></div>
+  <div>View Cart <i class="fas fa-arrow-right"></i></div>
+</div>
 
-<section id="orders-section">
-  <h2>📜 Order History</h2>
-  <div id="orders-list">
-    </div>
-</section>
-
-
-<button id="fab-cart" class="fab-cart" onclick="switchTab('cart')">
-  View Cart (<span id="fab-count">0</span>)
-</button>
+<div class="bottom-nav">
+  <div class="nav-icon active" onclick="nav('menu')"><i class="fas fa-utensils"></i><br>Menu</div>
+  <div class="nav-icon" onclick="nav('orders')"><i class="fas fa-receipt"></i><br>Orders</div>
+  <div class="nav-icon" onclick="nav('profile')"><i class="fas fa-user"></i><br>Profile</div>
+</div>
 
 <div id="toast"></div>
 
@@ -390,502 +165,212 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
-  // ================= CONFIGURATION =================
-  const firebaseConfig = {
-    apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4", 
-    authDomain: "dobhaichaapwale1.firebaseapp.com",
-    projectId: "dobhaichaapwale1",
-    storageBucket: "dobhaichaapwale1.firebasestorage.app",
-    messagingSenderId: "141034963645",
-    appId: "1:141034963645:web:442a93b6e87643b3bf2dd4"
-  };
-  
-  const RAZORPAY_KEY = "rzp_live_IAwVGH2rtMwKWw"; 
+const firebaseConfig = { apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4", authDomain: "dobhaichaapwale1.firebaseapp.com", projectId: "dobhaichaapwale1", storageBucket: "dobhaichaapwale1.firebasestorage.app", messagingSenderId: "141034963645", appId: "1:141034963645:web:442a93b6e87643b3bf2dd4" };
+const RAZORPAY_KEY = "rzp_live_IAwVGH2rtMwKWw";
 
-  // --- MENU DATA ---
-  const menuItems = [
-    { name: "Malai Chaap", variants: [{l:"Half", p:130}, {l:"Full", p:190}] },
-    { name: "Extra Malai Chaap", variants: [{l:"Half", p:150}, {l:"Full", p:210}] },
-    { name: "Masala Chaap", variants: [{l:"Half", p:130}, {l:"Full", p:190}] },
-    { name: "Tandoori Chaap", variants: [{l:"Half", p:130}, {l:"Full", p:190}] },
-    { name: "Achari Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
-    { name: "Spl. Afghani Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
-    { name: "Lemon Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
-    { name: "Hariyali Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
-    { name: "Pudina Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
-    { name: "Malai Tikka Chaap", variants: [{l:"Half", p:150}, {l:"Full", p:210}] },
-    { name: "Stuff Chaap", variants: [{l:"Half", p:160}, {l:"Full", p:220}] },
-    { name: "Garlic Chaap", variants: [{l:"Half", p:160}, {l:"Full", p:220}] },
-    { name: "Tawa Chaap", variants: [{l:"Half", p:160}, {l:"Full", p:220}] },
-    { name: "Veg Tandoori Butter Leg Piece", variants: [{l:"Half", p:130}, {l:"Full", p:190}] },
-    { name: "Plain Roti", price: 6 },
-    { name: "Butter Roti", price: 7 },
-    { name: "Tawa Roti", price: 6 },
-    { name: "Tawa Butter Roti", price: 7 },
-    { name: "Rumali Roti", price: 8 },
-    { name: "Missi Roti", price: 25 },
-    { name: "Laccha Parantha", price: 25 },
-    { name: "Stuff Naan", price: 35 },
-    { name: "Plain Naan", price: 25 },
-    { name: "Butter Naan", price: 30 },
-    { name: "Creamy Onion", price: 20 },
-    { name: "Sample", price: 1 },
-    { name: "2pcs Chaap + 2 Butter Roti", price: 120 },
-    { name: "Malai Chaap Roll", variants: [{l:"4pcs", p:110}, {l:"6pcs", p:170}] },
-    { name: "Masala Chaap Roll", variants: [{l:"4pcs", p:110}, {l:"6pcs", p:170}] },
-    { name: "Tandoori Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:170}] },
-    { name: "Afgani Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:170}] },
-    { name: "Achari Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:170}] },
-    { name: "Lemon Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] },
-    { name: "Hariyali Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] },
-    { name: "Pudina Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] },
-    { name: "Garlic Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] },
-    { name: "Stuff Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] }
-  ];
+let db, auth, menu=[], cart=[], user=null, orderType="Delivery", confirmRes=null;
 
-  // ================= LOGIC START =================
-  let db, auth;
-  let cart = [];
-  let currentUser = null;
-  let confirmResult = null;
-  let currentOrderType = "Delivery"; // Default
-
-  document.addEventListener("DOMContentLoaded", () => {
-    // 1. Initialize Firebase
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    auth = firebase.auth();
-
-    // 2. Initialize OneSignal
-    window.OneSignal = window.OneSignal || [];
-    OneSignal.push(() => OneSignal.init({ appId: "f0a152b1-8778-4aee-9d27-8f74eb2267b7", notifyButton: {enable:false} }));
-
-    // 3. Render Menu
-    renderMenu();
+window.onload = () => {
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore(); auth = firebase.auth();
     
-    // 4. Global Auth Listener
-    auth.onAuthStateChanged((user) => {
-      const badge = document.getElementById("header-status");
-      if (user) {
-        currentUser = user;
-        badge.innerText = "Logged In";
-        badge.classList.add("active");
-        
-        // Show Profile Tab
-        document.getElementById("profile-logged-out").classList.add("hidden");
-        document.getElementById("profile-logged-in").classList.remove("hidden");
-        document.getElementById("profile-mobile").value = user.phoneNumber;
-        
-        // Load Data
-        loadUserProfile(user.uid);
-      } else {
-        currentUser = null;
-        badge.innerText = "Guest";
-        badge.classList.remove("active");
-        
-        // Show Login Form
-        document.getElementById("profile-logged-out").classList.remove("hidden");
-        document.getElementById("profile-logged-in").classList.add("hidden");
-        
-        // Clear forms
-        document.getElementById("profile-name").value = "";
-        document.getElementById("profile-address").value = "";
-        document.getElementById("cust-mobile").readOnly = false;
-        document.getElementById("cust-mobile").style.background = "#fff";
-      }
+    // FETCH SETTINGS (Address/Map)
+    db.collection("settings").doc("config").get().then(doc => {
+        if(doc.exists) {
+            const d = doc.data();
+            document.getElementById("footer-addr").innerText = d.address || "Nangloi, New Delhi";
+            document.getElementById("footer-map").href = d.mapLink || "#";
+        }
     });
 
-    // 5. Initialize Recaptcha
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible' });
-  });
+    // FETCH CATEGORIES
+    db.collection("categories").orderBy("name").onSnapshot(snap => {
+        const d = document.getElementById("cat-scroll");
+        d.innerHTML = `<div class="cat-chip active" onclick="filterCat('All')">All</div>`;
+        snap.forEach(doc => {
+            d.innerHTML += `<div class="cat-chip" onclick="filterCat('${doc.data().name}')">${doc.data().name}</div>`;
+        });
+    });
 
-  // --- TAB SWITCHING ---
-  function switchTab(tabName) {
-    document.querySelectorAll("section").forEach(s => s.classList.remove("active-section"));
-    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-    
-    const indices = { 'menu':0, 'cart':1, 'orders':2, 'profile':3 };
-    document.querySelectorAll(".nav-btn")[indices[tabName]].classList.add("active");
+    // FETCH MENU
+    db.collection("menu").where("available", "==", true).onSnapshot(snap => {
+        menu = [];
+        snap.forEach(d => menu.push({id:d.id, ...d.data()}));
+        renderMenu(menu);
+    });
 
-    document.getElementById(tabName + "-section").classList.add("active-section");
-    
-    if(tabName === 'orders') fetchMyOrders();
-    
-    // Better scrolling for sticky tabs
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+    // AUTH
+    auth.onAuthStateChanged(u => {
+        user = u;
+        if(u) {
+            document.getElementById("user-status").innerText = "Member";
+            document.getElementById("user-status").classList.add("active");
+            document.getElementById("login-box").classList.add("hidden");
+            document.getElementById("user-box").classList.remove("hidden");
+            document.getElementById("u-mobile").innerText = u.phoneNumber;
+            loadHistory();
+        } else {
+            document.getElementById("user-status").innerText = "Guest";
+            document.getElementById("user-status").classList.remove("active");
+            document.getElementById("login-box").classList.remove("hidden");
+            document.getElementById("user-box").classList.add("hidden");
+        }
+    });
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha', {size:'invisible'});
+};
 
-  // --- MENU LOGIC ---
-  function renderMenu() {
-    const list = document.getElementById("menu-list");
-    list.innerHTML = menuItems.map(item => {
-      if (item.variants) {
-        const btns = item.variants.map(v => 
-          `<button class="btn-primary btn-small" onclick="addToCart('${item.name} (${v.l})', ${v.p})">${v.l} ₹${v.p}</button>`
-        ).join('');
-        return `<div class="menu-item"><div class="menu-item-header"><span class="item-name">${item.name}</span></div><div class="btn-group">${btns}</div></div>`;
-      } else {
-        return `<div class="menu-item">
-          <div class="menu-item-header"><span class="item-name">${item.name}</span><span class="item-price">₹${item.price}</span></div>
-          <button class="btn-primary btn-small" onclick="addToCart('${item.name}', ${item.price})">Add</button>
+// --- NAVIGATION ---
+function nav(tab) {
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.nav-icon').forEach(n=>n.classList.remove('active'));
+    document.getElementById(tab+'-view').classList.add('active');
+    const idx = {'menu':0, 'orders':1, 'profile':2};
+    if(idx[tab]!==undefined) document.querySelectorAll('.nav-icon')[idx[tab]].classList.add('active');
+}
+
+// --- MENU & CART ---
+function renderMenu(list) {
+    const d = document.getElementById("menu-list"); d.innerHTML = "";
+    if(!list.length) { d.innerHTML="<p style='text-align:center;color:#999'>No items found.</p>"; return; }
+    
+    // Sort: Bestsellers first
+    list.sort((a,b) => (b.isBestseller===true) - (a.isBestseller===true));
+
+    list.forEach(i => {
+        const star = i.isBestseller ? `<div class="bestseller-tag">Bestseller ⭐</div>` : "";
+        
+        let priceDisplay = "";
+        let actionBtn = "";
+
+        if(i.type === 'variant' && i.variants) {
+            // Price range for display
+            const prices = i.variants.map(v => v.price);
+            priceDisplay = `₹${Math.min(...prices)} - ₹${Math.max(...prices)}`;
+            // Open Variant Modal
+            actionBtn = `<button class="btn-add" onclick='openVariantModal(${JSON.stringify(i)})'>ADD</button>`;
+        } else {
+            priceDisplay = `₹${i.price}`;
+            actionBtn = `<button class="btn-add" onclick="addCart('${i.name}', ${i.price})">ADD</button>`;
+        }
+
+        d.innerHTML += `
+        <div class="menu-card">
+            ${star}
+            <div class="item-top">
+                <div style="flex:1">
+                    <div class="item-name"><div class="veg-dot"><div></div></div> ${i.name}</div>
+                    <div style="font-weight:600; color:#555;">${priceDisplay}</div>
+                </div>
+                <div style="margin-left:10px;">${actionBtn}</div>
+            </div>
         </div>`;
-      }
-    }).join('');
-  }
-
-  // --- CART LOGIC ---
-  function addToCart(name, price) {
-    const item = cart.find(i => i.name === name);
-    if(item) item.qty++; else cart.push({name, price, qty:1});
-    updateCartUI();
-    showToast(`Added: ${name}`);
-  }
-
-  function updateCartUI() {
-    const div = document.getElementById("cart-items");
-    const fab = document.getElementById("fab-cart");
-    const fabCount = document.getElementById("fab-count");
-    
-    if(cart.length === 0) {
-      div.innerHTML = '<p style="text-align:center; color:#999;">Your cart is empty.</p>';
-      document.getElementById("cart-total").innerText = "₹0";
-      fab.style.display = "none";
-      return;
-    }
-
-    let total = 0, count = 0;
-    div.innerHTML = cart.map(i => {
-      total += i.price * i.qty;
-      count += i.qty;
-      return `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #eee;">
-        <span>${i.name} <small>x${i.qty}</small></span>
-        <span style="font-weight:600;">₹${i.price * i.qty}</span>
-      </div>`;
-    }).join('');
-
-    document.getElementById("cart-total").innerText = "₹" + total;
-    fabCount.innerText = count;
-    fab.style.display = "block";
-  }
-
-  // --- ORDER TYPE LOGIC ---
-  function setOrderType(type) {
-    currentOrderType = type;
-    const addrField = document.getElementById("cust-address");
-    
-    document.getElementById("opt-delivery").classList.toggle("selected", type === "Delivery");
-    document.getElementById("opt-takeaway").classList.toggle("selected", type === "Takeaway");
-    
-    // Hide Address for Takeaway
-    if(type === "Takeaway") addrField.style.display = "none";
-    else addrField.style.display = "block";
-  }
-
-  // --- AUTH & PROFILE ---
-  function sendOTP() {
-    const phone = document.getElementById("login-phone").value.trim();
-    if(phone.length !== 10) return showToast("Enter 10-digit number");
-    
-    const btn = document.getElementById("btn-send-otp");
-    btn.innerHTML = '<span class="loader"></span> Sending...';
-    btn.disabled = true;
-
-    auth.signInWithPhoneNumber("+91"+phone, window.recaptchaVerifier)
-      .then(res => {
-        confirmResult = res;
-        document.getElementById("otp-box").classList.remove("hidden");
-        document.getElementById("btn-send-otp").classList.add("hidden");
-        showToast("OTP Sent!");
-      })
-      .catch(err => {
-        showToast(err.message);
-        btn.innerHTML = "Send OTP";
-        btn.disabled = false;
-      });
-  }
-
-  function verifyOTP() {
-    const code = document.getElementById("otp-code").value.trim();
-    confirmResult.confirm(code).then(result => {
-      showToast("Login Successful!");
-      saveUserOnLogin(result.user); // ✅ Auto-save user info to Firebase
-      switchTab('profile'); 
-    }).catch(err => showToast("Invalid OTP"));
-  }
-
-  function logout() {
-    auth.signOut().then(() => {
-      showToast("Logged out");
-      window.location.reload();
-    });
-  }
-
-  // ✅ NEW: Ensures User is in Database immediately upon login
-  function saveUserOnLogin(user) {
-    const userRef = db.collection("users").doc(user.uid);
-    userRef.get().then((doc) => {
-      if (!doc.exists) {
-        userRef.set({
-          mobile: user.phoneNumber,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-      }
-    });
-  }
-
-  // Load User Data (Autofill)
-  function loadUserProfile(uid) {
-    db.collection("users").doc(uid).get().then(doc => {
-      if(doc.exists) {
-        const d = doc.data();
-        // Fill Profile
-        document.getElementById("profile-name").value = d.name || "";
-        document.getElementById("profile-address").value = d.address || "";
-        // Autofill Checkout
-        document.getElementById("cust-name").value = d.name || "";
-        document.getElementById("cust-address").value = d.address || "";
-        document.getElementById("cust-mobile").value = currentUser.phoneNumber.replace("+91","");
-        document.getElementById("cust-mobile").readOnly = true;
-        document.getElementById("cust-mobile").style.background = "#eee";
-      }
-    });
-  }
-
-  function saveUserProfile() {
-    const name = document.getElementById("profile-name").value.trim();
-    const address = document.getElementById("profile-address").value.trim();
-    const btn = document.getElementById("btn-save-profile");
-    
-    btn.innerHTML = '<span class="loader"></span> Saving...';
-    
-    db.collection("users").doc(currentUser.uid).set({
-        name: name,
-        address: address,
-        mobile: currentUser.phoneNumber
-    }, { merge: true }).then(() => {
-        showToast("Profile Saved!");
-        btn.innerHTML = "Save Details";
-        // Update checkout fields immediately
-        document.getElementById("cust-name").value = name;
-        document.getElementById("cust-address").value = address;
-    });
-  }
-
-// --- UPDATED ORDER HISTORY (LIVE STATUS) ---
-function fetchMyOrders() {
-  const list = document.getElementById("orders-list");
-  if(!currentUser) {
-    list.innerHTML = '<p style="text-align:center; padding:20px;">Please login to see your history.</p>';
-    return;
-  }
-  
-  // Show loader initially
-  list.innerHTML = '<p style="text-align:center; padding:20px;"><span class="loader loader-dark"></span> Loading...</p>';
-  
-  // USE .onSnapshot (Real-time Listener) instead of .get()
-  // This makes the phone update INSTANTLY when Admin clicks "Accept"
-  db.collection("orders")
-    .where("userId", "==", currentUser.uid)
-    .orderBy("created", "desc")
-    .limit(10)
-    .onSnapshot(snap => {
-      
-      if(snap.empty) { 
-        list.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No past orders.</p>'; 
-        return; 
-      }
-      
-      // Build the HTML list
-      list.innerHTML = snap.docs.map(doc => {
-        const d = doc.data();
-        const date = d.created ? d.created.toDate().toLocaleDateString() : "Date N/A";
-        
-        // --- STATUS LOGIC (Matches your Admin Panel) ---
-        let statusText = d.status || "Pending";
-        let statusColor = "#7f8c8d"; // Default Grey (Pending)
-        let statusBg = "#f0f0f0";
-
-        if(statusText === "Accepted") { 
-            statusText = "🔥 Cooking"; 
-            statusColor = "#d35400"; // Orange
-            statusBg = "#fae5d3";
-        }
-        else if(statusText === "Ready") { 
-            statusText = "✅ Out for Delivery"; 
-            statusColor = "#27ae60"; // Green
-            statusBg = "#d5f5e3";
-        }
-        else if(statusText === "Completed") {
-            statusText = "🎉 Delivered";
-            statusColor = "#2c3e50"; 
-            statusBg = "#ecf0f1";
-        }
-        
-        // Render Card
-        return `<div class="order-card" style="border-left: 5px solid ${statusColor};">
-          <div class="order-header">
-            <span>📅 ${date}</span>
-            <span style="font-weight:700; color:${statusColor}; background:${statusBg}; padding:4px 10px; border-radius:12px; font-size:0.75rem;">
-              ${statusText}
-            </span>
-          </div>
-          <div class="order-items">${d.items.map(i=>`${i.name} <small>(${i.qty})</small>`).join(', ')}</div>
-          <div class="order-footer">
-            <span style="font-weight:700;">₹${d.total}</span>
-            <span style="color:green; font-size:0.85rem;">Paid Online</span>
-          </div>
-        </div>`;
-      }).join('');
-
-    }, err => {
-       console.log("Order Fetch Error:", err);
-       // Check for Index Error
-       if(err.code === 'failed-precondition') {
-           list.innerHTML = '<p style="color:red; text-align:center; font-size:0.8rem;">Setup required: Please check Console (F12) for Firebase Index link.</p>';
-       }
     });
 }
-  // --- GPS LOCATION FUNCTION ---
-function geoLocate() {
-  const btn = document.getElementById("btn-location");
-  const addrBox = document.getElementById("cust-address");
-  const originalText = btn.innerHTML;
 
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported by your browser.");
-    return;
-  }
-
-  btn.innerHTML = "📍 Locating...";
-  btn.disabled = true;
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      // Success
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      // Create exact Google Maps Link
-      const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
-      
-      // Append to address box
-      if (addrBox.value.trim() === "") {
-        addrBox.value = `📍 GPS Location: ${mapLink}\n(House/Flat No: )`;
-      } else {
-        addrBox.value += `\n\n📍 GPS Location: ${mapLink}`;
-      }
-      
-      btn.innerHTML = "✅ Location Added!";
-      btn.style.background = "#2ecc71";
-      
-      // Reset button after 3 seconds
-      setTimeout(() => {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        btn.style.background = "#27ae60";
-      }, 3000);
-    },
-    (error) => {
-      // Error
-      console.error(error);
-      alert("Could not get location. Please ensure GPS is ON and permission is allowed.");
-      btn.innerHTML = originalText;
-      btn.disabled = false;
-    },
-    { enableHighAccuracy: true } // Request best possible accuracy
-  );
+// --- VARIANT HANDLING ---
+function openVariantModal(item) {
+    const modal = document.getElementById("variant-modal");
+    const title = document.getElementById("v-title");
+    const opts = document.getElementById("v-options");
+    
+    title.innerText = item.name;
+    opts.innerHTML = "";
+    
+    item.variants.forEach(v => {
+        opts.innerHTML += `
+        <div class="v-opt" onclick="addCart('${item.name} (${v.name})', ${v.price}); document.getElementById('variant-modal').style.display='none'">
+            <span>${v.name}</span>
+            <span>₹${v.price}</span>
+        </div>`;
+    });
+    
+    modal.style.display = "flex";
 }
-  // --- CHECKOUT & PAYMENT ---
-  function handleCheckout() {
-    if(cart.length === 0) return showToast("Cart is empty");
 
-    const name = document.getElementById("cust-name").value.trim();
-    const mobile = document.getElementById("cust-mobile").value.trim();
-    let address = document.getElementById("cust-address").value.trim();
-    
-    // Validation
-    if(!name) return showToast("Name is required");
-    if(!mobile || mobile.length !== 10) return showToast("Valid 10-digit mobile required");
-    
-    if(currentOrderType === "Delivery" && !address) {
-        return showToast("Address is required for Delivery");
-    }
-    if(currentOrderType === "Takeaway") {
-        address = "Takeaway (Self Pickup)";
-    }
+function filterCat(cat) {
+    document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active')); event.target.classList.add('active');
+    renderMenu(cat==='All' ? menu : menu.filter(i => i.category === cat));
+}
+function filterMenu() { const q = document.getElementById("search").value.toLowerCase(); renderMenu(menu.filter(i=>i.name.toLowerCase().includes(q))); }
 
-    const total = cart.reduce((s, i) => s + (i.price*i.qty), 0);
-    const btn = document.getElementById("btn-checkout");
-    const originalText = btn.innerText;
-    
-    btn.innerHTML = '<span class="loader"></span> Processing...';
-    btn.disabled = true;
+function addCart(name, price) {
+    const exists = cart.find(i=>i.name===name);
+    if(exists) exists.qty++; else cart.push({name, price, qty:1});
+    updateCart(); toast(`Added ${name}`);
+    if(navigator.vibrate) navigator.vibrate(50);
+}
+function updateCart() {
+    const d = document.getElementById("cart-list"); d.innerHTML="";
+    if(!cart.length) { d.innerHTML="<p style='text-align:center;color:#999'>Empty</p>"; document.getElementById("fab-cart").style.display="none"; return; }
+    let total=0, count=0;
+    cart.forEach(i => {
+        total += i.price*i.qty; count+=i.qty;
+        d.innerHTML += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee"><span>${i.name} <small>x${i.qty}</small></span><span>₹${i.price*i.qty}</span></div>`;
+    });
+    document.getElementById("cart-total-display").innerText = "₹"+total;
+    document.getElementById("fab-total").innerText = "₹"+total;
+    document.getElementById("fab-count").innerText = count+" ITEMS";
+    document.getElementById("fab-cart").style.display="flex";
+}
 
-    const options = {
-      key: RAZORPAY_KEY,
-      amount: total * 100,
-      currency: "INR",
-      name: "Do Bhai Chaap Wale",
-      description: currentOrderType,
-      theme: { color: "#e91e63" },
-      modal: { ondismiss: function() { btn.innerHTML = originalText; btn.disabled = false; } },
-      handler: function(response) {
-        saveOrder(name, mobile, address, total, response.razorpay_payment_id);
-      }
+// --- CHECKOUT ---
+function setType(t) { 
+    orderType=t; 
+    document.getElementById("opt-del").classList.toggle("selected", t==="Delivery");
+    document.getElementById("opt-take").classList.toggle("selected", t==="Takeaway");
+    document.getElementById("c-addr").style.display = t==="Takeaway" ? "none" : "block";
+}
+function checkout() {
+    if(!cart.length) return toast("Cart empty");
+    const name=document.getElementById("c-name").value, phone=document.getElementById("c-phone").value, addr=document.getElementById("c-addr").value;
+    if(!name || !phone) return toast("Name & Phone required");
+    if(orderType==="Delivery" && !addr) return toast("Address required");
+    
+    const total = cart.reduce((a,b)=>a+(b.price*b.qty),0);
+    const options = { key: RAZORPAY_KEY, amount: total*100, currency: "INR", name: "Do Bhai Chaap", 
+        handler: function(r){ saveOrder(name, phone, addr, total, r.razorpay_payment_id); } 
     };
-    const rzp = new Razorpay(options);
-    rzp.on('payment.failed', function (response){
-        showToast("Payment Failed");
-        btn.innerHTML = originalText; 
-        btn.disabled = false;
+    new Razorpay(options).open();
+}
+function saveOrder(name, phone, addr, total, pid) {
+    db.collection("orders").add({
+        name, mobile:phone, address: orderType==="Takeaway"?"Takeaway":addr, 
+        items: cart, total, paymentId: pid, status: "Pending", 
+        created: firebase.firestore.FieldValue.serverTimestamp(),
+        userId: user ? user.uid : null
     });
-    rzp.open();
-  }
+    const items = cart.map(i=>`${i.name} x${i.qty}`).join('%0A');
+    const msg = `*NEW ORDER (${orderType})*%0A${name} - ${phone}%0AItems:%0A${items}%0ATotal: ₹${total}`;
+    document.getElementById("wa-btn").onclick = () => window.open(`https://wa.me/918700494451?text=${msg}`);
+    document.getElementById("checkout-form").classList.add("hidden");
+    document.getElementById("success-msg").classList.remove("hidden");
+    cart=[]; updateCart();
+}
 
-  async function saveOrder(name, mobile, address, total, payId) {
-    try {
-        const orderData = {
-            name, mobile, address, items: cart, total, paymentId: payId,
-            orderType: currentOrderType,
-            created: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        
-        // Link to user if logged in
-        if(currentUser) orderData.userId = currentUser.uid;
-
-        await db.collection("orders").add(orderData);
-
-        // Notify
-        OneSignal.push(() => OneSignal.sendSelfNotification("🛎️ NEW ORDER", `₹${total} (${currentOrderType})`, null, null, {sound:"ring"}));
-
-        // WhatsApp
-        const itemsList = cart.map(i => `• ${i.name} x ${i.qty}`).join('%0A');
-        const waMsg = `🛎️ NEW ORDER (${currentOrderType})%0A%0A👤 ${name}%0A📞 ${mobile}%0A🏠 ${address}%0A%0A🍽️ ITEMS:%0A${itemsList}%0A%0A💰 TOTAL: ₹${total}`;
-        
-        document.getElementById("waBtn").onclick = () => window.open(`https://wa.me/918700494451?text=${waMsg}`, '_blank');
-        
-        document.getElementById("checkout-form").classList.add("hidden");
-        document.getElementById("success-box").classList.remove("hidden");
-        
-        cart = []; updateCartUI();
-        
-        const btn = document.getElementById("btn-checkout");
-        btn.innerHTML = "Proceed to Pay";
-        btn.disabled = false;
-        
-    } catch (e) {
-        console.error(e);
-        showToast("Order saved but network issue occurred.");
-        document.getElementById("btn-checkout").disabled = false;
-        document.getElementById("btn-checkout").innerText = "Proceed to Pay";
-    }
-  }
-
-  function showToast(msg) {
-    const x = document.getElementById("toast");
-    x.innerText = msg; x.className = "show";
-    setTimeout(() => { x.className = x.className.replace("show", ""); }, 3000);
-  }
+// --- HISTORY & AUTH ---
+function loadHistory() {
+    db.collection("orders").where("userId","==",user.uid).orderBy("created","desc").limit(10).onSnapshot(s => {
+        const d = document.getElementById("history-list"); d.innerHTML="";
+        if(s.empty) d.innerHTML="<p style='text-align:center'>No orders yet.</p>";
+        s.forEach(doc => {
+            const o = doc.data();
+            d.innerHTML += `<div style="background:#f9f9f9;padding:10px;margin-bottom:10px;border-radius:8px;">
+                <div style="display:flex;justify-content:space-between;font-weight:bold"><span>${o.created?.toDate().toLocaleDateString()}</span><span>${o.status}</span></div>
+                <div style="font-size:0.9rem;color:#666">${o.items.map(i=>i.name).join(', ')}</div>
+                <div style="text-align:right;font-weight:bold;margin-top:5px">₹${o.total}</div>
+            </div>`;
+        });
+    });
+}
+function sendOTP() {
+    const p = document.getElementById("l-phone").value;
+    auth.signInWithPhoneNumber("+91"+p, window.recaptchaVerifier).then(c => { confirmRes=c; document.getElementById("otp-area").classList.remove("hidden"); toast("OTP Sent"); });
+}
+function verifyOTP() {
+    confirmRes.confirm(document.getElementById("l-otp").value).then(()=>toast("Logged In")).catch(()=>toast("Invalid OTP"));
+}
+function logout() { auth.signOut(); location.reload(); }
+function toast(m) { const t=document.getElementById("toast"); t.innerText=m; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),3000); }
 </script>
-
 </body>
 </html>
