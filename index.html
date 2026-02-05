@@ -298,6 +298,11 @@
     <input type="text" id="cust-name" placeholder="Full Name (Required)">
     <input type="tel" id="cust-mobile" placeholder="Mobile Number (Required)" maxlength="10">
     <textarea id="cust-address" rows="3" placeholder="Full Address (House No, Street, Landmark)"></textarea>
+    <button type="button" onclick="geoLocate()" id="btn-location" 
+        style="background:#27ae60; color:white; border:none; padding:8px 15px; border-radius:6px; font-size:0.85rem; cursor:pointer; margin-bottom:15px; display:flex; align-items:center; gap:5px;">
+  <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+  Auto-Detect My Location
+</button>
 
     <button onclick="handleCheckout()" id="btn-checkout" class="btn-primary" style="width:100%; font-size:1.1rem; padding:15px;">
       Proceed to Pay
@@ -739,6 +744,55 @@ function fetchMyOrders() {
            list.innerHTML = '<p style="color:red; text-align:center; font-size:0.8rem;">Setup required: Please check Console (F12) for Firebase Index link.</p>';
        }
     });
+}
+  // --- GPS LOCATION FUNCTION ---
+function geoLocate() {
+  const btn = document.getElementById("btn-location");
+  const addrBox = document.getElementById("cust-address");
+  const originalText = btn.innerHTML;
+
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser.");
+    return;
+  }
+
+  btn.innerHTML = "📍 Locating...";
+  btn.disabled = true;
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      // Success
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      // Create exact Google Maps Link
+      const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+      
+      // Append to address box
+      if (addrBox.value.trim() === "") {
+        addrBox.value = `📍 GPS Location: ${mapLink}\n(House/Flat No: )`;
+      } else {
+        addrBox.value += `\n\n📍 GPS Location: ${mapLink}`;
+      }
+      
+      btn.innerHTML = "✅ Location Added!";
+      btn.style.background = "#2ecc71";
+      
+      // Reset button after 3 seconds
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.style.background = "#27ae60";
+      }, 3000);
+    },
+    (error) => {
+      // Error
+      console.error(error);
+      alert("Could not get location. Please ensure GPS is ON and permission is allowed.");
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    },
+    { enableHighAccuracy: true } // Request best possible accuracy
+  );
 }
   // --- CHECKOUT & PAYMENT ---
   function handleCheckout() {
