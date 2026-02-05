@@ -1,386 +1,792 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-<script>
-  window.OneSignal = window.OneSignal || [];
-  OneSignal.push(function () {
-    OneSignal.init({
-      appId: "f0a152b1-8778-4aee-9d27-8f74eb2267b7",
-      notifyButton: { enable: false }
-    });
-  });
-</script>
-
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Do Bhai Chaap Wale | Nangloi, New Delhi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="description" content="Order authentic Chaap from Do Bhai Chaap Wale, Nangloi.">
+  <meta name="theme-color" content="#e91e63">
+  
+  <title>Do Bhai Chaap Wale | Order Online</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
-    body { margin:0; font-family:'Segoe UI',sans-serif; background:#fdfdfd; color:#333; }
-    header { background:#2e2e2e; color:#fff; padding:60px 20px; text-align:center; }
-    header h1 { font-size:3rem; margin:0; }
-    .tagline { font-size:1.2rem; margin:10px 0 20px; }
-    .btn-primary, .btn-view-cart {
-      background:#e91e63; color:#fff; padding:8px 16px;
-      border:none; border-radius:20px; cursor:pointer; margin:4px 0;
+    /* --- CSS VARIABLES --- */
+    :root {
+      --primary: #e91e63;
+      --primary-dark: #c2185b;
+      --bg: #f4f6f8;
+      --card-bg: #ffffff;
+      --text-main: #2d3436;
+      --text-light: #636e72;
+      --border: #dfe6e9;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --radius: 12px;
+      --success: #2ecc71;
     }
-    .btn-view-cart {
-      position:fixed; bottom:20px; right:20px; z-index:1000; display:none;
+
+    * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      padding-bottom: 100px; /* Space for bottom nav/cart */
     }
-    section { padding:40px 20px; max-width:1000px; margin:auto; }
-    h2 { color:#e91e63; margin-bottom:20px; }
-    ul { list-style:none; padding:0; }
-    li {
-      padding:8px 0; border-bottom:1px solid #ddd;
-      display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap;
+
+    /* --- HEADER --- */
+    header {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
+      color: #fff;
+      padding: 20px 20px 50px; /* Increased bottom padding for overlap */
+      border-bottom-left-radius: 25px;
+      border-bottom-right-radius: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 10; /* Lower than tabs */
     }
-    footer { background:#222; color:#aaa; text-align:center; padding:20px; font-size:0.9rem; }
-    #cart {
-      background:#fff0f4; padding:20px; margin:30px auto;
-      border:1px solid #e91e63; border-radius:10px;
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto;
     }
-    input, textarea, select {
-      width:100%; padding:8px; margin:6px 0;
-      border:1px solid #ccc; border-radius:5px;
+
+    header h1 { margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    .tagline { margin: 5px 0 0; opacity: 0.8; font-size: 0.8rem; }
+    
+    /* Login Status Badge */
+    .status-badge {
+        font-size: 0.75rem; background: rgba(255,255,255,0.1); 
+        padding: 4px 10px; border-radius: 20px; color: #ccc;
+        border: 1px solid rgba(255,255,255,0.1);
     }
-    #login { background:#e8f0ff; padding:20px; margin:30px auto; border-radius:10px; }
+    .status-badge.active { color: #2ecc71; background: rgba(46, 204, 113, 0.15); border-color: rgba(46, 204, 113, 0.3); }
+
+    /* --- NAVIGATION TABS (FIXED VISIBILITY) --- */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: -30px; /* Pulls tabs up into header */
+      margin-bottom: 25px;
+      padding: 0 10px;
+      overflow-x: auto;
+      
+      /* KEY FIXES HERE: */
+      position: sticky; /* Stays visible when scrolling */
+      top: 10px;        /* Distance from top when sticking */
+      z-index: 100;     /* Force tabs ON TOP of header */
+    }
+    
+    .nav-btn {
+      background: #fff;
+      color: var(--text-light);
+      border: none;
+      padding: 12px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      font-size: 0.85rem;
+      flex: 1;
+      min-width: 80px;
+      transition: all 0.3s;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    
+    .nav-btn.active {
+      background: var(--primary);
+      color: #fff;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(233, 30, 99, 0.4);
+    }
+
+    /* --- SECTIONS --- */
+    section {
+      max-width: 800px;
+      margin: 0 auto 30px;
+      padding: 0 15px;
+      display: none;
+      /* Add padding so content doesn't get hidden behind sticky tabs */
+      scroll-margin-top: 80px; 
+    }
+    section.active-section { display: block; animation: fadeIn 0.4s ease; }
+
+    h2 {
+      font-size: 1.3rem;
+      border-left: 5px solid var(--primary);
+      padding-left: 15px;
+      margin: 10px 0 20px; /* Adjusted spacing */
+      color: var(--text-main);
+    }
+
+    /* --- MENU GRID --- */
+    .menu-grid {
+      display: grid;
+      gap: 15px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width: 600px) { .menu-grid { grid-template-columns: 1fr 1fr; } }
+    
+    .menu-item {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+    
+    .menu-item-header {
+      display: flex; justify-content: space-between; margin-bottom: 10px;
+    }
+    .item-name { font-weight: 600; font-size: 1rem; }
+    .item-price { color: var(--primary); font-weight: 700; }
+    
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* --- BUTTONS --- */
+    .btn-primary {
+      background: var(--primary);
+      color: #fff; border: none; padding: 12px 20px;
+      border-radius: 50px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
+      transition: transform 0.2s;
+    }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:disabled { background: #ccc; cursor: wait; box-shadow: none; transform: none; }
+    
+    .btn-small { padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; flex:1; white-space: nowrap; }
+    .btn-logout { background: #333; margin-top: 15px; width: 100%; }
+
+    /* --- FORMS & INPUTS --- */
+    input, textarea {
+      width: 100%; padding: 14px; margin-bottom: 15px;
+      border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 1rem;
+      background: #fafafa;
+    }
+    input:focus, textarea:focus { background: #fff; border-color: var(--primary); }
+    
+    /* --- DELIVERY TOGGLE --- */
+    .order-type-switch {
+        display: flex; gap: 10px; margin-bottom: 25px;
+    }
+    .type-option {
+        flex: 1; text-align: center; padding: 14px;
+        border: 2px solid #eee; border-radius: 12px;
+        cursor: pointer; font-weight: 600; color: #777;
+        background: #fff; transition: all 0.2s;
+    }
+    .type-option.selected {
+        border-color: var(--primary); color: var(--primary);
+        background: #fff0f5; box-shadow: 0 2px 8px rgba(233, 30, 99, 0.1);
+    }
+    
+    /* --- MY ORDERS HISTORY --- */
+    .order-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-left: 5px solid #ccc;
+      box-shadow: var(--shadow);
+    }
+    .order-card.status-paid { border-left-color: var(--success); }
+    .order-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #777; margin-bottom: 8px; }
+    .order-items { font-size: 0.95rem; font-weight: 500; margin-bottom: 8px; line-height: 1.5; }
+    .order-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 8px; }
+    .order-total { font-weight: 700; color: var(--primary); }
+
+    /* --- CART FLOATING BTN --- */
+    .fab-cart {
+      position: fixed; bottom: 25px; right: 25px;
+      background: #1a1a1a; color: #fff;
+      padding: 15px 25px; border-radius: 50px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      font-weight: 600; border: none; cursor: pointer;
+      display: none; z-index: 1000;
+      font-size: 1rem;
+    }
+
+    /* --- ANIMATIONS & UTILS --- */
+    .hidden { display: none !important; }
+    .loader { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid #fff; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+    .loader-dark { border-top-color: var(--primary); }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Success Checkmark */
+    .success-animation { margin: 20px auto; }
+    .checkmark { width: 56px; height: 56px; border-radius: 50%; display: block; stroke-width: 2; stroke: #fff; stroke-miterlimit: 10; box-shadow: inset 0px 0px 0px var(--success); animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; }
+    .checkmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--success); fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+    .checkmark__check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
+    @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+    @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+    @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 30px var(--success); } }
+
+    /* Toast */
+    #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 2000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; }
+    #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Do Bhai Chaap Wale</h1>
-  <p class="tagline">Authentic Chaap & Street-Style Fast Food</p>
-  <a href="#menu" class="btn-primary">Explore Menu</a>
+  <div class="header-content">
+    <div>
+      <h1>Do Bhai Chaap Wale</h1>
+      <p class="tagline">Nangloi's Authentic Taste</p>
+    </div>
+    <div id="header-status" class="status-badge">Guest</div>
+  </div>
 </header>
 
-<button id="view-cart-toggle" class="btn-view-cart" onclick="scrollToCart()">View Cart</button>
-
-<section id="login">
-  <h2>📱 Login with Mobile</h2>
-
-  <input type="tel" id="phoneNumber" placeholder="Enter mobile number (10 digits)" />
-  <div id="recaptcha-container"></div>
-
-  <button onclick="sendOTP()" class="btn-primary">Send OTP</button>
-
-  <div id="otpBox" style="display:none;">
-    <input type="text" id="otpCode" placeholder="Enter OTP" />
-    <button onclick="verifyOTP()" class="btn-primary">Verify OTP</button>
-  </div>
-
-  <p id="loginStatus"></p>
-</section>
-
-
-<section id="menu">
-  <h2>Our Delicious Menu</h2>
-  <ul id="menu-list"></ul>
-</section>
-
-<section id="cart">
-  <div id="inform-us-box" style="display:none; margin-top:15px;">
-  <button id="waBtn" class="btn-primary">
-    📲 Send Order on WhatsApp
-  </button>
+<div class="nav-tabs">
+  <button class="nav-btn active" onclick="switchTab('menu')">Menu</button>
+  <button class="nav-btn" onclick="switchTab('cart')">Cart</button>
+  <button class="nav-btn" onclick="switchTab('orders')">History</button>
+  <button class="nav-btn" onclick="switchTab('profile')">Profile</button>
 </div>
 
-  <h2>🛒 Your Cart</h2>
-  <div id="cart-items"><em>No items in cart.</em></div>
-  <p id="total-amount">Total: ₹0</p>
-
-  <h3>Customer Details</h3>
-  <input type="text" id="cust-name" placeholder="Full Name" />
-  <input type="tel" id="cust-mobile" placeholder="Mobile Number" />
-  <textarea id="cust-address" placeholder="Full Address"></textarea>
-
-  <button onclick="checkout()" class="btn-primary">Proceed to Pay</button>
+<section id="menu-section" class="active-section">
+  <h2>🔥 Our Menu</h2>
+  <div id="menu-list" class="menu-grid"></div>
+  
+  <div style="text-align:center; margin-top:30px; padding:20px; background:#fff; border-radius:12px; box-shadow:var(--shadow);">
+    <h3 style="margin-top:0;">📍 Visit Us</h3>
+    <p style="color:#666; font-size:0.9rem;">
+      Do Bhai Chaap Wale<br>
+      Main Rohtak Road, Nangloi, New Delhi
+    </p>
+    <a href="https://goo.gl/maps/YOUR_MAP_LINK" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:none;">Open in Google Maps</a>
+  </div>
 </section>
 
-<footer>
-  <p>&copy; 2025 Do Bhai Chaap Wale</p>
-</footer>
 
+<section id="cart-section">
+  <h2>🛒 Your Cart</h2>
+  
+  <div id="cart-items" style="background:#fff; padding:15px; border-radius:12px; margin-bottom:20px;">
+    <p style="text-align:center; color:#999;">Your cart is empty.</p>
+  </div>
+  
+  <div style="text-align:right; font-size:1.4rem; font-weight:700; margin-bottom:20px;">
+    Total: <span id="cart-total">₹0</span>
+  </div>
+
+  <div id="checkout-form">
+    <h3>📝 Order Details</h3>
+    
+    <div class="order-type-switch">
+        <div class="type-option selected" id="opt-delivery" onclick="setOrderType('Delivery')">
+            🛵 Delivery
+        </div>
+        <div class="type-option" id="opt-takeaway" onclick="setOrderType('Takeaway')">
+            🥡 Takeaway
+        </div>
+    </div>
+
+    <input type="text" id="cust-name" placeholder="Full Name (Required)">
+    <input type="tel" id="cust-mobile" placeholder="Mobile Number (Required)" maxlength="10">
+    <textarea id="cust-address" rows="3" placeholder="Full Address (House No, Street, Landmark)"></textarea>
+
+    <button onclick="handleCheckout()" id="btn-checkout" class="btn-primary" style="width:100%; font-size:1.1rem; padding:15px;">
+      Proceed to Pay
+    </button>
+    
+    <p style="text-align:center; font-size:0.8rem; color:#888; margin-top:15px;">
+      * Guest checkout available. Login in Profile tab to save details.
+    </p>
+  </div>
+
+  <div id="success-box" class="hidden" style="text-align:center; background:#fff; padding:30px; border-radius:12px; margin-top:20px; border:1px solid #eee;">
+    <div class="success-animation">
+      <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+      </svg>
+    </div>
+    <h3 style="color:#2ecc71; margin:10px 0;">Order Placed!</h3>
+    <p>Please confirm your order on WhatsApp.</p>
+    <button id="waBtn" class="btn-primary" style="background:#25D366; width:100%;">
+      📲 Send to WhatsApp
+    </button>
+  </div>
+</section>
+
+
+<section id="profile-section">
+  <h2>👤 My Profile</h2>
+  
+  <div id="profile-logged-out">
+    <p style="margin-bottom:20px; color:#666;">Login to save your address and view order history.</p>
+    
+    <div style="background:#fff; padding:20px; border-radius:12px; box-shadow:var(--shadow);">
+        <label style="font-weight:600;">Mobile Login</label>
+        <input type="tel" id="login-phone" placeholder="Enter 10-digit number" maxlength="10" style="margin-top:10px;">
+        <div id="recaptcha-container"></div>
+        
+        <button onclick="sendOTP()" id="btn-send-otp" class="btn-primary" style="width:100%">Send OTP</button>
+
+        <div id="otp-box" class="hidden" style="margin-top:15px;">
+            <input type="text" id="otp-code" placeholder="Enter 6-digit OTP">
+            <button onclick="verifyOTP()" id="btn-verify-otp" class="btn-primary" style="width:100%">Verify OTP</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="profile-logged-in" class="hidden">
+    <div style="background:#fff; padding:20px; border-radius:12px; box-shadow:var(--shadow);">
+        <h3 style="margin-top:0;">Edit Default Details</h3>
+        <p style="font-size:0.85rem; color:#888;">These details will autofill when you order.</p>
+        
+        <label>Your Name</label>
+        <input type="text" id="profile-name">
+        
+        <label>Mobile Number</label>
+        <input type="text" id="profile-mobile" readonly style="background:#eee; color:#777;">
+        
+        <label>Default Address</label>
+        <textarea id="profile-address" rows="3"></textarea>
+        
+        <button onclick="saveUserProfile()" id="btn-save-profile" class="btn-primary" style="width:100%">Save Details</button>
+        <button onclick="logout()" class="btn-primary btn-logout">Logout</button>
+    </div>
+  </div>
+</section>
+
+
+<section id="orders-section">
+  <h2>📜 Order History</h2>
+  <div id="orders-list">
+    </div>
+</section>
+
+
+<button id="fab-cart" class="fab-cart" onclick="switchTab('cart')">
+  View Cart (<span id="fab-count">0</span>)
+</button>
+
+<div id="toast"></div>
+
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<!-- 🔥 Firebase CDN (required) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
-  firebase.initializeApp({
-    apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4",
+  // ================= CONFIGURATION =================
+  const firebaseConfig = {
+    apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4", 
     authDomain: "dobhaichaapwale1.firebaseapp.com",
     projectId: "dobhaichaapwale1",
     storageBucket: "dobhaichaapwale1.firebasestorage.app",
     messagingSenderId: "141034963645",
     appId: "1:141034963645:web:442a93b6e87643b3bf2dd4"
-  });
-
-  // ✅ THIS WAS MISSING
-  window._db = firebase.firestore();
-</script>
-
-
-<script>
-let confirmationResult = null;
-
-// Invisible reCAPTCHA (required by Firebase)
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-  'recaptcha-container',
-  { size: 'invisible' }
-);
-
-// SEND OTP
-function sendOTP() {
-  const phone = document.getElementById("phoneNumber").value.trim();
-
-  if (phone.length !== 10) {
-    alert("Enter valid 10-digit mobile number");
-    return;
-  }
-
-  firebase.auth()
-    .signInWithPhoneNumber("+91" + phone, window.recaptchaVerifier)
-    .then(result => {
-      confirmationResult = result;
-      document.getElementById("otpBox").style.display = "block";
-      document.getElementById("loginStatus").innerText = "OTP sent ✅";
-    })
-    .catch(err => alert(err.message));
-}
-
-// VERIFY OTP
-function verifyOTP() {
-  const code = document.getElementById("otpCode").value.trim();
-
-  confirmationResult.confirm(code)
-    .then(result => {
-      document.getElementById("loginStatus").innerText = "Login successful 🎉";
-      loadUserProfile(result.user);
-    })
-    .catch(() => alert("Wrong OTP"));
-}
-
-// CREATE / LOAD USER PROFILE
-function loadUserProfile(user) {
-  const ref = window._db.collection("users").doc(user.uid);
-
-  ref.get().then(doc => {
-    if (!doc.exists) {
-      ref.set({
-        mobile: user.phoneNumber,
-        name: "",
-        address: "",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    } else {
-      const d = doc.data();
-      document.getElementById("cust-name").value = d.name || "";
-      document.getElementById("cust-address").value = d.address || "";
-      document.getElementById("cust-mobile").value =
-        user.phoneNumber.replace("+91", "");
-    }
-  });
-}
-</script>
+  };
   
-<script>
-let cart = [];
+  const RAZORPAY_KEY = "rzp_live_IAwVGH2rtMwKWw"; 
 
-const menuItems = [
-  { name: "Malai Chaap", half: 130, full: 190 },
-  { name: "Extra Malai Chaap", half: 150, full: 210 },
-  { name: "Masala Chaap", half: 130, full: 190 },
-  { name: "Tandoori Chaap", half: 130, full: 190 },
-  { name: "Achari Chaap", half: 140, full: 200 },
-  { name: "Spl. Afghani Chaap", half: 140, full: 200 },
-  { name: "Lemon Chaap", half: 140, full: 200 },
-  { name: "Hariyali Chaap", half: 140, full: 200 },
-  { name: "Pudina Chaap", half: 140, full: 200 },
-  { name: "Malai Tikka Chaap", half: 150, full: 210 },
-  { name: "Stuff Chaap", half: 160, full: 220 },
-  { name: "Garlic Chaap", half: 160, full: 220 },
-  { name: "Tawa Chaap", half: 160, full: 220 },
-  { name: "Veg Tandoori Butter Leg Piece", half: 130, full: 190 },
-  { name: "Plain Roti", price: 6 },
-  { name: "Sample", price: 1 },
-  { name: "Butter Roti", price: 7 },
-  { name: "Tawa Roti", price: 6 },
-  { name: "Tawa Butter Roti", price: 7 },
-  { name: "Rumali Roti", price: 8 },
-  { name: "Missi Roti", price: 25 },
-  { name: "Laccha Parantha", price: 25 },
-  { name: "Stuff Naan", price: 35 },
-  { name: "Plain Naan", price: 25 },
-  { name: "Butter Naan", price: 30 },
-  { name: "2pcs Chaap + 2 Butter Roti", price: 120 },
-  { name: "Creamy Onion", price: 20 },
-  { name: "Malai Chaap Roll", four: 110, six: 170 },
-  { name: "Masala Chaap Roll", four: 110, six: 170 },
-  { name: "Tandoori Chaap Roll", four: 120, six: 170 },
-  { name: "Afgani Chaap Roll", four: 120, six: 170 },
-  { name: "Achari Chaap Roll", four: 120, six: 170 },
-  { name: "Lemon Chaap Roll", four: 120, six: 230 },
-  { name: "Hariyali Chaap Roll", four: 120, six: 230 },
-  { name: "Pudina Chaap Roll", four: 120, six: 230 },
-  { name: "Garlic Chaap Roll", four: 120, six: 230 },
-  { name: "Stuff Chaap Roll", four: 120, six: 230 }
-];
+  // --- MENU DATA ---
+  const menuItems = [
+    { name: "Malai Chaap", variants: [{l:"Half", p:130}, {l:"Full", p:190}] },
+    { name: "Extra Malai Chaap", variants: [{l:"Half", p:150}, {l:"Full", p:210}] },
+    { name: "Masala Chaap", variants: [{l:"Half", p:130}, {l:"Full", p:190}] },
+    { name: "Tandoori Chaap", variants: [{l:"Half", p:130}, {l:"Full", p:190}] },
+    { name: "Achari Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
+    { name: "Spl. Afghani Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
+    { name: "Lemon Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
+    { name: "Hariyali Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
+    { name: "Pudina Chaap", variants: [{l:"Half", p:140}, {l:"Full", p:200}] },
+    { name: "Malai Tikka Chaap", variants: [{l:"Half", p:150}, {l:"Full", p:210}] },
+    { name: "Stuff Chaap", variants: [{l:"Half", p:160}, {l:"Full", p:220}] },
+    { name: "Garlic Chaap", variants: [{l:"Half", p:160}, {l:"Full", p:220}] },
+    { name: "Tawa Chaap", variants: [{l:"Half", p:160}, {l:"Full", p:220}] },
+    { name: "Veg Tandoori Butter Leg Piece", variants: [{l:"Half", p:130}, {l:"Full", p:190}] },
+    { name: "Plain Roti", price: 6 },
+    { name: "Butter Roti", price: 7 },
+    { name: "Tawa Roti", price: 6 },
+    { name: "Tawa Butter Roti", price: 7 },
+    { name: "Rumali Roti", price: 8 },
+    { name: "Missi Roti", price: 25 },
+    { name: "Laccha Parantha", price: 25 },
+    { name: "Stuff Naan", price: 35 },
+    { name: "Plain Naan", price: 25 },
+    { name: "Butter Naan", price: 30 },
+    { name: "Creamy Onion", price: 20 },
+    { name: "Sample", price: 1 },
+    { name: "2pcs Chaap + 2 Butter Roti", price: 120 },
+    { name: "Malai Chaap Roll", variants: [{l:"4pcs", p:110}, {l:"6pcs", p:170}] },
+    { name: "Masala Chaap Roll", variants: [{l:"4pcs", p:110}, {l:"6pcs", p:170}] },
+    { name: "Tandoori Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:170}] },
+    { name: "Afgani Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:170}] },
+    { name: "Achari Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:170}] },
+    { name: "Lemon Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] },
+    { name: "Hariyali Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] },
+    { name: "Pudina Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] },
+    { name: "Garlic Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] },
+    { name: "Stuff Chaap Roll", variants: [{l:"4pcs", p:120}, {l:"6pcs", p:230}] }
+  ];
 
-document.addEventListener("DOMContentLoaded", () => {
-  const menu = document.getElementById("menu-list");
-  menuItems.forEach(item => {
-    const li = document.createElement("li");
-    if (item.half) {
-      li.innerHTML = `${item.name} — Half ₹${item.half} / Full ₹${item.full}
-      <button onclick="addToCart('${item.name} (Half)',${item.half})" class="btn-primary">Add Half</button>
-      <button onclick="addToCart('${item.name} (Full)',${item.full})" class="btn-primary">Add Full</button>`;
-    } else if (item.four) {
-      li.innerHTML = `${item.name} — 4pcs ₹${item.four} / 6pcs ₹${item.six}
-      <button onclick="addToCart('${item.name} (4pcs)',${item.four})" class="btn-primary">Add 4pcs</button>
-      <button onclick="addToCart('${item.name} (6pcs)',${item.six})" class="btn-primary">Add 6pcs</button>`;
-    } else {
-      li.innerHTML = `${item.name} — ₹${item.price}
-      <button onclick="addToCart('${item.name}',${item.price})" class="btn-primary">Add</button>`;
+  // ================= LOGIC START =================
+  let db, auth;
+  let cart = [];
+  let currentUser = null;
+  let confirmResult = null;
+  let currentOrderType = "Delivery"; // Default
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1. Initialize Firebase
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    auth = firebase.auth();
+
+    // 2. Initialize OneSignal
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(() => OneSignal.init({ appId: "f0a152b1-8778-4aee-9d27-8f74eb2267b7", notifyButton: {enable:false} }));
+
+    // 3. Render Menu
+    renderMenu();
+    
+    // 4. Global Auth Listener
+    auth.onAuthStateChanged((user) => {
+      const badge = document.getElementById("header-status");
+      if (user) {
+        currentUser = user;
+        badge.innerText = "Logged In";
+        badge.classList.add("active");
+        
+        // Show Profile Tab
+        document.getElementById("profile-logged-out").classList.add("hidden");
+        document.getElementById("profile-logged-in").classList.remove("hidden");
+        document.getElementById("profile-mobile").value = user.phoneNumber;
+        
+        // Load Data
+        loadUserProfile(user.uid);
+      } else {
+        currentUser = null;
+        badge.innerText = "Guest";
+        badge.classList.remove("active");
+        
+        // Show Login Form
+        document.getElementById("profile-logged-out").classList.remove("hidden");
+        document.getElementById("profile-logged-in").classList.add("hidden");
+        
+        // Clear forms
+        document.getElementById("profile-name").value = "";
+        document.getElementById("profile-address").value = "";
+        document.getElementById("cust-mobile").readOnly = false;
+        document.getElementById("cust-mobile").style.background = "#fff";
+      }
+    });
+
+    // 5. Initialize Recaptcha
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible' });
+  });
+
+  // --- TAB SWITCHING ---
+  function switchTab(tabName) {
+    document.querySelectorAll("section").forEach(s => s.classList.remove("active-section"));
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+    
+    const indices = { 'menu':0, 'cart':1, 'orders':2, 'profile':3 };
+    document.querySelectorAll(".nav-btn")[indices[tabName]].classList.add("active");
+
+    document.getElementById(tabName + "-section").classList.add("active-section");
+    
+    if(tabName === 'orders') fetchMyOrders();
+    
+    // Better scrolling for sticky tabs
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // --- MENU LOGIC ---
+  function renderMenu() {
+    const list = document.getElementById("menu-list");
+    list.innerHTML = menuItems.map(item => {
+      if (item.variants) {
+        const btns = item.variants.map(v => 
+          `<button class="btn-primary btn-small" onclick="addToCart('${item.name} (${v.l})', ${v.p})">${v.l} ₹${v.p}</button>`
+        ).join('');
+        return `<div class="menu-item"><div class="menu-item-header"><span class="item-name">${item.name}</span></div><div class="btn-group">${btns}</div></div>`;
+      } else {
+        return `<div class="menu-item">
+          <div class="menu-item-header"><span class="item-name">${item.name}</span><span class="item-price">₹${item.price}</span></div>
+          <button class="btn-primary btn-small" onclick="addToCart('${item.name}', ${item.price})">Add</button>
+        </div>`;
+      }
+    }).join('');
+  }
+
+  // --- CART LOGIC ---
+  function addToCart(name, price) {
+    const item = cart.find(i => i.name === name);
+    if(item) item.qty++; else cart.push({name, price, qty:1});
+    updateCartUI();
+    showToast(`Added: ${name}`);
+  }
+
+  function updateCartUI() {
+    const div = document.getElementById("cart-items");
+    const fab = document.getElementById("fab-cart");
+    const fabCount = document.getElementById("fab-count");
+    
+    if(cart.length === 0) {
+      div.innerHTML = '<p style="text-align:center; color:#999;">Your cart is empty.</p>';
+      document.getElementById("cart-total").innerText = "₹0";
+      fab.style.display = "none";
+      return;
     }
-    menu.appendChild(li);
-  });
-});
 
-function addToCart(name, price) {
-  const f = cart.find(i => i.name === name);
-  if (f) f.qty++; else cart.push({ name, price, qty: 1 });
-  updateCart();
-  document.getElementById("view-cart-toggle").style.display = "block";
-}
+    let total = 0, count = 0;
+    div.innerHTML = cart.map(i => {
+      total += i.price * i.qty;
+      count += i.qty;
+      return `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #eee;">
+        <span>${i.name} <small>x${i.qty}</small></span>
+        <span style="font-weight:600;">₹${i.price * i.qty}</span>
+      </div>`;
+    }).join('');
 
-function updateCart() {
-  let total = 0;
-  const div = document.getElementById("cart-items");
-  div.innerHTML = "";
-  cart.forEach(i => {
-    total += i.price * i.qty;
-    div.innerHTML += `${i.name} × ${i.qty} = ₹${i.price * i.qty}<br>`;
-  });
-  document.getElementById("total-amount").innerText = "Total: ₹" + total;
-}
-
-function scrollToCart() {
-  document.getElementById("cart").scrollIntoView({ behavior: "smooth" });
-}
-
-function checkout() {
-  const name = document.getElementById("cust-name").value.trim();
-  const mobile = document.getElementById("cust-mobile").value.trim();
-  const address = document.getElementById("cust-address").value.trim();
-
-  if (!name || !mobile || !address) {
-    alert("Please fill all customer details before proceeding.");
-    return;
+    document.getElementById("cart-total").innerText = "₹" + total;
+    fabCount.innerText = count;
+    fab.style.display = "block";
   }
 
-  if (cart.length === 0) {
-    alert("Cart is empty!");
-    return;
+  // --- ORDER TYPE LOGIC ---
+  function setOrderType(type) {
+    currentOrderType = type;
+    const addrField = document.getElementById("cust-address");
+    
+    document.getElementById("opt-delivery").classList.toggle("selected", type === "Delivery");
+    document.getElementById("opt-takeaway").classList.toggle("selected", type === "Takeaway");
+    
+    // Hide Address for Takeaway
+    if(type === "Takeaway") addrField.style.display = "none";
+    else addrField.style.display = "block";
   }
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  // --- AUTH & PROFILE ---
+  function sendOTP() {
+    const phone = document.getElementById("login-phone").value.trim();
+    if(phone.length !== 10) return showToast("Enter 10-digit number");
+    
+    const btn = document.getElementById("btn-send-otp");
+    btn.innerHTML = '<span class="loader"></span> Sending...';
+    btn.disabled = true;
 
-  const options = {
-    key: "rzp_live_IAwVGH2rtMwKWw", // your original Razorpay key
-    amount: total * 100,
-    currency: "INR",
-    name: "Do Bhai Chaap Wale",
-    description: "Online Food Order",
+    auth.signInWithPhoneNumber("+91"+phone, window.recaptchaVerifier)
+      .then(res => {
+        confirmResult = res;
+        document.getElementById("otp-box").classList.remove("hidden");
+        document.getElementById("btn-send-otp").classList.add("hidden");
+        showToast("OTP Sent!");
+      })
+      .catch(err => {
+        showToast(err.message);
+        btn.innerHTML = "Send OTP";
+        btn.disabled = false;
+      });
+  }
 
-handler: async function (response) {
+  function verifyOTP() {
+    const code = document.getElementById("otp-code").value.trim();
+    confirmResult.confirm(code).then(result => {
+      showToast("Login Successful!");
+      saveUserOnLogin(result.user); // ✅ Auto-save user info to Firebase
+      switchTab('profile'); 
+    }).catch(err => showToast("Invalid OTP"));
+  }
 
-  // 1️⃣ SAVE ORDER TO FIRESTORE
-  if (window._db) {
-    await window._db.collection("orders").add({
-      name,
-      mobile,
-      address,
-      items: cart,
-      total,
-      paymentId: response.razorpay_payment_id,
-      created: firebase.firestore.FieldValue.serverTimestamp()
+  function logout() {
+    auth.signOut().then(() => {
+      showToast("Logged out");
+      window.location.reload();
     });
   }
-  const user = firebase.auth().currentUser;
-if (user) {
-  window._db.collection("users").doc(user.uid).update({
-    name,
-    address
-  });
-}
 
+  // ✅ NEW: Ensures User is in Database immediately upon login
+  function saveUserOnLogin(user) {
+    const userRef = db.collection("users").doc(user.uid);
+    userRef.get().then((doc) => {
+      if (!doc.exists) {
+        userRef.set({
+          mobile: user.phoneNumber,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      }
+    });
+  }
 
-  // 2️⃣ BUILD WHATSAPP MESSAGE
-  let itemsText = cart
-    .map(i => `• ${i.name} x ${i.qty} = ₹${i.price * i.qty}`)
-    .join('%0A');
+  // Load User Data (Autofill)
+  function loadUserProfile(uid) {
+    db.collection("users").doc(uid).get().then(doc => {
+      if(doc.exists) {
+        const d = doc.data();
+        // Fill Profile
+        document.getElementById("profile-name").value = d.name || "";
+        document.getElementById("profile-address").value = d.address || "";
+        // Autofill Checkout
+        document.getElementById("cust-name").value = d.name || "";
+        document.getElementById("cust-address").value = d.address || "";
+        document.getElementById("cust-mobile").value = currentUser.phoneNumber.replace("+91","");
+        document.getElementById("cust-mobile").readOnly = true;
+        document.getElementById("cust-mobile").style.background = "#eee";
+      }
+    });
+  }
 
-  let waMessage =
-    `🛎️ NEW ORDER – Do Bhai Chaap Wale%0A%0A` +
-    `👤 Name: ${name}%0A` +
-    `📞 Mobile: ${mobile}%0A` +
-    `🏠 Address: ${address}%0A%0A` +
-    `🍽️ Items:%0A${itemsText}%0A%0A` +
-    `💰 Total: ₹${total}%0A` +
-    `💳 Payment ID: ${response.razorpay_payment_id}`;
+  function saveUserProfile() {
+    const name = document.getElementById("profile-name").value.trim();
+    const address = document.getElementById("profile-address").value.trim();
+    const btn = document.getElementById("btn-save-profile");
+    
+    btn.innerHTML = '<span class="loader"></span> Saving...';
+    
+    db.collection("users").doc(currentUser.uid).set({
+        name: name,
+        address: address,
+        mobile: currentUser.phoneNumber
+    }, { merge: true }).then(() => {
+        showToast("Profile Saved!");
+        btn.innerHTML = "Save Details";
+        // Update checkout fields immediately
+        document.getElementById("cust-name").value = name;
+        document.getElementById("cust-address").value = address;
+    });
+  }
 
-  let waUrl = `https://wa.me/918700494451?text=${waMessage}`;
+  // --- ORDERS HISTORY ---
+  function fetchMyOrders() {
+    const list = document.getElementById("orders-list");
+    if(!currentUser) {
+      list.innerHTML = '<p style="text-align:center; padding:20px;">Please login to see your history.</p>';
+      return;
+    }
+    list.innerHTML = '<p style="text-align:center; padding:20px;"><span class="loader loader-dark"></span> Loading...</p>';
+    
+    // NOTE: This query requires a Firestore Index. Check Console if it fails.
+    db.collection("orders").where("userId", "==", currentUser.uid).orderBy("created", "desc").limit(10).get()
+      .then(snap => {
+        if(snap.empty) { list.innerHTML = '<p style="text-align:center;">No past orders.</p>'; return; }
+        list.innerHTML = snap.docs.map(doc => {
+          const d = doc.data();
+          const date = d.created ? d.created.toDate().toLocaleDateString() : "Date N/A";
+          return `<div class="order-card status-paid">
+            <div class="order-header"><span>📅 ${date}</span><span>${d.orderType || 'Delivery'}</span></div>
+            <div class="order-items">${d.items.map(i=>`${i.name} (${i.qty})`).join(', ')}</div>
+            <div class="order-footer"><span>₹${d.total}</span><span style="color:green;">Paid</span></div>
+          </div>`;
+        }).join('');
+      })
+      .catch(err => {
+         console.log(err);
+         if(err.code === 'failed-precondition') list.innerHTML = '<p style="color:red; text-align:center;">First time? Check console for setup link.</p>';
+         else list.innerHTML = '<p style="text-align:center;">Could not load history.</p>';
+      });
+  }
 
-  // 3️⃣ SUCCESS UI + SAFE WHATSAPP BUTTON
-  document.getElementById("inform-us-box").style.display = "block";
-  document.getElementById("waBtn").onclick = function () {
-    window.location.href = waUrl;
-  };
+  // --- CHECKOUT & PAYMENT ---
+  function handleCheckout() {
+    if(cart.length === 0) return showToast("Cart is empty");
 
-  alert("✅ Payment successful! ID: " + response.razorpay_payment_id);
+    const name = document.getElementById("cust-name").value.trim();
+    const mobile = document.getElementById("cust-mobile").value.trim();
+    let address = document.getElementById("cust-address").value.trim();
+    
+    // Validation
+    if(!name) return showToast("Name is required");
+    if(!mobile || mobile.length !== 10) return showToast("Valid 10-digit mobile required");
+    
+    if(currentOrderType === "Delivery" && !address) {
+        return showToast("Address is required for Delivery");
+    }
+    if(currentOrderType === "Takeaway") {
+        address = "Takeaway (Self Pickup)";
+    }
 
-  // 🔔 RING ADMIN PHONES
-ringAdmins({
-  name: name,
-  total: total
-});
+    const total = cart.reduce((s, i) => s + (i.price*i.qty), 0);
+    const btn = document.getElementById("btn-checkout");
+    const originalText = btn.innerText;
+    
+    btn.innerHTML = '<span class="loader"></span> Processing...';
+    btn.disabled = true;
 
-  cart = [];
-  updateCart();
-},
+    const options = {
+      key: RAZORPAY_KEY,
+      amount: total * 100,
+      currency: "INR",
+      name: "Do Bhai Chaap Wale",
+      description: currentOrderType,
+      theme: { color: "#e91e63" },
+      modal: { ondismiss: function() { btn.innerHTML = originalText; btn.disabled = false; } },
+      handler: function(response) {
+        saveOrder(name, mobile, address, total, response.razorpay_payment_id);
+      }
+    };
+    const rzp = new Razorpay(options);
+    rzp.on('payment.failed', function (response){
+        showToast("Payment Failed");
+        btn.innerHTML = originalText; 
+        btn.disabled = false;
+    });
+    rzp.open();
+  }
 
+  async function saveOrder(name, mobile, address, total, payId) {
+    try {
+        const orderData = {
+            name, mobile, address, items: cart, total, paymentId: payId,
+            orderType: currentOrderType,
+            created: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        // Link to user if logged in
+        if(currentUser) orderData.userId = currentUser.uid;
 
-    theme: { color: "#e91e63" }
-  };
+        await db.collection("orders").add(orderData);
 
-const rzp = new Razorpay(options);
-rzp.open();
-} // ✅ CLOSE checkout() PROPERLY
+        // Notify
+        OneSignal.push(() => OneSignal.sendSelfNotification("🛎️ NEW ORDER", `₹${total} (${currentOrderType})`, null, null, {sound:"ring"}));
 
-function login() {
-  alert("Baseline file confirmed.");
-}
-</script>
+        // WhatsApp
+        const itemsList = cart.map(i => `• ${i.name} x ${i.qty}`).join('%0A');
+        const waMsg = `🛎️ NEW ORDER (${currentOrderType})%0A%0A👤 ${name}%0A📞 ${mobile}%0A🏠 ${address}%0A%0A🍽️ ITEMS:%0A${itemsList}%0A%0A💰 TOTAL: ₹${total}`;
+        
+        document.getElementById("waBtn").onclick = () => window.open(`https://wa.me/918700494451?text=${waMsg}`, '_blank');
+        
+        document.getElementById("checkout-form").classList.add("hidden");
+        document.getElementById("success-box").classList.remove("hidden");
+        
+        cart = []; updateCartUI();
+        
+        const btn = document.getElementById("btn-checkout");
+        btn.innerHTML = "Proceed to Pay";
+        btn.disabled = false;
+        
+    } catch (e) {
+        console.error(e);
+        showToast("Order saved but network issue occurred.");
+        document.getElementById("btn-checkout").disabled = false;
+        document.getElementById("btn-checkout").innerText = "Proceed to Pay";
+    }
+  }
 
-
-<script>
-  console.log("Firebase check:", typeof firebase);
-</script>
-
-<script>
-function ringAdmins(order) {
-  OneSignal.push(function () {
-    OneSignal.sendSelfNotification(
-      "🛎️ NEW ORDER RECEIVED",
-      `Order from ${order.name}\nTotal ₹${order.total}`,
-      null,
-      null,
-      { sound: "ring" }
-    );
-  });
-}
+  function showToast(msg) {
+    const x = document.getElementById("toast");
+    x.innerText = msg; x.className = "show";
+    setTimeout(() => { x.className = x.className.replace("show", ""); }, 3000);
+  }
 </script>
 
 </body>
