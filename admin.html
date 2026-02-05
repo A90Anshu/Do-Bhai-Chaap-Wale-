@@ -517,6 +517,10 @@
 </div>
 
 <script>
+// Pre-load the loud alarm sound so it's ready instantly
+const alarmSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+alarmSound.load();
+
 // UI HELPER: Custom Toast Notification
 function showToast(msg, type='info') {
   const box = document.getElementById('toast-box');
@@ -709,7 +713,7 @@ function exportCSV() {
   a.click();
 }
 
-/* ================= NOTIFICATIONS ================= */
+/* ================= NOTIFICATIONS & LOUD ALARM ================= */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/firebase-messaging-sw.js")
     .then(reg => messaging.useServiceWorker(reg));
@@ -721,6 +725,13 @@ function enableBackgroundRinging() {
       showToast("Permission denied for notifications", "error");
       return;
     }
+    
+    // TRICK: Play and pause immediately to unlock audio on iOS/Android
+    alarmSound.play().then(() => {
+      alarmSound.pause();
+      alarmSound.currentTime = 0;
+    }).catch(e => console.log("Audio unlock failed (user interaction needed)", e));
+
     messaging.getToken().then(token => {
       if (!token) return;
       db.collection("adminTokens").doc(token).set({ created: new Date() });
@@ -730,8 +741,14 @@ function enableBackgroundRinging() {
 }
 
 messaging.onMessage(() => {
-  new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg").play();
+  // 1. Play Loud Sound
+  alarmSound.currentTime = 0;
+  alarmSound.play().catch(e => console.log("Sound play failed", e));
+  
+  // 2. Vibrate Phone
   if (navigator.vibrate) navigator.vibrate([500,500,500,500]);
+  
+  // 3. Show Visual Toast
   showToast("🔔 New Order Received!");
 });
 </script>
