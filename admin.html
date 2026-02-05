@@ -104,6 +104,36 @@
     .btn-outline { background: #fff; border: 1px solid #cbd5e1; color: var(--slate-700); }
     .btn-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; justify-content: center; align-items: center; padding: 0; font-size: 1rem; }
 
+    /* ================= WAITING ANIMATION (NEW) ================= */
+    #waiting-msg {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      color: var(--primary);
+    }
+    .pulse-ring {
+      display: block;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.7);
+      animation: pulse-red 2s infinite;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+    @keyframes pulse-red {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(233, 30, 99, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(233, 30, 99, 0); }
+    }
+
     /* ================= MOBILE RESPONSIVE FIX ================= */
     .mobile-list { display: none; }
 
@@ -111,7 +141,6 @@
       body { overflow: auto; background: #f1f5f9; }
       #dashboard { flex-direction: column; height: auto; min-height: 100vh; }
       
-      /* 1. Sidebar becomes Top Nav Scroll */
       aside {
         width: 100%;
         position: sticky;
@@ -121,41 +150,25 @@
         align-items: center;
         padding: 0 10px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        overflow-x: auto; /* Enable horizontal scroll */
-        white-space: nowrap; /* Keep items in one line */
+        overflow-x: auto;
+        white-space: nowrap;
+        background: var(--slate-800);
       }
       
-      .brand-header { display: none; /* Hide big logo on mobile to save space */ }
+      .brand-header { display: none; }
+      .nav-container { flex-direction: row; padding: 10px 0; gap: 10px; width: 100%; }
+      .nav-item { flex: none; background: rgba(255,255,255,0.1); padding: 8px 16px; font-size: 0.85rem; }
       
-      .nav-container {
-        flex-direction: row;
-        padding: 10px 0;
-        gap: 10px;
-        width: 100%;
-      }
-      
-      .nav-item {
-        flex: none; /* Don't shrink */
-        background: rgba(255,255,255,0.1);
-        padding: 8px 16px;
-        font-size: 0.85rem;
-      }
-      
-      /* 2. Main Content Adjustments */
       main { padding: 15px; height: auto; overflow: visible; }
-      
-      /* 3. Hide Table, Show Cards */
       .table-card { display: none; }
       .mobile-list { display: block; }
       
-      /* 4. Controls Stack */
       .header-bar { flex-direction: column; align-items: stretch; gap: 10px; }
       .status-filter { width: 100%; }
       .tab { flex: 1; text-align: center; padding: 10px 0; }
       .search-box { width: 100%; }
       .btn-outline { justify-content: center; padding: 12px; }
 
-      /* 5. Mobile Card Design */
       .m-card { 
         background: #fff; 
         padding: 15px; 
@@ -189,6 +202,10 @@
     .login-card { background: rgba(255,255,255,0.95); padding: 40px; border-radius: 16px; width: 90%; max-width: 380px; text-align: center; }
     .login-card input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 8px; }
     .login-card button { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    
+    /* Remember Me Checkbox */
+    .remember-me { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; justify-content: left; font-size: 0.9rem; color: #555; }
+    .remember-me input { width: auto; margin: 0; }
 
     /* Toast */
     #toast-box { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
@@ -212,6 +229,12 @@
     <h2 class="brand-font" style="margin-top:0;">Admin Access</h2>
     <input id="adminUser" placeholder="Username">
     <input id="adminPass" type="password" placeholder="Password">
+    
+    <div class="remember-me">
+      <input type="checkbox" id="rememberMe">
+      <label for="rememberMe">Keep me logged in</label>
+    </div>
+
     <button onclick="login()">Sign In</button>
     <p id="loginError" style="color:#ef4444; margin-top:15px;"></p>
   </div>
@@ -264,6 +287,12 @@
             </thead>
             <tbody id="ordersTable"></tbody>
           </table>
+
+          <div id="waiting-msg">
+            <div class="pulse-ring"><i class="fas fa-wifi"></i></div>
+            <p>Waiting for new orders...</p>
+          </div>
+
           <div id="empty-msg" style="padding:40px; text-align:center; color:#94a3b8; display:none;">
             <i class="fas fa-clipboard-check" style="font-size:3rem; margin-bottom:15px; opacity:0.3;"></i>
             <p>No orders found.</p>
@@ -272,6 +301,12 @@
       </div>
 
       <div id="mobileOrders" class="mobile-list"></div>
+      
+      <div id="waiting-msg-mobile" style="display:none; text-align:center; padding:50px 20px; color:var(--primary);">
+        <div class="pulse-ring" style="margin:0 auto 20px;"><i class="fas fa-wifi"></i></div>
+        <p>Waiting for new orders...</p>
+      </div>
+      
     </div>
 
     <div id="view-payouts" class="hidden">
@@ -323,14 +358,29 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const messaging = firebase.messaging();
 
-// 3. Login Logic
+// 3. Login Logic & Remember Me
 const ADMIN_USER = "admin";
 const ADMIN_PASS = "A90Anshu@";
+
+// CHECK LOGIN ON LOAD
+window.onload = function() {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadOrders();
+    }
+};
 
 function login() {
   const u = document.getElementById('adminUser').value;
   const p = document.getElementById('adminPass').value;
+  const remember = document.getElementById('rememberMe').checked;
+
   if(u === ADMIN_USER && p === ADMIN_PASS) {
+    if(remember) {
+        localStorage.setItem('isLoggedIn', 'true');
+    }
+    
     document.getElementById('login-overlay').style.display = 'none';
     document.getElementById('page-loader').style.display = 'flex';
     document.getElementById('dashboard').classList.remove('hidden');
@@ -340,7 +390,10 @@ function login() {
   }
 }
 
-function logout() { location.reload(); }
+function logout() { 
+    localStorage.removeItem('isLoggedIn');
+    location.reload(); 
+}
 
 // 4. View Switching
 function switchView(v) {
@@ -348,7 +401,6 @@ function switchView(v) {
   document.getElementById('view-payouts').classList.add('hidden');
   document.getElementById('view-' + v).classList.remove('hidden');
   
-  // Highlight Nav
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event.currentTarget.classList.add('active');
 }
@@ -365,15 +417,16 @@ let isFirstLoad = true;
 
 function loadOrders() {
   db.collection("orders").orderBy("created", "desc").onSnapshot(snap => {
-      // Hide loader
       const loader = document.getElementById('page-loader');
       if(loader) { loader.style.opacity = '0'; setTimeout(()=>loader.style.display='none', 500); }
 
       const newOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       
-      // CHECK FOR NEW ORDERS (For Sound)
-      if (!isFirstLoad && newOrders.length > ordersData.length) {
-        // Simple check: if we have more orders than before, ring!
+      // Ring only if new Pending orders arrive
+      const oldPending = ordersData.filter(o => (o.status || "Pending") === "Pending").length;
+      const newPending = newOrders.filter(o => (o.status || "Pending") === "Pending").length;
+
+      if (!isFirstLoad && newPending > oldPending) {
         alarmSound.play().catch(e => console.log("Audio blocked", e));
         if(navigator.vibrate) navigator.vibrate([500,500,500]);
         showToast("New Order Received!");
@@ -400,12 +453,10 @@ function renderOrders() {
   const searchVal = document.getElementById('searchInput').value.toLowerCase();
   
   let filtered = ordersData.filter(o => {
-    // 1. Status Filter
     const statusMatch = currentFilter === "Ready" 
       ? (o.status === "Ready" || o.status === "Completed")
       : (o.status || "Pending") === currentFilter;
     
-    // 2. Search Filter
     const searchMatch = !searchVal || 
       o.name.toLowerCase().includes(searchVal) || 
       o.mobile.includes(searchVal) || 
@@ -416,25 +467,40 @@ function renderOrders() {
 
   const tableBody = document.getElementById('ordersTable');
   const mobileList = document.getElementById('mobileOrders');
+  const waitingMsg = document.getElementById('waiting-msg');
+  const waitingMsgMob = document.getElementById('waiting-msg-mobile');
+  const emptyMsg = document.getElementById('empty-msg');
   
   tableBody.innerHTML = "";
   mobileList.innerHTML = "";
 
+  // Handle Empty States
   if(filtered.length === 0) {
-    document.getElementById('empty-msg').style.display = 'block';
+    if(currentFilter === 'Pending') {
+        // Show Waiting Animation
+        waitingMsg.style.display = 'flex';
+        waitingMsgMob.style.display = 'block';
+        emptyMsg.style.display = 'none';
+    } else {
+        // Show normal empty message
+        waitingMsg.style.display = 'none';
+        waitingMsgMob.style.display = 'none';
+        emptyMsg.style.display = 'block';
+    }
   } else {
-    document.getElementById('empty-msg').style.display = 'none';
+    // Hide all empty messages
+    waitingMsg.style.display = 'none';
+    waitingMsgMob.style.display = 'none';
+    emptyMsg.style.display = 'none';
   }
 
   filtered.forEach(o => {
     const time = o.created?.toDate ? o.created.toDate().toLocaleTimeString("en-IN",{hour:'2-digit',minute:'2-digit'}) : "Just now";
     
-    // Format Items
     const itemsHtml = (o.items || []).map(i => 
       `<div class="item-row">${i.name} <span class="qty-badge">x${i.qty}</span></div>`
     ).join("");
 
-    // Buttons
     let btns = "";
     if((o.status || "Pending") === "Pending") {
       btns = `<button class="btn btn-accept" onclick="updateStatus('${o.id}', 'Accepted')"><i class="fas fa-check"></i> Accept</button>
@@ -461,7 +527,7 @@ function renderOrders() {
     `;
 
     // Mobile Card (FIXED LAYOUT)
-    mobileOrders.innerHTML += `
+    mobileList.innerHTML += `
       <div class="m-card">
         <div class="m-top"><span>#${o.id.slice(-4)}</span> <span>${time}</span></div>
         <div class="m-main">${o.name}</div>
@@ -534,13 +600,11 @@ if ("serviceWorker" in navigator) {
 }
 
 function enableSoundAndNotifications() {
-  // A. Unlock Audio
   alarmSound.play().then(() => {
     alarmSound.pause();
     alarmSound.currentTime = 0;
   }).catch(e => console.log("Audio unlock failed", e));
 
-  // B. Register Token
   Notification.requestPermission().then(p => {
     if (p !== "granted") {
       alert("Please allow notifications");
@@ -562,4 +626,5 @@ messaging.onMessage(() => {
 });
 </script>
 </body>
+</html>
 </html>
