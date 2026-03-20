@@ -10,9 +10,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
+  <!-- FIREBASE LIBRARIES -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-functions.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
 
   <style>
@@ -121,8 +123,8 @@
     }
     
     /* UTILS */
-    #page-loader { position: fixed; inset: 0; background: #fff; z-index: 9999; display: none; justify-content: center; align-items: center; }
-    .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+    #page-loader { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column; }
+    .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom:10px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     #toast-box { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
     .toast { background: var(--slate-800); color: #fff; padding: 12px 20px; border-radius: 8px; margin-top: 10px; animation: slideIn 0.3s ease; border-left: 4px solid var(--primary); }
@@ -138,7 +140,10 @@
 
 <body>
 <div id="toast-box"></div>
-<div id="page-loader"><div class="spinner"></div></div>
+<div id="page-loader">
+    <div class="spinner"></div>
+    <div style="font-weight:600; color:var(--slate-800);">Processing...</div>
+</div>
 
 <div id="modal-overlay">
   <div class="modal">
@@ -250,6 +255,7 @@ const firebaseConfig = { apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4", auth
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
+const cloudFunctions = firebase.functions(); 
 const messaging = firebase.messaging();
 
 const alarmSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
@@ -259,7 +265,6 @@ let currentEditingId = null;
 
 /* ================= AUTHENTICATION ================= */
 window.onload = function() {
-    // ONLY trust Real Firebase Auth to unhide the dashboard
     auth.onAuthStateChanged((user) => {
         if (user) {
             document.getElementById('login-overlay').style.display = 'none';
@@ -280,19 +285,13 @@ function login() {
   const errorMsg = document.getElementById('loginError');
 
   if(!e || !p) { errorMsg.innerText = "Please enter credentials"; return; }
-
-  // 💥 SECRET TRICK: Auto-convert "admin" to the email so your workflow never changes.
   if(e === "admin") { e = "admin@dobhaichaap.com"; }
 
   btn.innerText = "Verifying...";
   errorMsg.innerText = "";
 
-  // Sign into Firebase Auth SECURELY
   auth.signInWithEmailAndPassword(e, p)
-    .then(() => {
-        btn.innerText = "Sign In";
-        // Let onAuthStateChanged handle the screen switch automatically
-    })
+    .then(() => { btn.innerText = "Sign In"; })
     .catch(err => {
         console.error(err);
         errorMsg.innerText = "Invalid Credentials. Check spelling.";
@@ -300,9 +299,7 @@ function login() {
     });
 }
 
-function logout() { 
-    auth.signOut().then(() => { location.reload(); }); 
-}
+function logout() { auth.signOut().then(() => { location.reload(); }); }
 
 /* ================= APP LOGIC ================= */
 function initApp() { loadOrders(); loadMenu(); loadSettings(); loadCategories(); loadCoupons(); }
@@ -313,7 +310,7 @@ function switchView(v) {
     if(event) event.currentTarget.classList.add('active');
 }
 
-/* ================= ORDERS ================= */
+/* ================= ORDERS & SHIPROCKET ================= */
 let ordersData=[], currentFilter="Pending", isFirst=true;
 function loadOrders() {
     db.collection("orders").orderBy("created", "desc").onSnapshot(snap => {
@@ -322,9 +319,6 @@ function loadOrders() {
         const oldPending = ordersData.filter(o=>(o.status||"Pending")==="Pending").length;
         if(!isFirst && newPending > oldPending) { triggerAlarm(); showToast("🔔 New Order!"); }
         ordersData=newOrders; renderOrders(); calculateAnalytics(); isFirst=false;
-    }, error => {
-        console.error("Orders Error:", error);
-        if(error.code === 'permission-denied') alert("Access Denied: Your Firebase Rules are blocking you.");
     });
 }
 
@@ -349,8 +343,31 @@ function stopAlarm() { alarmSound.pause(); alarmSound.currentTime=0; }
 function updOrder(id, s) { db.collection("orders").doc(id).update({status:s}); stopAlarm(); }
 function setFilter(f) { currentFilter=f; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); event.target.classList.add('active'); renderOrders(); }
 
+// SHIPROCKET BOOKING 
+async function bookShiprocket(orderId) {
+    if(!confirm("Are you sure you want to book a Shiprocket rider for this order?")) return;
+    
+    document.getElementById('page-loader').style.display = 'flex'; 
+    
+    try {
+        const bookRider = cloudFunctions.httpsCallable('bookShiprocketRider');
+        const response = await bookRider({ orderId: orderId });
+        showToast(response.data.message);
+    } catch (error) {
+        console.error("Shiprocket Booking Error:", error);
+        alert("Failed to book rider. Check the browser console or Firebase logs for details.");
+    } finally {
+        document.getElementById('page-loader').style.display = 'none'; 
+    }
+}
+
 function renderOrders() {
-    const f = ordersData.filter(o => { const s = o.status||"Pending"; return currentFilter==="Ready" ? (s==="Ready"||s==="Completed") : s===currentFilter; });
+    const f = ordersData.filter(o => { 
+        const s = o.status||"Pending"; 
+        if (currentFilter === "Ready") return (s==="Ready" || s==="Rider Assigned");
+        return currentFilter==="Completed" ? s==="Completed" : s===currentFilter; 
+    });
+    
     const tbody = document.getElementById('ordersTable'); const mlist = document.getElementById('mobileOrders');
     if(tbody) tbody.innerHTML=""; 
     if(mlist) mlist.innerHTML="";
@@ -358,13 +375,32 @@ function renderOrders() {
     f.forEach(o => {
         const iHtml = (o.items||[]).map(i=>`<div>${i.name} x${i.qty}</div>`).join('');
         let btns = "";
-        if((o.status||"Pending")==="Pending") btns = `<button class="btn btn-accept" onclick="updOrder('${o.id}','Accepted')">Accept</button>`;
-        else if(o.status==="Accepted") btns = `<button class="btn btn-ready" onclick="updOrder('${o.id}','Ready')">Mark Ready</button>`;
-        else if(o.status==="Ready") btns = `<button class="btn btn-accept" onclick="updOrder('${o.id}','Completed')">Mark Delivered</button>`;
-        else btns = `<span style="color:green;font-weight:bold">Completed</span>`;
         
-        if(tbody) tbody.innerHTML += `<tr><td>${o.created?.toDate?o.created.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</td><td><b>${o.name}</b><br>${o.mobile}</td><td>${iHtml}</td><td>₹${o.total}</td><td>${btns}</td></tr>`;
-        if(mlist) mlist.innerHTML += `<div class="m-card"><div class="m-header"><b>${o.name}</b> <b>₹${o.total}</b></div><div style="font-size:0.9rem; margin-bottom:5px;">${o.mobile}</div><div class="m-body" style="background:#f9f9f9;padding:10px;">${iHtml}</div><div class="m-actions">${btns.replace('btn','btn style="width:100%"')}</div></div>`;
+        // STATUS LOGIC WITH SHIPROCKET BUTTON & TRACK MAP BUTTON
+        if((o.status||"Pending")==="Pending") {
+            btns = `<button class="btn btn-accept" onclick="updOrder('${o.id}','Accepted')">Accept & Cook</button>`;
+        } else if(o.status==="Accepted") {
+            btns = `<button class="btn btn-ready" onclick="updOrder('${o.id}','Ready')">Mark Ready</button>`;
+        } else if(o.status==="Ready") {
+            btns = `
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <button class="btn btn-ready" style="background:#8b5cf6;" onclick="bookShiprocket('${o.id}')">🚚 Book Rider</button>
+                <button class="btn btn-accept" onclick="updOrder('${o.id}','Completed')">Manual Del</button>
+            </div>`;
+        } else if(o.status==="Rider Assigned") {
+            // NEW: "Track Map" button added below!
+            btns = `
+            <div style="display:flex; flex-direction:column; gap:5px; text-align:center;">
+                <span style="color:#8b5cf6;font-weight:bold;font-size:0.85rem;">🚚 Rider Assigned<br><small>ID: ${o.shiprocketOrderId||'N/A'}</small></span>
+                <button class="btn btn-outline" style="padding:6px; font-size:0.8rem; border-color:#8b5cf6; color:#8b5cf6;" onclick="window.open('https://app.shiprocket.in/seller/orders/details/${o.shiprocketOrderId}', '_blank')">📍 Track Map</button>
+                <button class="btn btn-accept" style="padding:6px; font-size:0.8rem;" onclick="updOrder('${o.id}','Completed')">Mark Delivered</button>
+            </div>`;
+        } else {
+            btns = `<span style="color:green;font-weight:bold">Completed</span>`;
+        }
+        
+        if(tbody) tbody.innerHTML += `<tr><td>${o.created?.toDate?o.created.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</td><td><b>${o.name}</b><br>${o.mobile}<br><small>${o.address||''}</small></td><td>${iHtml}</td><td>₹${o.total}</td><td>${btns}</td></tr>`;
+        if(mlist) mlist.innerHTML += `<div class="m-card"><div class="m-header"><b>${o.name}</b> <b>₹${o.total}</b></div><div style="font-size:0.9rem; margin-bottom:5px;">${o.mobile}<br>${o.address||''}</div><div class="m-body" style="background:#f9f9f9;padding:10px;">${iHtml}</div><div class="m-actions">${btns.replace('btn','btn style="width:100%"')}</div></div>`;
     });
 }
 
