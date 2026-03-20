@@ -290,19 +290,24 @@ function login() {
   let u = document.getElementById('adminUser').value.trim();
   const p = document.getElementById('adminPass').value.trim();
   const btn = document.querySelector('button[onclick="login()"]');
-  const rememberMe = document.getElementById('rememberMe').checked; // Check the box status
+  const rememberMe = document.getElementById('rememberMe').checked; 
+  const errorMsg = document.getElementById('loginError');
+
+  if(!u || !p) {
+      errorMsg.innerText = "Please enter credentials";
+      return;
+  }
   
   // THE SECRET TRICK: Convert "admin" to the real Firebase email
   if(u === "admin") {
-      u = "admin@dobhaichaap.com"; // MUST match the email you created in Firebase Auth
+      u = "admin@dobhaichaap.com"; 
   }
 
   btn.innerText = "Verifying...";
+  errorMsg.innerText = ""; // clear old errors
 
-  // 1. Tell Firebase how long to remember you based on the checkbox
-  const persistenceType = rememberMe 
-      ? firebase.auth.Auth.Persistence.LOCAL   // Remember even if browser closes
-      : firebase.auth.Auth.Persistence.SESSION; // Forget when tab closes
+  // 1. Use simple strings to prevent JavaScript crashes
+  const persistenceType = rememberMe ? 'local' : 'session';
 
   // 2. Apply the memory setting, THEN log in
   auth.setPersistence(persistenceType)
@@ -314,8 +319,17 @@ function login() {
         btn.innerText = "Sign In";
     })
     .catch((error) => {
-        console.error(error);
-        document.getElementById('loginError').innerText="Invalid Credentials";
+        console.error("Firebase Login Error:", error);
+        
+        // Give a clear error message based on what went wrong
+        if (error.code === 'auth/user-not-found') {
+            errorMsg.innerText = "Account not found. Did you create it in Firebase?";
+        } else if (error.code === 'auth/wrong-password') {
+            errorMsg.innerText = "Wrong Password!";
+        } else {
+            errorMsg.innerText = "Login Failed: " + error.message;
+        }
+        
         btn.innerText = "Sign In";
     });
 }
