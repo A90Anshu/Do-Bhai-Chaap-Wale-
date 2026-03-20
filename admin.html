@@ -272,24 +272,56 @@ let currentEditingId = null;
 
 /* INIT */
 window.onload = function() {
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('dashboard').classList.remove('hidden');
-        initApp();
-    }
+    // ONLY rely on Real Firebase Auth now
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('dashboard').classList.remove('hidden');
+            initApp();
+        } else {
+            document.getElementById('login-overlay').style.display = 'flex';
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+    });
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('/firebase-messaging-sw.js');
 };
 
 function login() {
-  if(document.getElementById('adminUser').value==="admin" && document.getElementById('adminPass').value==="A90Anshu@") {
-    if(document.getElementById('rememberMe').checked) localStorage.setItem('isLoggedIn', 'true');
-    document.getElementById('login-overlay').style.display='none'; document.getElementById('dashboard').classList.remove('hidden'); initApp();
-  } else document.getElementById('loginError').innerText="Invalid Credentials";
-}
-function logout() { localStorage.removeItem('isLoggedIn'); location.reload(); }
-function initApp() { loadOrders(); loadMenu(); loadSettings(); loadCategories(); loadCoupons(); }
-function switchView(v) { ['orders','menu','settings','categories','coupons','payouts'].forEach(id=>document.getElementById('view-'+id).classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); }
+  let u = document.getElementById('adminUser').value.trim();
+  const p = document.getElementById('adminPass').value.trim();
+  const btn = document.querySelector('button[onclick="login()"]');
+  const rememberMe = document.getElementById('rememberMe').checked; // Check the box status
+  
+  // THE SECRET TRICK: Convert "admin" to the real Firebase email
+  if(u === "admin") {
+      u = "admin@dobhaichaap.com"; // MUST match the email you created in Firebase Auth
+  }
 
+  btn.innerText = "Verifying...";
+
+  // 1. Tell Firebase how long to remember you based on the checkbox
+  const persistenceType = rememberMe 
+      ? firebase.auth.Auth.Persistence.LOCAL   // Remember even if browser closes
+      : firebase.auth.Auth.Persistence.SESSION; // Forget when tab closes
+
+  // 2. Apply the memory setting, THEN log in
+  auth.setPersistence(persistenceType)
+    .then(() => {
+        return auth.signInWithEmailAndPassword(u, p);
+    })
+    .then((userCredential) => {
+        // Success! window.onload's onAuthStateChanged will handle the screen switch.
+        btn.innerText = "Sign In";
+    })
+    .catch((error) => {
+        console.error(error);
+        document.getElementById('loginError').innerText="Invalid Credentials";
+        btn.innerText = "Sign In";
+    });
+}
+function logout() { 
+    auth.signOut().then(() => { location.reload(); }); 
+}
 /* ORDERS */
 let ordersData=[], currentFilter="Pending", isFirst=true;
 
