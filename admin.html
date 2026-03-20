@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-  <!-- FIREBASE LIBRARIES (Added Missing Auth Library Here!) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -246,22 +245,21 @@
 </div>
 
 <script>
-/* CONFIG */
+/* ================= FIREBASE CONFIG ================= */
 const firebaseConfig = { apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4", authDomain: "dobhaichaapwale1.firebaseapp.com", projectId: "dobhaichaapwale1", storageBucket: "dobhaichaapwale1.firebasestorage.app", messagingSenderId: "141034963645", appId: "1:141034963645:web:442a93b6e87643b3bf2dd4" };
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const auth = firebase.auth(); // Correctly loaded now!
+const auth = firebase.auth();
 const messaging = firebase.messaging();
 
-// SOUND ENGINE
 const alarmSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
 alarmSound.loop = true; 
 let wakeLock = null;
 let currentEditingId = null;
 
-/* INIT */
+/* ================= AUTHENTICATION ================= */
 window.onload = function() {
-    // Only trust Firebase Auth for Admin Access
+    // ONLY trust Real Firebase Auth to unhide the dashboard
     auth.onAuthStateChanged((user) => {
         if (user) {
             document.getElementById('login-overlay').style.display = 'none';
@@ -272,51 +270,32 @@ window.onload = function() {
             document.getElementById('dashboard').classList.add('hidden');
         }
     });
-
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('/firebase-messaging-sw.js');
 };
 
-/* SECURE LOGIN FUNCTION */
 function login() {
-    let u = document.getElementById('adminUser').value.trim();
-    const p = document.getElementById('adminPass').value.trim();
-    const btn = document.querySelector('button[onclick="login()"]');
-    const rememberMe = document.getElementById('rememberMe').checked; 
-    const errorMsg = document.getElementById('loginError');
+  let e = document.getElementById('adminUser').value.trim();
+  const p = document.getElementById('adminPass').value.trim();
+  const btn = document.querySelector('button[onclick="login()"]');
+  const errorMsg = document.getElementById('loginError');
 
-    if(!u || !p) {
-        errorMsg.innerText = "Please enter credentials";
-        return;
-    }
+  if(!e || !p) { errorMsg.innerText = "Please enter credentials"; return; }
 
-    // THE SECRET TRICK: Convert "admin" to the real Firebase email
-    if(u === "admin") {
-        u = "admin@dobhaichaap.com"; 
-    }
+  // 💥 SECRET TRICK: Auto-convert "admin" to the email so your workflow never changes.
+  if(e === "admin") { e = "admin@dobhaichaap.com"; }
 
-    btn.innerText = "Verifying...";
-    errorMsg.innerText = ""; 
+  btn.innerText = "Verifying...";
+  errorMsg.innerText = "";
 
-    // Apply the memory setting, THEN log in
-    const persistenceType = rememberMe ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
-
-    auth.setPersistence(persistenceType)
+  // Sign into Firebase Auth SECURELY
+  auth.signInWithEmailAndPassword(e, p)
     .then(() => {
-        return auth.signInWithEmailAndPassword(u, p);
-    })
-    .then((userCredential) => {
         btn.innerText = "Sign In";
-        // onAuthStateChanged automatically handles hiding the login screen
+        // Let onAuthStateChanged handle the screen switch automatically
     })
-    .catch((error) => {
-        console.error("Auth Error:", error);
-        if (error.code === 'auth/user-not-found') {
-            errorMsg.innerText = "Account not found. Ensure you created it in Firebase!";
-        } else if (error.code === 'auth/wrong-password') {
-            errorMsg.innerText = "Wrong Password!";
-        } else {
-            errorMsg.innerText = "Login Failed: " + error.message;
-        }
+    .catch(err => {
+        console.error(err);
+        errorMsg.innerText = "Invalid Credentials. Check spelling.";
         btn.innerText = "Sign In";
     });
 }
@@ -325,6 +304,7 @@ function logout() {
     auth.signOut().then(() => { location.reload(); }); 
 }
 
+/* ================= APP LOGIC ================= */
 function initApp() { loadOrders(); loadMenu(); loadSettings(); loadCategories(); loadCoupons(); }
 function switchView(v) { 
     ['orders','menu','settings','categories','coupons','payouts'].forEach(id=>document.getElementById('view-'+id).classList.add('hidden')); 
@@ -333,7 +313,7 @@ function switchView(v) {
     if(event) event.currentTarget.classList.add('active');
 }
 
-/* ORDERS */
+/* ================= ORDERS ================= */
 let ordersData=[], currentFilter="Pending", isFirst=true;
 function loadOrders() {
     db.collection("orders").orderBy("created", "desc").onSnapshot(snap => {
@@ -342,8 +322,12 @@ function loadOrders() {
         const oldPending = ordersData.filter(o=>(o.status||"Pending")==="Pending").length;
         if(!isFirst && newPending > oldPending) { triggerAlarm(); showToast("🔔 New Order!"); }
         ordersData=newOrders; renderOrders(); calculateAnalytics(); isFirst=false;
+    }, error => {
+        console.error("Orders Error:", error);
+        if(error.code === 'permission-denied') alert("Access Denied: Your Firebase Rules are blocking you.");
     });
 }
+
 function calculateAnalytics() {
     let total=0, today=0, count=0, pending=0, items={};
     const tStr = new Date().toDateString();
@@ -356,14 +340,15 @@ function calculateAnalytics() {
     document.getElementById('pay-total').innerText = "₹"+total; document.getElementById('stat-pending').innerText = pending;
     document.getElementById('pay-today').innerText = "₹"+today; document.getElementById('count-today').innerText = count + " Orders";
     
-    // Top Items & Status Charts
     const top = Object.entries(items).sort((a,b)=>b[1]-a[1]).slice(0,5);
     document.getElementById('top-items-list').innerHTML = top.map(([n,q])=>`<div class="item-row"><span>${n}</span><b>${q}</b></div>`).join('');
 }
+
 function triggerAlarm() { alarmSound.currentTime=0; alarmSound.play().catch(()=>{}); }
 function stopAlarm() { alarmSound.pause(); alarmSound.currentTime=0; }
 function updOrder(id, s) { db.collection("orders").doc(id).update({status:s}); stopAlarm(); }
 function setFilter(f) { currentFilter=f; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); event.target.classList.add('active'); renderOrders(); }
+
 function renderOrders() {
     const f = ordersData.filter(o => { const s = o.status||"Pending"; return currentFilter==="Ready" ? (s==="Ready"||s==="Completed") : s===currentFilter; });
     const tbody = document.getElementById('ordersTable'); const mlist = document.getElementById('mobileOrders');
@@ -383,7 +368,7 @@ function renderOrders() {
     });
 }
 
-/* MENU WITH DRAG & DROP LOGIC */
+/* ================= MENU ================= */
 let fullMenu = [];
 function loadMenu(filter='all') {
     db.collection("menu").onSnapshot(snap => {
@@ -436,7 +421,7 @@ function moveItem(index, direction) {
     batch.commit().then(() => showToast("Order Updated"));
 }
 
-/* CATEGORIES */
+/* ================= CATEGORIES & SETTINGS ================= */
 function loadCategories() {
     db.collection("categories").orderBy("name").onSnapshot(snap => {
         const d = document.getElementById("category-list"), s = document.getElementById("inp-category");
@@ -451,7 +436,6 @@ function loadCategories() {
 function addCategory() { const n = prompt("Category Name:"); if(n) db.collection("categories").add({name:n}); }
 function promptNewCategory() { const n = prompt("Category Name:"); if(n) db.collection("categories").add({name:n}); }
 
-/* MODALS */
 function openAddModal() { 
     currentEditingId = null; 
     document.getElementById('modal-title').innerText="Add Item"; 
@@ -507,13 +491,11 @@ function saveMenuItem() {
     }
 }
 
-/* SETTINGS & COUPONS */
 function loadSettings() { db.collection("settings").doc("config").get().then(d=>{ if(d.exists) { const v=d.data(); document.getElementById('cfg-name').value=v.shopName||""; document.getElementById('cfg-address').value=v.address||""; document.getElementById('cfg-map').value=v.mapLink||""; } }); }
 function saveSettings() { db.collection("settings").doc("config").set({ shopName:document.getElementById('cfg-name').value, address:document.getElementById('cfg-address').value, mapLink:document.getElementById('cfg-map').value }, {merge:true}).then(()=>showToast("Saved")); }
 function loadCoupons() { db.collection("coupons").onSnapshot(snap=>{ const l=document.getElementById('coupon-list'); if(l) { l.innerHTML=""; snap.forEach(d=>{ const c=d.data(); l.innerHTML+=`<div class="info-card"><div><b>${c.code}</b><br>${c.desc}</div><button class="btn btn-danger" onclick="db.collection('coupons').doc('${d.id}').delete()">Del</button></div>`; }); } }); }
 function addCoupon() { const c=prompt("Code:"), d=prompt("Desc:"); if(c) db.collection("coupons").add({code:c, desc:d}); }
 
-/* UTILS */
 function exportCSV() {
   let csv = "Name,Mobile,Total,Status\n"; ordersData.forEach(o => csv += `${o.name},${o.mobile},${o.total},${o.status}\n`);
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv])); a.download = "orders.csv"; a.click();
