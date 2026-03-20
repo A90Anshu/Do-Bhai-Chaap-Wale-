@@ -480,53 +480,55 @@ function updateCart() {
     document.getElementById("fab-cart").style.display="flex";
 }
 
-// --- CHECKOUT & SHIPROCKET LIVE CALC ---
-function setType(t) { 
-    orderType=t; 
-    document.getElementById("opt-del").classList.toggle("selected", t==="Delivery");
-    document.getElementById("opt-take").classList.toggle("selected", t==="Takeaway");
-    document.getElementById("delivery-fields").style.display = t==="Takeaway" ? "none" : "block";
+// ==========================================
+// SHIPROCKET LIVE SHIPPING CALCULATOR (HYPERLOCAL GPS UPGRADE)
+// ==========================================
+exports.getShippingRate = functions.https.onCall(async (data, context) => {
+    const destPincode = data.pincode;
+    const lat = data.lat; // Capturing Exact GPS from frontend
+    const lng = data.lng; // Capturing Exact GPS from frontend
     
-    if(t === "Takeaway") { isDeliveryCalculated = true; liveDeliveryFee = 0; } 
-    else { resetDelivery(); }
-    updateCart(); 
-}
-
-function resetDelivery() {
-    isDeliveryCalculated = false; liveDeliveryFee = 0;
-    document.getElementById("del-msg").style.display = "none"; updateCart(); 
-}
-
-async function calculateLiveShipping() {
-    const pin = document.getElementById("c-pincode").value.trim();
-    if(pin.length !== 6) return toast("Enter a valid 6-digit Pincode!");
-
-    const btn = document.getElementById("btn-calc-ship");
-    const msg = document.getElementById("del-msg");
-    btn.innerText = "⏳ Loading..."; btn.disabled = true; msg.style.display = "none";
+    if (!destPincode) throw new functions.https.HttpsError('invalid-argument', 'Pincode is required.');
 
     try {
-        const getRate = cloudFunctions.httpsCallable('getShippingRate');
-        const response = await getRate({ pincode: pin });
+        // 1. Log in to Shiprocket API
+        const authResponse = await axios.post("https://apiv2.shiprocket.in/v1/external/auth/login", {
+            email: "YOUR_SHIPROCKET_EMAIL@gmail.com", // ⚠️ YOU MUST CHANGE THIS TO YOUR REAL EMAIL
+            password: "YOUR_SHIPROCKET_PASSWORD"      // ⚠️ YOU MUST CHANGE THIS TO YOUR REAL PASSWORD
+        });
+        const token = authResponse.data.token;
 
-        if(response.data.success) {
-            liveDeliveryFee = response.data.rate; isDeliveryCalculated = true;
-            msg.style.display = "block"; msg.style.color = "var(--success)";
-            msg.innerText = `Delivery Available! Rate: ₹${liveDeliveryFee} applied.`;
-            updateCart(); 
-        } else {
-            isDeliveryCalculated = false; liveDeliveryFee = 0;
-            msg.style.display = "block"; msg.style.color = "var(--danger)";
-            msg.innerText = response.data.message || "Cannot deliver to this location.";
-            updateCart();
+        // 2. Check Prices (Using Hyperlocal GPS if available!)
+        let apiUrl = `https://apiv2.shiprocket.in/v1/external/courier/serviceability/?pickup_postcode=110063&delivery_postcode=${destPincode}&weight=0.5&cod=0`;
+        if (lat && lng) {
+            apiUrl += `&delivery_lat=${lat}&delivery_lng=${lng}`; // Adds exact Zomato-style GPS accuracy
         }
-    } catch(err) {
-        console.error("Calculation Error:", err);
-        msg.style.display = "block"; msg.style.color = "var(--danger)";
-        msg.innerText = "Failed to fetch price. Please check Pincode.";
+
+        const serviceResponse = await axios.get(apiUrl, { headers: { "Authorization": `Bearer ${token}` } });
+        const couriers = serviceResponse.data.data.available_courier_companies;
+        
+        if (!couriers || couriers.length === 0) return { success: false, message: "Delivery not available to this location." };
+
+        let lowestRate = couriers[0].rate;
+        for (let courier of couriers) {
+            if (courier.rate < lowestRate) lowestRate = courier.rate;
+        }
+
+        return { success: true, rate: Math.round(lowestRate) };
+
+    } catch (error) {
+        // THIS WILL TELL YOU EXACTLY WHAT WENT WRONG ON THE FRONTEND
+        let errorMsg = "Could not fetch live rates.";
+        if (error.response && error.response.status === 401) {
+            errorMsg = "Shiprocket Login Failed. Put your real Email/Pass in index.js!";
+        } else if (error.response && error.response.status === 404) {
+            errorMsg = "Shiprocket says: No riders serve this Pincode right now.";
+        } else if (error.response && error.response.data && error.response.data.message) {
+            errorMsg = error.response.data.message;
+        }
+        return { success: false, message: errorMsg };
     }
-    btn.innerText = "Check Price"; btn.disabled = false;
-}
+});
 
 function checkout() {
     if(!cart.length) return toast("Cart empty");
