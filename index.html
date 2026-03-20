@@ -9,7 +9,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   
   <style>
-    /* VARIABLES */
+    /* VARIABLES & RESET */
     :root { --primary:#ff5252; --primary-soft:#ffebee; --bg:#f4f6f8; --text:#1c1c1c; --gray:#696969; --success:#26a541; --radius:12px; }
     * { box-sizing:border-box; outline:none; -webkit-tap-highlight-color:transparent; }
     body { margin:0; font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); padding-bottom:100px; }
@@ -21,49 +21,28 @@
     .status { background:var(--bg); padding:5px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; }
     .status.active { background:#e8f5e9; color:var(--success); }
 
-    /* COUPONS */
-    .offers-scroll { display:flex; gap:12px; overflow-x:auto; padding:15px; scrollbar-width:none; }
-    .offer-card { min-width:260px; background:linear-gradient(135deg,#2c3e50,#000); color:#fff; padding:15px; border-radius:var(--radius); box-shadow:0 4px 10px rgba(0,0,0,0.1); }
-    .offer-card h3 { margin:0; font-size:1.1rem; }
-    
-    /* MENU */
+    /* MENU & CARDS */
     .cat-scroll { display:flex; gap:10px; overflow-x:auto; padding:10px 15px; background:#fff; border-bottom:1px solid #eee; }
     .cat-chip { white-space:nowrap; padding:8px 16px; background:#f9f9f9; border:1px solid #eee; border-radius:50px; font-weight:600; font-size:0.85rem; color:var(--gray); transition:0.2s; cursor:pointer; }
     .cat-chip.active { background:var(--primary); color:#fff; border-color:var(--primary); }
-    
     .menu-grid { padding:15px; display:grid; gap:15px; }
     .menu-card { background:#fff; padding:15px; border-radius:var(--radius); box-shadow:0 2px 8px rgba(0,0,0,0.04); position:relative; }
-    .bestseller-tag { position:absolute; top:-8px; left:-8px; background:#f59e0b; color:#fff; font-size:0.6rem; padding:4px 8px; border-radius:4px; font-weight:800; text-transform:uppercase; z-index:10; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-    
+    .bestseller-tag { position:absolute; top:-8px; left:-8px; background:#f59e0b; color:#fff; font-size:0.6rem; padding:4px 8px; border-radius:4px; font-weight:800; text-transform:uppercase; z-index:10; }
     .item-top { display:flex; justify-content:space-between; align-items:flex-start; }
     .item-name { font-weight:700; font-size:1rem; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
     .veg-dot { width:12px; height:12px; border:1px solid var(--success); padding:2px; display:inline-block; border-radius:2px; }
     .veg-dot div { width:6px; height:6px; background:var(--success); border-radius:50%; }
-    
     .btn-add { background:#fff; color:var(--success); border:1px solid #eee; padding:8px 25px; border-radius:8px; font-weight:800; font-size:0.9rem; box-shadow:0 2px 6px rgba(0,0,0,0.05); cursor:pointer;}
     .btn-add:active { transform: scale(0.95); }
     
-    /* VARIANT MODAL */
-    #variant-modal { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; display:none; justify-content:center; align-items:center; }
-    .v-card { background:#fff; width:90%; max-width:350px; border-radius:16px; padding:20px; animation:popIn 0.2s; }
-    @keyframes popIn { from{transform:scale(0.9)} to{transform:scale(1)} }
-    .v-opt { display:flex; justify-content:space-between; padding:12px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer; font-weight:600; }
-    .v-opt:hover { border-color:var(--primary); background:var(--primary-soft); color:var(--primary); }
-
-    /* CART & BOTTOM NAV */
-    .fab-cart { position:fixed; bottom:90px; left:15px; right:15px; background:#111; color:#fff; padding:16px; border-radius:12px; display:none; justify-content:space-between; align-items:center; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:800; cursor:pointer;}
-    .bottom-nav { position:fixed; bottom:0; width:100%; background:#fff; display:flex; justify-content:space-around; padding:12px 0; box-shadow:0 -5px 20px rgba(0,0,0,0.05); z-index:900; }
-    .nav-icon { text-align:center; color:#ccc; font-size:0.75rem; font-weight:600; cursor:pointer;}
-    .nav-icon.active { color:var(--primary); } .nav-icon i { display:block; font-size:1.4rem; margin-bottom:4px; }
-    
-    /* FORM & CART STYLES */
-    .cart-box { background:#fff; padding:20px; border-radius:12px; margin:15px; }
+    /* CART & CHECKOUT */
+    .cart-box { background:#fff; padding:20px; border-radius:12px; margin:15px; box-shadow:0 4px 12px rgba(0,0,0,0.03); }
     .bill-row { display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.95rem; color:#555; }
     .bill-row.total { font-weight:800; color:#000; font-size:1.1rem; border-top:1px dashed #ccc; padding-top:10px; margin-top:5px; }
     input, textarea { width:100%; padding:14px; background:#f9f9f9; border:1px solid #eee; border-radius:10px; margin-bottom:12px; font-family:inherit; }
-    .btn-primary { width:100%; padding:15px; background:var(--primary); color:#fff; border:none; border-radius:10px; font-weight:700; font-size:1rem; cursor:pointer;}
-    .btn-outline { width:100%; padding:12px; background:#fff; border:1px solid #ccc; border-radius:10px; font-weight:600; cursor:pointer; margin-bottom:12px; }
-    .type-opt { flex:1; text-align:center; padding:10px; background:#fff; border-radius:8px; font-weight:600; color:#999; cursor:pointer;}
+    .btn-primary { width:100%; padding:15px; background:var(--primary); color:#fff; border:none; border-radius:10px; font-weight:700; font-size:1rem; cursor: pointer; }
+    .btn-outline { width:100%; padding:12px; background:#fff; border:1px solid #ccc; border-radius:10px; font-weight:600; cursor: pointer; margin-bottom:12px; }
+    .type-opt { flex:1; text-align:center; padding:10px; background:#fff; border-radius:8px; font-weight:600; color:#999; cursor: pointer; }
     .type-opt.selected { background:#fff; color:var(--primary); box-shadow:0 2px 5px rgba(0,0,0,0.1); }
 
     /* PROFESSIONAL PROFILE */
@@ -77,14 +56,19 @@
     .history-head { display: flex; justify-content: space-between; border-bottom: 1px dashed #eee; padding-bottom: 10px; margin-bottom: 10px; }
     .btn-reorder { background: var(--primary-soft); color: var(--primary); border: none; padding: 8px 15px; border-radius: 6px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
-    /* LIVE TRACKING POPUP */
+    /* NAVIGATION & POPUPS */
+    .fab-cart { position:fixed; bottom:90px; left:15px; right:15px; background:#111; color:#fff; padding:16px; border-radius:12px; display:none; justify-content:space-between; align-items:center; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:800; cursor:pointer;}
+    .bottom-nav { position:fixed; bottom:0; width:100%; background:#fff; display:flex; justify-content:space-around; padding:12px 0; box-shadow:0 -5px 20px rgba(0,0,0,0.05); z-index:900; }
+    .nav-icon { text-align:center; color:#ccc; font-size:0.75rem; font-weight:600; cursor:pointer;}
+    .nav-icon.active { color:var(--primary); } .nav-icon i { display:block; font-size:1.4rem; margin-bottom:4px; }
     #live-tracking { position:fixed; bottom:75px; left:15px; right:15px; background:#fff; border:2px solid var(--primary); border-radius:12px; padding:15px; z-index:850; box-shadow:0 10px 20px rgba(255,82,82,0.15); animation:popIn 0.3s; display:none; }
-    .rating-stars span { font-size:2rem; color:#ccc; cursor:pointer; transition:0.2s; }
-    .rating-stars span:hover, .rating-stars span.active { color:#ffc107; }
-
-    /* UTILS */
+    .rating-stars span { font-size:2rem; color:#ccc; cursor:pointer; transition:0.2s; } .rating-stars span:hover, .rating-stars span.active { color:#ffc107; }
+    #variant-modal { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; display:none; justify-content:center; align-items:center; }
+    .v-card { background:#fff; width:90%; max-width:350px; border-radius:16px; padding:20px; animation:popIn 0.2s; }
+    .v-opt { display:flex; justify-content:space-between; padding:12px; border:1px solid #eee; border-radius:8px; margin-bottom:10px; cursor:pointer; font-weight:600; }
+    
     .hidden { display:none !important; }
-    section { display:none; animation:fadeIn 0.3s; } section.active { display:block; } @keyframes fadeIn { from{opacity:0}to{opacity:1} }
+    section { display:none; animation:fadeIn 0.3s; } section.active { display:block; } @keyframes fadeIn { from{opacity:0}to{opacity:1} } @keyframes popIn { from{transform:scale(0.9)} to{transform:scale(1)} }
     #toast { visibility:hidden; min-width:250px; background:#333; color:#fff; text-align:center; border-radius:50px; padding:12px; position:fixed; z-index:2000; left:50%; bottom:100px; transform:translateX(-50%); }
     #toast.show { visibility:visible; animation:fadein 0.5s, fadeout 0.5s 2.5s; } @keyframes fadein { from{bottom:80px; opacity:0;} to{bottom:100px; opacity:1;} } @keyframes fadeout { from{bottom:100px; opacity:1;} to{bottom:80px; opacity:0;} }
   </style>
@@ -362,11 +346,9 @@ function renderMenu(list) {
         if(i.type === 'variant' && i.variants) {
             const prices = i.variants.map(v => v.price);
             priceDisplay = `₹${Math.min(...prices)} - ₹${Math.max(...prices)}`;
-            // SECURE FIX: Pass ONLY the ID. No quotes to break HTML!
             actionBtn = `<button class="btn-add" onclick="openVariantModal('${i.id}')">ADD</button>`;
         } else {
             priceDisplay = `₹${i.price}`;
-            // SECURE FIX: Pass ONLY the ID.
             actionBtn = `<button class="btn-add" onclick="addSingleCart('${i.id}')">ADD</button>`;
         }
 
@@ -400,7 +382,6 @@ function openVariantModal(itemId) {
     opts.innerHTML = "";
     
     item.variants.forEach((v, idx) => {
-        // SECURE FIX: Pass ONLY the ID and the array index.
         opts.innerHTML += `<div class="v-opt" onclick="addVariantCart('${itemId}', ${idx})">
             <span>${v.name}</span>
             <span>₹${v.price}</span>
@@ -415,7 +396,6 @@ function addVariantCart(itemId, variantIndex) {
         const variantFullName = `${item.name} (${item.variants[variantIndex].name})`;
         addCart(variantFullName, item.variants[variantIndex].price);
     }
-    // Safely close modal via JavaScript, not inline HTML
     document.getElementById('variant-modal').style.display = 'none';
 }
 
@@ -474,61 +454,76 @@ function updateCart() {
         document.getElementById("bill-grand").innerText = "₹" + currentGrandTotal;
     }
     
-    document.getElementById("cart-total-display").innerText = "₹"+subtotal; // Show items total in cart box
-    document.getElementById("fab-total").innerText = "₹"+currentGrandTotal; // Show grand total on floating button
+    document.getElementById("cart-total-display").innerText = "₹"+subtotal; 
+    document.getElementById("fab-total").innerText = "₹"+currentGrandTotal; 
     document.getElementById("fab-count").innerText = count+" ITEMS";
     document.getElementById("fab-cart").style.display="flex";
 }
 
-// ==========================================
-// SHIPROCKET LIVE SHIPPING CALCULATOR (HYPERLOCAL GPS UPGRADE)
-// ==========================================
-exports.getShippingRate = functions.https.onCall(async (data, context) => {
-    const destPincode = data.pincode;
-    const lat = data.lat; // Capturing Exact GPS from frontend
-    const lng = data.lng; // Capturing Exact GPS from frontend
+// --- CHECKOUT & SHIPROCKET LIVE CALC ---
+function setType(t) { 
+    orderType=t; 
+    document.getElementById("opt-del").classList.toggle("selected", t==="Delivery");
+    document.getElementById("opt-take").classList.toggle("selected", t==="Takeaway");
+    document.getElementById("delivery-fields").style.display = t==="Takeaway" ? "none" : "block";
     
-    if (!destPincode) throw new functions.https.HttpsError('invalid-argument', 'Pincode is required.');
+    if(t === "Takeaway") { isDeliveryCalculated = true; liveDeliveryFee = 0; } 
+    else { resetDelivery(); }
+    updateCart(); 
+}
 
+function resetDelivery() {
+    isDeliveryCalculated = false; liveDeliveryFee = 0;
+    document.getElementById("del-msg").style.display = "none"; updateCart(); 
+}
+
+async function calculateLiveShipping() {
     try {
-        // 1. Log in to Shiprocket API
-        const authResponse = await axios.post("https://apiv2.shiprocket.in/v1/external/auth/login", {
-            email: "YOUR_SHIPROCKET_EMAIL@gmail.com", // ⚠️ YOU MUST CHANGE THIS TO YOUR REAL EMAIL
-            password: "YOUR_SHIPROCKET_PASSWORD"      // ⚠️ YOU MUST CHANGE THIS TO YOUR REAL PASSWORD
-        });
-        const token = authResponse.data.token;
-
-        // 2. Check Prices (Using Hyperlocal GPS if available!)
-        let apiUrl = `https://apiv2.shiprocket.in/v1/external/courier/serviceability/?pickup_postcode=110063&delivery_postcode=${destPincode}&weight=0.5&cod=0`;
-        if (lat && lng) {
-            apiUrl += `&delivery_lat=${lat}&delivery_lng=${lng}`; // Adds exact Zomato-style GPS accuracy
+        const pin = document.getElementById("c-pincode").value.trim();
+        if(pin.length !== 6) {
+            alert("Please enter a valid 6-digit Pincode!");
+            return;
         }
 
-        const serviceResponse = await axios.get(apiUrl, { headers: { "Authorization": `Bearer ${token}` } });
-        const couriers = serviceResponse.data.data.available_courier_companies;
+        const btn = document.getElementById("btn-calc-ship");
+        const msg = document.getElementById("del-msg");
         
-        if (!couriers || couriers.length === 0) return { success: false, message: "Delivery not available to this location." };
+        btn.innerText = "⏳ Loading..."; 
+        btn.disabled = true; 
+        msg.style.display = "none";
 
-        let lowestRate = couriers[0].rate;
-        for (let courier of couriers) {
-            if (courier.rate < lowestRate) lowestRate = courier.rate;
+        const getRate = cloudFunctions.httpsCallable('getShippingRate');
+        const response = await getRate({ pincode: pin });
+
+        if(response.data.success) {
+            liveDeliveryFee = response.data.rate; 
+            isDeliveryCalculated = true;
+            msg.style.display = "block"; 
+            msg.style.color = "var(--success)";
+            msg.innerText = `Delivery Available! Rate: ₹${liveDeliveryFee} applied.`;
+            updateCart(); 
+        } else {
+            isDeliveryCalculated = false; 
+            liveDeliveryFee = 0;
+            msg.style.display = "block"; 
+            msg.style.color = "var(--danger)";
+            msg.innerText = response.data.message || "Cannot deliver to this location.";
+            updateCart();
         }
+        
+        btn.innerText = "Check Price"; 
+        btn.disabled = false;
 
-        return { success: true, rate: Math.round(lowestRate) };
-
-    } catch (error) {
-        // THIS WILL TELL YOU EXACTLY WHAT WENT WRONG ON THE FRONTEND
-        let errorMsg = "Could not fetch live rates.";
-        if (error.response && error.response.status === 401) {
-            errorMsg = "Shiprocket Login Failed. Put your real Email/Pass in index.js!";
-        } else if (error.response && error.response.status === 404) {
-            errorMsg = "Shiprocket says: No riders serve this Pincode right now.";
-        } else if (error.response && error.response.data && error.response.data.message) {
-            errorMsg = error.response.data.message;
-        }
-        return { success: false, message: errorMsg };
+    } catch(err) {
+        console.error("Calculation Error:", err);
+        const msg = document.getElementById("del-msg");
+        msg.style.display = "block"; 
+        msg.style.color = "var(--danger)";
+        msg.innerText = "Server Error. Please wait a moment and try again.";
+        document.getElementById("btn-calc-ship").innerText = "Check Price"; 
+        document.getElementById("btn-calc-ship").disabled = false;
     }
-});
+}
 
 function checkout() {
     if(!cart.length) return toast("Cart empty");
