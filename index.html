@@ -647,10 +647,15 @@ function fetchExactLocation() {
     if (navigator.geolocation) {
         toast("Fetching location...");
         navigator.geolocation.getCurrentPosition(position => {
-            // Create a clean Google Maps link
+            
+            // 1. SAVE HIDDEN VARIABLES for the Distance Calculator (This was missing!)
+            userLat = position.coords.latitude;
+            userLng = position.coords.longitude;
+            
+            // 2. Create a clean Google Maps link for the Shiprocket Rider
             const mapLink = `https://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
             
-            // Put it directly into the Address text box
+            // 3. Put it directly into the Address text box
             const addrField = document.getElementById('c-addr');
             addrField.value = addrField.value ? `${addrField.value}\n[Exact GPS: ${mapLink}]` : `[Exact GPS: ${mapLink}]`;
             
