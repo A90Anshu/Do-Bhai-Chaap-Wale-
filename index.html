@@ -631,12 +631,13 @@ function fetchExactLocation() {
     if (navigator.geolocation) {
         toast("Fetching location...");
         navigator.geolocation.getCurrentPosition(position => {
-            // Save coordinates for Shiprocket API
-            userLat = position.coords.latitude;
-            userLng = position.coords.longitude;
+            // Create a clean Google Maps link
+            const mapLink = `https://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
             
+            // Put it directly into the Address text box
             const addrField = document.getElementById('c-addr');
-            addrField.value = addrField.value ? `${addrField.value} (GPS Verified)` : "GPS Verified Location";
+            addrField.value = addrField.value ? `${addrField.value}\n[Exact GPS: ${mapLink}]` : `[Exact GPS: ${mapLink}]`;
+            
             toast("Exact Location Attached! 📍");
         }, () => alert("Could not get location. Please enable location services."));
     }
