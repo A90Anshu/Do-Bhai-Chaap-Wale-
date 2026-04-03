@@ -350,13 +350,14 @@ async function bookShiprocket(orderId) {
     document.getElementById('page-loader').style.display = 'flex'; 
     
     try {
-        // 1. Find the full order details from your dashboard's memory
+        // 1. Find the full order details from your Admin dashboard memory
         const orderInfo = ordersData.find(o => o.id === orderId);
         if (!orderInfo) throw new Error("Order details missing!");
 
-        // 2. Call your untouched index.js function, passing ALL the data it expects
+        // 2. Call your UNTOUCHED index.js function and pass the details
+        // The "address" field now contains the Google Maps link!
         const bookRider = cloudFunctions.httpsCallable('bookShiprocketRider');
-        const response = await bookRider({ 
+        await bookRider({ 
             orderId: orderInfo.id, 
             name: orderInfo.name, 
             mobile: orderInfo.mobile, 
@@ -366,10 +367,9 @@ async function bookShiprocket(orderId) {
             total: orderInfo.total 
         });
 
-        // 3. Update the Firestore database so the status changes to "Rider Assigned"
+        // 3. Update the database to change the status to "Rider Assigned"
         await db.collection("orders").doc(orderId).update({
-            status: "Rider Assigned",
-            shiprocketOrderId: response.data.shiprocket_order_id || "N/A"
+            status: "Rider Assigned"
         });
 
         showToast("Rider Booked Successfully!");
