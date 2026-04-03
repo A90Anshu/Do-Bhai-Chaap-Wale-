@@ -246,6 +246,8 @@ const firebaseConfig = { apiKey: "AIzaSyADDoSv7Wt8WOfYkcAYZcQOZtCKROuHMu4", auth
 const RAZORPAY_KEY = "rzp_live_IAwVGH2rtMwKWw";
 
 let db, auth, cloudFunctions, menu=[], cart=[], myOrders=[], user=null, orderType="Delivery", confirmRes=null;
+let userLat = null; // Added for Shiprocket
+let userLng = null; // Added for Shiprocket
 let activeOrderUnsubscribe = null; 
 let currentTrackingOrderId = null;
 let currentGrandTotal = 0; 
@@ -549,10 +551,15 @@ function checkout() {
 function saveOrder(name, phone, addr, pincode, totalVal, pid) {
     db.collection("orders").add({
         name, mobile:phone, address: orderType==="Takeaway"?"Takeaway":addr, pincode: orderType === "Takeaway" ? "" : pincode,
+        lat: userLat, // Save GPS Latitude
+        lng: userLng, // Save GPS Longitude
         items: cart, total: totalVal, paymentId: pid, status: "Pending", 
         created: firebase.firestore.FieldValue.serverTimestamp(),
         userId: user ? user.uid : null
     }).then((docRef) => {
+        // We DO NOT call the Shiprocket function here anymore.
+        // It just saves the order to the database for your Admin Panel.
+        
         localStorage.setItem('activeOrderId', docRef.id); startTracking(docRef.id);
         const items = cart.map(i=>`${i.name} x${i.qty}`).join('%0A');
         const addrText = orderType === "Takeaway" ? "Takeaway" : `${addr}, Pin: ${pincode}`;
@@ -624,9 +631,12 @@ function fetchExactLocation() {
     if (navigator.geolocation) {
         toast("Fetching location...");
         navigator.geolocation.getCurrentPosition(position => {
-            const googleMapsLink = `https://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
+            // Save coordinates for Shiprocket API
+            userLat = position.coords.latitude;
+            userLng = position.coords.longitude;
+            
             const addrField = document.getElementById('c-addr');
-            addrField.value = addrField.value ? `${addrField.value}\n[GPS: ${googleMapsLink}]` : `[GPS: ${googleMapsLink}]`;
+            addrField.value = addrField.value ? `${addrField.value} (GPS Verified)` : "GPS Verified Location";
             toast("Exact Location Attached! 📍");
         }, () => alert("Could not get location. Please enable location services."));
     }
