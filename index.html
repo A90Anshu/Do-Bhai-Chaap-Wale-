@@ -254,6 +254,22 @@ let currentGrandTotal = 0;
 let liveDeliveryFee = 0; 
 let isDeliveryCalculated = false;
 
+// Add your exact shop GPS coordinates here (Currently set to general Paschim Vihar)
+const SHOP_LAT = 28.6642034; 
+const SHOP_LNG = 77.0520377;
+
+// Formula to calculate distance between two GPS points in Kilometers
+function getDistanceInKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+}
+  
 window.onload = () => {
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.firestore(); 
@@ -481,37 +497,37 @@ function resetDelivery() {
 
 async function calculateLiveShipping() {
     try {
-        const pin = document.getElementById("c-pincode").value.trim();
-        if(pin.length !== 6) {
-            alert("Please enter a valid 6-digit Pincode!");
+        const btn = document.getElementById("btn-calc-ship");
+        const msg = document.getElementById("del-msg");
+
+        // 1. Force the user to provide their GPS location first
+        if (!userLat || !userLng) {
+            msg.style.display = "block"; 
+            msg.style.color = "var(--danger)";
+            msg.innerText = "Please click 'Fetch My Exact GPS Location' first!";
             return;
         }
 
-        const btn = document.getElementById("btn-calc-ship");
-        const msg = document.getElementById("del-msg");
-        
-        btn.innerText = "⏳ Loading..."; 
+        btn.innerText = "⏳ Calculating..."; 
         btn.disabled = true; 
         msg.style.display = "none";
 
-        const getRate = cloudFunctions.httpsCallable('getShippingRate');
-        const response = await getRate({ pincode: pin });
+        // 2. Calculate distance using the formula we added
+        const distanceKm = getDistanceInKm(SHOP_LAT, SHOP_LNG, userLat, userLng);
 
-        if(response.data.success) {
-            liveDeliveryFee = response.data.rate; 
-            isDeliveryCalculated = true;
-            msg.style.display = "block"; 
-            msg.style.color = "var(--success)";
-            msg.innerText = `Delivery Available! Rate: ₹${liveDeliveryFee} applied.`;
-            updateCart(); 
-        } else {
-            isDeliveryCalculated = false; 
-            liveDeliveryFee = 0;
-            msg.style.display = "block"; 
-            msg.style.color = "var(--danger)";
-            msg.innerText = response.data.message || "Cannot deliver to this location.";
-            updateCart();
-        }
+        // 3. Apply your pricing logic: Base 30 + (15 * km)
+        // Math.round ensures we don't get weird decimals like ₹45.32
+        const calculatedPrice = Math.round(30 + (distanceKm * 15));
+
+        liveDeliveryFee = calculatedPrice; 
+        isDeliveryCalculated = true;
+        
+        msg.style.display = "block"; 
+        msg.style.color = "var(--success)";
+        // Shows the customer the distance and the exact fee
+        msg.innerText = `Distance: ${distanceKm.toFixed(1)} km. Delivery Fee: ₹${liveDeliveryFee}`;
+        
+        updateCart(); 
         
         btn.innerText = "Check Price"; 
         btn.disabled = false;
@@ -521,7 +537,7 @@ async function calculateLiveShipping() {
         const msg = document.getElementById("del-msg");
         msg.style.display = "block"; 
         msg.style.color = "var(--danger)";
-        msg.innerText = "Server Error. Please wait a moment and try again.";
+        msg.innerText = "Error calculating distance. Please try again.";
         document.getElementById("btn-calc-ship").innerText = "Check Price"; 
         document.getElementById("btn-calc-ship").disabled = false;
     }
